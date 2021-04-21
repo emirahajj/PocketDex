@@ -15,39 +15,23 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     
     var myPic = String()
 
-    
-    let typeColors = [
-        "normal" : UIColor(red: 0.6588, green: 0.6588, blue: 0.4902, alpha: 1.0) /* #a8a87d */,
-        "fighting" : UIColor(red: 0.6941, green: 0.2392, blue: 0.1922, alpha: 1.0) /* #b13d31 */,
-        "flying" : UIColor(red: 0.6431, green: 0.5686, blue: 0.9176, alpha: 1.0) /* #a491ea */,
-        "poison" : UIColor(red: 0.5804, green: 0.2745, blue: 0.6078, alpha: 1.0) /* #94469b */,
-        "ground" : UIColor(red: 0.8588, green: 0.7569, blue: 0.4588, alpha: 1.0) /* #dbc175 */,
-        "rock" : UIColor(red: 0.7059, green: 0.6314, blue: 0.2941, alpha: 1.0) /* #b4a14b */,
-        "bug" : UIColor(red: 0.6706, green: 0.7176, blue: 0.2588, alpha: 1.0) /* #abb742 */,
-        "ghost" : UIColor(red: 0.4235, green: 0.349, blue: 0.5804, alpha: 1.0) /* #6c5994 */,
-        "steel" : UIColor(red: 0.7216, green: 0.7216, blue: 0.8078, alpha: 1.0) /* #b8b8ce */,
-        "fire" : UIColor(red: 0.8824, green: 0.5255, blue: 0.2667, alpha: 1.0) /* #e18644 */,
-        "water" : UIColor(red: 0.4392, green: 0.5608, blue: 0.9137, alpha: 1.0) /* #708fe9 */,
-        "grass" : UIColor(red: 0.5451, green: 0.7765, blue: 0.3765, alpha: 1.0) /* #8bc660 */,
-        "electric" : UIColor(red: 0.9451, green: 0.8196, blue: 0.3294, alpha: 1.0) /* #f1d154 */,
-        "psychic" : UIColor(red: 0.902, green: 0.3882, blue: 0.5333, alpha: 1.0) /* #e66388 */,
-        "ice" : UIColor(red: 0.651, green: 0.8392, blue: 0.8431, alpha: 1.0) /* #a6d6d7 */,
-        "dragon" : UIColor(red: 0.4118, green: 0.2314, blue: 0.9373, alpha: 1.0) /* #693bef */,
-        "dark" : UIColor(red: 0.4235, green: 0.349, blue: 0.2902, alpha: 1.0) /* #6c594a */,
-        "fairy" : UIColor(red: 0.8863, green: 0.6157, blue: 0.6745, alpha: 1.0) /* #e29dac */,
-    ]
     var pokemon = [[String:Any]]() //dictionary that stores URL + pokemon names
     @IBOutlet weak var tableView: UITableView!
     var picString = String()
         
     let popUp = AYPopupPickerView()
-    let gens = ["Gen I", "Gen II", "Gen III", "Gen IV", "Gen V", "Gen VI", "Gen VII"]
+    let gens = ["R/B/Y", "G/S/C", "R/S/E", "D/P", "Plat.", "HG/SS", "B/W", "B2/W2"]
     let genLookup = [
-        "Gen I" : "https://pokeapi.co/api/v2/pokemon?limit=151&offset=0",
-        "Gen II" : "https://pokeapi.co/api/v2/pokemon?limit=100&offset=152",
-        "Gen III" : "https://pokeapi.co/api/v2/pokemon?limit=202&offset=251"
-        
+        "R/B/Y" : "https://pokeapi.co/api/v2/pokedex/1/",
+        "G/S/C" : "https://pokeapi.co/api/v2/pokedex/3/",
+        "R/S/E" : "https://pokeapi.co/api/v2/pokedex/4/",
+        "D/P" : "https://pokeapi.co/api/v2/pokedex/5/",
+        "Plat." : "https://pokeapi.co/api/v2/pokedex/6/",
+        "HG/SS" : "https://pokeapi.co/api/v2/pokedex/7/",
+        "B/W" : "https://pokeapi.co/api/v2/pokedex/8/",
+        "B2/W2" : "https://pokeapi.co/api/v2/pokedex/9/",
     ]
+    let typesArray = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy", "unknown", "shadow"]
     
     func APIcall(genString: String) {
         let genInfo = genLookup[genString]! as String
@@ -62,7 +46,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             } else if let data = data {
                 let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
                 
-                self.pokemon = dataDictionary["results"] as! [[String:Any]]
+                self.pokemon = dataDictionary["pokemon_entries"] as! [[String:Any]]
                 self.tableView.setContentOffset(.zero, animated: true)
                 self.tableView.reloadData()
             }
@@ -93,7 +77,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         tableView.dataSource = self
         tableView.delegate = self
         // Do any additional setup after loading the view.
-        let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=151&offset=0")!
+        let url = URL(string: "https://pokeapi.co/api/v2/pokedex/1/")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task = session.dataTask(with: request) { (data, response, error) in
@@ -103,7 +87,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             } else if let data = data {
                 let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
                 
-                self.pokemon = dataDictionary["results"] as! [[String:Any]]
+                self.pokemon = dataDictionary["pokemon_entries"] as! [[String:Any]]
                 
                 self.tableView.reloadData()
             }
@@ -140,9 +124,11 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         let cell = tableView.dequeueReusableCell(withIdentifier: "PokeCell") as! PokeCell
         
         let mypoke = pokemon[indexPath.row]
-        let name = mypoke["name"] as! String //name of pokemon
-        let myURL = mypoke["url"] as! String // url like .../v2/pokemon/<number>/
-        let number = Int(myURL.dropFirst(34).dropLast())!
+        let name = (mypoke["pokemon_species"] as! [String:Any])["name"] as! String //name of pokemon
+        let myURL = (mypoke["pokemon_species"] as! [String:Any])["url"] as! String
+//            mypoke["url"] as! String // url like .../v2/pokemon/<number>/
+        let number = Int(myURL.dropFirst(42).dropLast())!
+        print(number)
         let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(number).png"
         let photoURL = URL(string: picstring)
         cell.digiPic.af.setImage(withURL: photoURL!)
@@ -174,7 +160,10 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         let index = tableView.indexPath(for: cell)!
                 
         //the url for the pokemon information--remmeber this is just the name +
-        let pokeURL = pokemon[index.row]["url"] as! String
+        print(pokemon[index.row])
+        var pokeURL = (pokemon[index.row]["pokemon_species"] as! [String:Any])["url"] as! String
+        pokeURL = "https://pokeapi.co/api/v2/pokemon/" + pokeURL.dropFirst(42)
+        print(pokeURL)
 
         //create a variable that represents the viewcontroller we cwant to navigate to
         let dexViewController = segue.destination as! DexEntryController
