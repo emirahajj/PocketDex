@@ -11,13 +11,13 @@ import UIKit
 struct cellData {
     var opened = Bool()
     var title = String()
-    var sectionData = [innerData]()
-}
-struct innerData {
-    var opened = Bool()
-    var title = String()
     var sectionData = [String]()
 }
+//struct innerData {
+//    var opened = Bool()
+//    var title = String()
+//    var sectionData = [String]()
+//}
 
 class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
@@ -32,6 +32,9 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         tableView.delegate = self
         
         tableView.reloadData()
+        let dict = [
+            "machines" : " "
+        ]
         let sections = ["machines", "pokeballs", "medicine", "berries", "mail", "battle","key","misc"]
         tableViewData = [
             cellData(opened: false, title: "machines", sectionData: []),
@@ -66,9 +69,11 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         if indexPath.row == 0 {
             cell.textLabel?.text = tableViewData[indexPath.section].title
+            cell.backgroundColor = UIColor.green
             return cell
         }
-        cell.textLabel?.text = tableViewData[indexPath.section].sectionData[indexPath.row - 1].title
+        cell.textLabel?.text = tableViewData[indexPath.section].sectionData[indexPath.row - 1]
+        cell.backgroundColor = UIColor.white
         return cell
     }
     
@@ -100,35 +105,35 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
                         let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
                         
                         let categorieObjects = dataDictionary["categories"] as! [[String:Any]]
-                        var categoryNames: [innerData] = []
+                        var categoryNames: [String] = []
                         for category in categorieObjects {
-                             let innerSection = innerData(opened: false, title: category["name"] as! String, sectionData: [])
-                            categoryNames.append(innerSection)
+//                             let innerSection = innerData(opened: false, title: category["name"] as! String, sectionData: [])
+                            categoryNames.append(category["name"] as! String)
                         }
                         self.tableViewData[indexPath.section].sectionData = categoryNames
                         self.tableView.reloadSections(sections, with: .none)
                     }
                 }
+                
+
                 task.resume()
             }
         } else {
             //put the other API call in here!
-            if tableViewData[indexPath.section].sectionData[indexPath.row - 1].opened == true {
-                
-                tableViewData[indexPath.section].sectionData[indexPath.row - 1].opened = false
-                let sections = IndexSet.init(integer: tableViewData[indexPath.section].sectionData[indexPath.row - 1].sectionData.count)
-                print(sections)
-                tableView.reloadSections(sections, with: .none)
-            } else {
-                tableViewData[indexPath.section].sectionData[indexPath.row - 1].opened = true
-                let sections = IndexSet.init(integer: tableViewData[indexPath.section].sectionData[indexPath.row - 1].sectionData.count)
-                tableViewData[indexPath.section].sectionData[indexPath.row - 1].sectionData = ["text"]
-                print(sections)
-
-                tableView.reloadSections(sections, with: .none)
-
-
-            }
+//            if tableViewData[indexPath.section].sectionData[indexPath.row - 1].opened == true {
+//
+//                tableViewData[indexPath.section].sectionData[indexPath.row - 1].opened = false
+//                let sections = IndexSet.init(integer: tableViewData[indexPath.section].sectionData[indexPath.row - 1].sectionData.count)
+//                print(sections)
+//                tableView.reloadSections(sections, with: .none)
+//            } else {
+//                tableViewData[indexPath.section].sectionData[indexPath.row - 1].opened = true
+//                let sections = IndexSet.init(integer: tableViewData[indexPath.section].sectionData[indexPath.row - 1].sectionData.count)
+//                tableViewData[indexPath.section].sectionData[indexPath.row - 1].sectionData = ["text"]
+//                print(sections)
+//
+//                tableView.reloadSections(sections, with: .none)
+//            }
 //            tableView.reloadSections(<#T##sections: IndexSet##IndexSet#>, with: <#T##UITableView.RowAnimation#>)
             //print("hey")
             
