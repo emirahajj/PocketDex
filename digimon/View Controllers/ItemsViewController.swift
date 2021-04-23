@@ -21,34 +21,114 @@ struct cellData {
 
 class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
+    @IBOutlet weak var bagImage: UIImageView!
+    @IBOutlet weak var segControl: UISegmentedControl!
     @IBOutlet weak var tableView: UITableView!
     
     //try making another struct and embedding that as the section data of the first
     var tableViewData = [cellData]()
+    
+    //segmented control
+    let sections = ["machines", "pokeballs", "medicine", "berries", "mail", "battle","key","misc"]
+    var subcategories : [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
         
-        tableView.reloadData()
-        let dict = [
-            "machines" : " "
-        ]
-        let sections = ["machines", "pokeballs", "medicine", "berries", "mail", "battle","key","misc"]
-        tableViewData = [
-            cellData(opened: false, title: "machines", sectionData: []),
-            cellData(opened: false, title: "pokeballs", sectionData: []),
-            cellData(opened: false, title: "medicine", sectionData: []),
-            cellData(opened: false, title: "berries", sectionData: []),
-            cellData(opened: false, title: "mail", sectionData: []),
-            cellData(opened: false, title: "battle", sectionData: []),
-            cellData(opened: false, title: "key", sectionData: []),
-            cellData(opened: false, title: "misc", sectionData: [])]
+        
+        //get the selected index item-pocket
+        let bagPocket = sections[segControl.selectedSegmentIndex]
+        print(bagPocket)
+        
+        //get the item-categories that belong to the selected index
+        
+        let url = URL(string: "https://pokeapi.co/api/v2/item-pocket/\(bagPocket)")!
+        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
+        let task = session.dataTask(with: request) { (data, response, error) in
+            // This will run when the network request returns
+            if let error = error {
+                print(error.localizedDescription)
+            } else if let data = data {
+                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
+                let categorieObjects = dataDictionary["categories"] as! [[String:Any]]
+                var newSubCategories : [cellData] = []
+                for category in categorieObjects {
+                    let newCellData = cellData(opened: false, title: category["name"] as! String, sectionData: [])
+                    newSubCategories.append(newCellData)
+                }
+                
+                self.tableViewData = newSubCategories
+                
+                for subCategory in self.subcategories {
+                    let newSub = cellData(opened: false, title: subCategory, sectionData: [])
+                    self.tableViewData.append(newSub)
+                }
+                self.tableView.reloadData()
 
+
+            }
+        }
+
+        task.resume()
+        
+
+        //then iterate to create cellData objects to add to the tableViewData array
+        
+ 
         // Do any additional setup after loading the view.
     }
     
+    @IBAction func onSegChange(_ sender: Any) {
+        let bagPocket = sections[segControl.selectedSegmentIndex]
+        
+        let url = URL(string: "https://pokeapi.co/api/v2/item-pocket/\(bagPocket)")!
+        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
+        let task = session.dataTask(with: request) { (data, response, error) in
+            // This will run when the network request returns
+            if let error = error {
+                print(error.localizedDescription)
+            } else if let data = data {
+                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
+                
+                let categorieObjects = dataDictionary["categories"] as! [[String:Any]]
+                var newSubCategories : [cellData] = []
+                for category in categorieObjects {
+                    let newCellData = cellData(opened: false, title: category["name"] as! String, sectionData: [])
+                    newSubCategories.append(newCellData)
+                }
+                
+                self.tableViewData = newSubCategories
+                
+                for subCategory in self.subcategories {
+                    let newSub = cellData(opened: false, title: subCategory, sectionData: [])
+                    self.tableViewData.append(newSub)
+                }
+                self.tableView.reloadData()
+
+
+            }
+        }
+
+        task.resume()
+        
+        
+        //animate the bag to shake a lil
+        
+        UIView.animate(withDuration: 0.05, animations: {
+            self.bagImage.transform = CGAffineTransform(rotationAngle: (4 * .pi) / 180.0)
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.05) {
+                self.bagImage.transform = CGAffineTransform(rotationAngle: -1 * (4 * .pi) / 180.0)
+            }
+        })
+        
+
+        
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableViewData[section].opened {
             return tableViewData[section].sectionData.count + 1
@@ -60,19 +140,22 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
     func numberOfSections(in tableView: UITableView) -> Int {
         return tableViewData.count
     }
-//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        return "Section \(section)"
-//    }
+    
+    func formatName(string : String) -> String {
+        let newString = string.replacingOccurrences(of: "-", with: " ")
+        return newString.capitalized
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell") as! ItemCell
         
         if indexPath.row == 0 {
-            cell.textLabel?.text = tableViewData[indexPath.section].title
+            cell.textLabel?.text = formatName(string: tableViewData[indexPath.section].title)
             cell.backgroundColor = UIColor.green
             return cell
         }
-        cell.textLabel?.text = tableViewData[indexPath.section].sectionData[indexPath.row - 1]
+        cell.textLabel?.text = formatName(string: tableViewData[indexPath.section].sectionData[indexPath.row - 1])
         cell.backgroundColor = UIColor.white
         return cell
     }
@@ -94,7 +177,7 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
 
                 let sections = IndexSet.init(integer: indexPath.section)
                 
-                let url = URL(string: "https://pokeapi.co/api/v2/item-pocket/\(tableViewData[indexPath.section].title)")!
+                let url = URL(string: "https://pokeapi.co/api/v2/item-category/\(tableViewData[indexPath.section].title)")!
                 let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
                 let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
                 let task = session.dataTask(with: request) { (data, response, error) in
@@ -103,8 +186,8 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
                         print(error.localizedDescription)
                     } else if let data = data {
                         let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-                        
-                        let categorieObjects = dataDictionary["categories"] as! [[String:Any]]
+                        //tableviewdata[indexpath.section].sectionData = [our new aray]
+                        let categorieObjects = dataDictionary["items"] as! [[String:Any]]
                         var categoryNames: [String] = []
                         for category in categorieObjects {
 //                             let innerSection = innerData(opened: false, title: category["name"] as! String, sectionData: [])
