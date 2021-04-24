@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2D08509E2627539A0028E533 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D08509D2627539A0028E533 /* ItemCell.swift */; };
+		2D3B57B02633A67A0031CDD6 /* InnerItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3B57AF2633A67A0031CDD6 /* InnerItemCell.swift */; };
 		2D7C9B4B25CCEFE400A94181 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C9B4A25CCEFE400A94181 /* AppDelegate.swift */; };
 		2D7C9B4D25CCEFE400A94181 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C9B4C25CCEFE400A94181 /* SceneDelegate.swift */; };
 		2D7C9B4F25CCEFE400A94181 /* PokemonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C9B4E25CCEFE400A94181 /* PokemonViewController.swift */; };
@@ -43,6 +44,7 @@
 
 /* Begin PBXFileReference section */
 		2D08509D2627539A0028E533 /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
+		2D3B57AF2633A67A0031CDD6 /* InnerItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnerItemCell.swift; sourceTree = "<group>"; };
 		2D7C9B4725CCEFE400A94181 /* digimon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = digimon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C9B4A25CCEFE400A94181 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2D7C9B4C25CCEFE400A94181 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 			children = (
 				2D7C9B9025CCF24A00A94181 /* PokeCell.swift */,
 				2D08509D2627539A0028E533 /* ItemCell.swift */,
+				2D3B57AF2633A67A0031CDD6 /* InnerItemCell.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -435,6 +438,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D7C9B4F25CCEFE400A94181 /* PokemonViewController.swift in Sources */,
+				2D3B57B02633A67A0031CDD6 /* InnerItemCell.swift in Sources */,
 				2DAFDF73260FA74F00325984 /* ItemsViewController.swift in Sources */,
 				2D7C9B4B25CCEFE400A94181 /* AppDelegate.swift in Sources */,
 				2D7C9B9125CCF24A00A94181 /* PokeCell.swift in Sources */,

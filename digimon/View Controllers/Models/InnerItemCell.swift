@@ -1,17 +1,16 @@
 //
-//  ItemCell.swift
+//  InnerItemCell.swift
 //  digimon
 //
-//  Created by Emira Hajj on 4/14/21.
+//  Created by Emira Hajj on 4/23/21.
 //
 
 import UIKit
 
-class ItemCell: UITableViewCell {
-
-    @IBOutlet weak var label: UILabel!
+class InnerItemCell: UITableViewCell {
     
-    @IBOutlet weak var itemImage2: UIImageView!
+    
+    @IBOutlet weak var label: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

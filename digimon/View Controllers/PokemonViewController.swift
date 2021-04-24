@@ -10,15 +10,19 @@ import AlamofireImage
 import AYPopupPickerView
 
 
-class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate {
+class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, UISearchBarDelegate {
 
     
     var myPic = String()
 
     var pokemon = [[String:Any]]() //dictionary that stores URL + pokemon names
+    
+    var secondary = [[String:Any]]()
+
     @IBOutlet weak var tableView: UITableView!
     var picString = String()
-        
+    
+    @IBOutlet weak var searchBar: UISearchBar!
     let popUp = AYPopupPickerView()
     let gens = ["R/B/Y", "G/S/C", "R/S/E", "D/P", "Plat.", "HG/SS", "B/W", "B2/W2"]
     let genLookup = [
@@ -74,10 +78,12 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         popUp.pickerView.dataSource = self
         popUp.pickerView.delegate = self
         
+        searchBar.delegate = self
+        
         tableView.dataSource = self
         tableView.delegate = self
         // Do any additional setup after loading the view.
-        let url = URL(string: "https://pokeapi.co/api/v2/pokedex/1/")!
+        let url = URL(string: "https://pokeapi.co/api/v2/pokedex/2/")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task = session.dataTask(with: request) { (data, response, error) in
@@ -88,24 +94,47 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
                 let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
                 
                 self.pokemon = dataDictionary["pokemon_entries"] as! [[String:Any]]
-                
+                self.secondary = dataDictionary["pokemon_entries"] as! [[String:Any]]
                 self.tableView.reloadData()
+
             }
         }
+
         task.resume()
 
         
     }
     
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return pokemon.count
+        return secondary.count
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        //secondary = []
+        if searchText == "" {
+            secondary = pokemon
+        }
+        else{
+            let query = searchBar.text!.lowercased()
+            print(query)
+            secondary = pokemon.filter({ (value:[String : Any]) -> Bool in
+                
+                let name = (value["pokemon_species"] as! [String:Any])["name"] as! String
+                
+                return (name.starts(with: query))
+                 
+            })
+
+        }
+        tableView.reloadData()
+
+    }
+    
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
@@ -123,7 +152,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "PokeCell") as! PokeCell
         
-        let mypoke = pokemon[indexPath.row]
+        let mypoke = secondary[indexPath.row]
         let name = (mypoke["pokemon_species"] as! [String:Any])["name"] as! String //name of pokemon
         let myURL = (mypoke["pokemon_species"] as! [String:Any])["url"] as! String
 //            mypoke["url"] as! String // url like .../v2/pokemon/<number>/

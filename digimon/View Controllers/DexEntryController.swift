@@ -127,6 +127,10 @@ class DexEntryController: UIViewController {
         //set the image
         let url = URL(string: picString)!
         dexPicture.af.setImage(withURL: url)
+        dexPicture.layer.shadowColor = UIColor.darkGray.cgColor
+        dexPicture.layer.shadowRadius = 7
+        dexPicture.layer.shadowOpacity = 1
+        dexPicture.layer.shadowOffset = CGSize.init(width: 0, height: 7)
         topColor.layer.cornerRadius = 12
         //print(dexInfo)
         //pokeBall.image = UIImage(named: "poke.png")

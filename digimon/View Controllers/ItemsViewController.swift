@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 
 struct cellData {
@@ -53,6 +54,7 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 print(error.localizedDescription)
             } else if let data = data {
                 let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
+                
                 let categorieObjects = dataDictionary["categories"] as! [[String:Any]]
                 var newSubCategories : [cellData] = []
                 for category in categorieObjects {
@@ -127,6 +129,9 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         })
         
 
+        self.tableView.reloadData()
+
+
         
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -148,16 +153,31 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell") as! ItemCell
+        //need to check if the sgemented control got switched or not
+        
         
         if indexPath.row == 0 {
-            cell.textLabel?.text = formatName(string: tableViewData[indexPath.section].title)
-            cell.backgroundColor = UIColor.green
+            let cell = tableView.dequeueReusableCell(withIdentifier: "InnerItemCell") as! InnerItemCell
+
+            cell.label?.text = formatName(string: tableViewData[indexPath.section].title)
+            cell.backgroundColor = UIColor.init(red: 0.9, green: 0.36, blue: 0.34, alpha: 1.0)
+//            let imageURL = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/nope.png")
+//            //print(imageURL)
+//            cell.itemImage2?.af.setImage(withURL: imageURL!)
             return cell
+
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell") as! ItemCell
+            cell.label?.text = formatName(string: tableViewData[indexPath.section].sectionData[indexPath.row - 1])
+            let imageURL = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/\(tableViewData[indexPath.section].sectionData[indexPath.row - 1]).png")
+            cell.itemImage2?.af.setImage(withURL: imageURL!)
+            cell.backgroundColor = UIColor.white
+            return cell
+
+            
         }
-        cell.textLabel?.text = formatName(string: tableViewData[indexPath.section].sectionData[indexPath.row - 1])
-        cell.backgroundColor = UIColor.white
-        return cell
+
+        
     }
     
     
@@ -165,12 +185,13 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         //refactor--use title for header in section, and keep the
-        //only want to collapse first when first one is clicked
+        //only want to collapse first when first one is clicked]
+        
+        print("This is in section: \(indexPath.section) and row: \(indexPath.row)")
         if indexPath.row == 0 {
             if tableViewData[indexPath.section].opened == true {
                 tableViewData[indexPath.section].opened = false
                 let sections = IndexSet.init(integer: indexPath.section)
-                print(sections.count)
                 tableView.reloadSections(sections, with: .none)
             } else {
                 tableViewData[indexPath.section].opened = true
