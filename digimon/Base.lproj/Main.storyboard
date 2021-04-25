@@ -195,8 +195,9 @@
                                     <constraint firstAttribute="width" constant="200" id="RCX-jx-XBI"/>
                                 </constraints>
                             </imageView>
-                            <segmentedControl opaque="NO" contentMode="scaleAspectFit" selected="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="cPV-pe-9Iz">
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" selected="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="cPV-pe-9Iz">
                                 <rect key="frame" x="11" y="279" width="392" height="51"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="B9l-55-EEr"/>
                                 </constraints>
@@ -485,13 +486,13 @@
     </scenes>
     <resources>
         <image name="115px-Bag_artwork" width="115" height="120"/>
-        <image name="battle" width="40" height="39"/>
-        <image name="berries" width="40" height="39"/>
-        <image name="key" width="40" height="39"/>
+        <image name="battle" width="417" height="417"/>
+        <image name="berries" width="417" height="417"/>
+        <image name="key" width="417" height="417"/>
         <image name="machines" width="40" height="39"/>
-        <image name="mail" width="40" height="39"/>
-        <image name="medicine" width="40" height="39"/>
-        <image name="misc" width="40" height="39"/>
+        <image name="mail" width="417" height="417"/>
+        <image name="medicine" width="417" height="417"/>
+        <image name="misc" width="417" height="417"/>
         <image name="poke.png" width="860" height="903"/>
         <image name="pokeballs" width="40" height="39"/>
         <systemColor name="systemBackgroundColor">

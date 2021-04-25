@@ -39,6 +39,7 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         tableView.delegate = self
         
         
+        
         //get the selected index item-pocket
         let bagPocket = sections[segControl.selectedSegmentIndex]
         print(bagPocket)

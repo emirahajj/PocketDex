@@ -189,8 +189,8 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         let index = tableView.indexPath(for: cell)!
                 
         //the url for the pokemon information--remmeber this is just the name +
-        print(pokemon[index.row])
-        var pokeURL = (pokemon[index.row]["pokemon_species"] as! [String:Any])["url"] as! String
+        //print(pokemon[index.row])
+        var pokeURL = (secondary[index.row]["pokemon_species"] as! [String:Any])["url"] as! String
         pokeURL = "https://pokeapi.co/api/v2/pokemon/" + pokeURL.dropFirst(42)
         print(pokeURL)
 
