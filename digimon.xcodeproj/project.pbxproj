@@ -18,6 +18,7 @@
 		2D7C9B6225CCEFE500A94181 /* digimonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C9B6125CCEFE500A94181 /* digimonTests.swift */; };
 		2D7C9B6D25CCEFE500A94181 /* digimonUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C9B6C25CCEFE500A94181 /* digimonUITests.swift */; };
 		2D7C9B9125CCF24A00A94181 /* PokeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C9B9025CCF24A00A94181 /* PokeCell.swift */; };
+		2D7F882C2638B45F0004AFDF /* AreasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F882B2638B45F0004AFDF /* AreasViewController.swift */; };
 		2DAFDF73260FA74F00325984 /* ItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DAFDF72260FA74F00325984 /* ItemsViewController.swift */; };
 		2DBCF3A325D71F84009E0174 /* DexEntryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCF3A225D71F84009E0174 /* DexEntryController.swift */; };
 		59AC7953022D182F94470180 /* Pods_digimon_digimonUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B804A3906EE84B4DC309FB1D /* Pods_digimon_digimonUITests.framework */; };
@@ -60,6 +61,7 @@
 		2D7C9B6C25CCEFE500A94181 /* digimonUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = digimonUITests.swift; sourceTree = "<group>"; };
 		2D7C9B6E25CCEFE500A94181 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2D7C9B9025CCF24A00A94181 /* PokeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokeCell.swift; sourceTree = "<group>"; };
+		2D7F882B2638B45F0004AFDF /* AreasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreasViewController.swift; sourceTree = "<group>"; };
 		2DAFDF72260FA74F00325984 /* ItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsViewController.swift; sourceTree = "<group>"; };
 		2DBCF3A225D71F84009E0174 /* DexEntryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DexEntryController.swift; sourceTree = "<group>"; };
 		60C58F67CF2C8C3A945B5A83 /* Pods-digimonTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digimonTests.release.xcconfig"; path = "Target Support Files/Pods-digimonTests/Pods-digimonTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 			children = (
 				2DBCF3A225D71F84009E0174 /* DexEntryController.swift */,
 				2DAFDF72260FA74F00325984 /* ItemsViewController.swift */,
+				2D7F882B2638B45F0004AFDF /* AreasViewController.swift */,
 				2D7C9B4E25CCEFE400A94181 /* PokemonViewController.swift */,
 				2DBDA62D26081B050071AB29 /* Models */,
 			);
@@ -437,6 +440,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D7F882C2638B45F0004AFDF /* AreasViewController.swift in Sources */,
 				2D7C9B4F25CCEFE400A94181 /* PokemonViewController.swift in Sources */,
 				2D3B57B02633A67A0031CDD6 /* InnerItemCell.swift in Sources */,
 				2DAFDF73260FA74F00325984 /* ItemsViewController.swift in Sources */,

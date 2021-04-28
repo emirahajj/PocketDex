@@ -50,7 +50,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             } else if let data = data {
                 let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
                 
-                self.pokemon = dataDictionary["pokemon_entries"] as! [[String:Any]]
+                self.secondary = dataDictionary["pokemon_entries"] as! [[String:Any]]
                 self.tableView.setContentOffset(.zero, animated: true)
                 self.tableView.reloadData()
             }

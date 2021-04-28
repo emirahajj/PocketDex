@@ -33,11 +33,25 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
     let sections = ["machines", "pokeballs", "medicine", "berries", "mail", "battle","key","misc"]
     var subcategories : [String] = []
     
+//    @objc func swipedRight(){
+//        segControl.selectedSegmentIndex -= 1
+//    }
+//
+//    @objc func swipedLeft(){
+//        segControl.selectedSegmentIndex += 1
+//    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
         
+//        var swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.swipedRight))
+//        swipeRight.direction = UISwipeGestureRecognizer.Direction.right
+//
+//        var swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(self.swipedLeft))
+//        swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
         
         
         //get the selected index item-pocket
@@ -84,6 +98,18 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         // Do any additional setup after loading the view.
     }
     
+    
+    @IBAction func onSwipeLeft(_ sender: Any) {
+        segControl.selectedSegmentIndex += 1
+        self.onSegChange(self)
+
+    }
+    
+    @IBAction func onSwipeRight(_ sender: Any) {
+        segControl.selectedSegmentIndex -= 1
+        self.onSegChange(self)
+
+    }
     @IBAction func onSegChange(_ sender: Any) {
         let bagPocket = sections[segControl.selectedSegmentIndex]
         
@@ -170,6 +196,7 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell") as! ItemCell
             cell.label?.text = formatName(string: tableViewData[indexPath.section].sectionData[indexPath.row - 1])
+            //need to take care of TM/HM sprites
             let imageURL = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/\(tableViewData[indexPath.section].sectionData[indexPath.row - 1]).png")
             cell.itemImage2?.af.setImage(withURL: imageURL!)
             cell.backgroundColor = UIColor.white

@@ -173,8 +173,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="58"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y0u-t3-HbJ">
-                                                    <rect key="frame" x="156" y="19" width="102" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y0u-t3-HbJ">
+                                                    <rect key="frame" x="99" y="19" width="216" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -218,6 +218,7 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="te6-Y5-EJF"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="Plq-ez-dEg" firstAttribute="top" secondItem="cPV-pe-9Iz" secondAttribute="bottom" constant="18" id="65F-wR-JMN"/>
                             <constraint firstItem="cPV-pe-9Iz" firstAttribute="leading" secondItem="te6-Y5-EJF" secondAttribute="leading" constant="11" id="Fbs-Ms-lBF"/>
@@ -229,6 +230,10 @@
                             <constraint firstItem="Plq-ez-dEg" firstAttribute="bottom" secondItem="te6-Y5-EJF" secondAttribute="bottom" id="kWD-Jm-vbf"/>
                             <constraint firstItem="Plq-ez-dEg" firstAttribute="leading" secondItem="te6-Y5-EJF" secondAttribute="leading" id="lTM-wo-e3w"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="8u3-cp-2j9" appends="YES" id="eER-CC-qpZ"/>
+                            <outletCollection property="gestureRecognizers" destination="7MZ-WJ-xAn" appends="YES" id="tXJ-17-AfQ"/>
+                        </connections>
                     </view>
                     <tabBarItem key="tabBarItem" title="Items" id="lrW-9Q-jvb"/>
                     <connections>
@@ -238,22 +243,66 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qua-8V-jux" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="right" id="8u3-cp-2j9" userLabel="SwipeRight">
+                    <connections>
+                        <action selector="onSwipeRight:" destination="Z9T-eo-5ow" id="rq5-Rq-RR8"/>
+                    </connections>
+                </swipeGestureRecognizer>
+                <swipeGestureRecognizer direction="left" id="7MZ-WJ-xAn" userLabel="SwipeLeft">
+                    <connections>
+                        <action selector="onSwipeLeft:" destination="Z9T-eo-5ow" id="L7Y-tY-KRI"/>
+                    </connections>
+                </swipeGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1047.8260869565217" y="1006.4732142857142"/>
         </scene>
         <!--Areas-->
         <scene sceneID="ufn-7a-BNo">
             <objects>
-                <viewController id="VyM-hL-AhB" sceneMemberID="viewController">
+                <viewController id="VyM-hL-AhB" customClass="AreasViewController" customModule="digimon" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ZLR-Gp-cn6">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" scrollEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LhE-U3-NcV">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="282"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <viewLayoutGuide key="contentLayoutGuide" id="yAW-7f-VFF"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="TH3-F5-t0O"/>
+                            </scrollView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Region" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oQA-KX-miZ">
+                                <rect key="frame" x="26" y="307" width="106" height="41"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="RzH-gE-n4H"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="aub-Fg-xsE" appends="YES" id="cfy-op-N3B"/>
+                            <outletCollection property="gestureRecognizers" destination="LHA-oJ-s18" appends="YES" id="OaW-yF-pUF"/>
+                        </connections>
                     </view>
                     <tabBarItem key="tabBarItem" title="Areas" id="aMs-fU-TKi"/>
+                    <connections>
+                        <outlet property="regionName" destination="oQA-KX-miZ" id="HLO-3o-18M"/>
+                        <outlet property="scrollView" destination="LhE-U3-NcV" id="0qa-1U-1WX"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sKh-A0-wCg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="left" id="aub-Fg-xsE" userLabel="LeftSwipe">
+                    <connections>
+                        <action selector="onLeftSwipe:" destination="VyM-hL-AhB" id="2Sh-Ng-ccK"/>
+                    </connections>
+                </swipeGestureRecognizer>
+                <swipeGestureRecognizer direction="right" id="LHA-oJ-s18" userLabel="RightSwipe">
+                    <connections>
+                        <action selector="onRightSwipe:" destination="VyM-hL-AhB" id="Zae-n8-ncF"/>
+                    </connections>
+                </swipeGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1039.1304347826087" y="1816.7410714285713"/>
         </scene>
@@ -461,7 +510,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lUI-d3-iz9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1792.753623188406" y="194.86607142857142"/>
+            <point key="canvasLocation" x="1809" y="-199"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="wDG-vM-EQu">
