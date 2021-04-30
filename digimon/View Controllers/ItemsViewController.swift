@@ -33,26 +33,12 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
     let sections = ["machines", "pokeballs", "medicine", "berries", "mail", "battle","key","misc"]
     var subcategories : [String] = []
     
-//    @objc func swipedRight(){
-//        segControl.selectedSegmentIndex -= 1
-//    }
-//
-//    @objc func swipedLeft(){
-//        segControl.selectedSegmentIndex += 1
-//    }
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
-        
-//        var swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.swipedRight))
-//        swipeRight.direction = UISwipeGestureRecognizer.Direction.right
-//
-//        var swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(self.swipedLeft))
-//        swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
-        
+
         
         //get the selected index item-pocket
         let bagPocket = sections[segControl.selectedSegmentIndex]
@@ -78,11 +64,6 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 }
                 
                 self.tableViewData = newSubCategories
-                
-                for subCategory in self.subcategories {
-                    let newSub = cellData(opened: false, title: subCategory, sectionData: [])
-                    self.tableViewData.append(newSub)
-                }
                 self.tableView.reloadData()
 
 
@@ -131,11 +112,6 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 }
                 
                 self.tableViewData = newSubCategories
-                
-                for subCategory in self.subcategories {
-                    let newSub = cellData(opened: false, title: subCategory, sectionData: [])
-                    self.tableViewData.append(newSub)
-                }
                 self.tableView.reloadData()
 
 
@@ -182,15 +158,11 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         //need to check if the sgemented control got switched or not
         
-        
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "InnerItemCell") as! InnerItemCell
 
             cell.label?.text = formatName(string: tableViewData[indexPath.section].title)
             cell.backgroundColor = UIColor.init(red: 0.9, green: 0.36, blue: 0.34, alpha: 1.0)
-//            let imageURL = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/nope.png")
-//            //print(imageURL)
-//            cell.itemImage2?.af.setImage(withURL: imageURL!)
             return cell
 
         } else {
@@ -201,14 +173,8 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.itemImage2?.af.setImage(withURL: imageURL!)
             cell.backgroundColor = UIColor.white
             return cell
-
-            
         }
-
-        
     }
-    
-    
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         

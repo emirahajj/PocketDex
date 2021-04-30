@@ -17,10 +17,12 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
 
     var pokemon = [[String:Any]]() //dictionary that stores URL + pokemon names
     
-    var secondary = [[String:Any]]()
+    var secondary = [[String:Any]]() //duplicate of pokemon to use search feature
+    
+    var picString = String() //string representing pokemon image
+
 
     @IBOutlet weak var tableView: UITableView!
-    var picString = String()
     
     @IBOutlet weak var searchBar: UISearchBar!
     let popUp = AYPopupPickerView()
@@ -35,6 +37,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         "B/W" : "https://pokeapi.co/api/v2/pokedex/8/",
         "B2/W2" : "https://pokeapi.co/api/v2/pokedex/9/",
     ]
+    
     let typesArray = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy", "unknown", "shadow"]
     
     func APIcall(genString: String) {
@@ -51,6 +54,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
                 let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
                 
                 self.secondary = dataDictionary["pokemon_entries"] as! [[String:Any]]
+                self.pokemon = dataDictionary["pokemon_entries"] as! [[String:Any]]
                 self.tableView.setContentOffset(.zero, animated: true)
                 self.tableView.reloadData()
             }
@@ -58,6 +62,15 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         task.resume()
         
     }
+    
+    func gradient(frame:CGRect, colors:[CGColor]) -> CAGradientLayer {
+            let layer = CAGradientLayer()
+            layer.frame = frame
+            layer.startPoint = CGPoint(x: 0, y: 0.5)
+            layer.endPoint = CGPoint(x: 1, y: 0.5)
+            layer.colors = colors
+            return layer
+        }
     
     
     @IBOutlet weak var btn: UIButton!
@@ -82,6 +95,15 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         
         tableView.dataSource = self
         tableView.delegate = self
+        
+        let blue = UIColor(red: 0.76, green: 0.95, blue: 0.53, alpha: 1.00)
+        let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00)
+        let array = [blue.cgColor, green.cgColor]
+        view.layer.insertSublayer(gradient(frame: view.bounds, colors:array ), at:0)
+        
+        searchBar.layer.backgroundColor = UIColor.clear.cgColor
+        
+                
         // Do any additional setup after loading the view.
         let url = URL(string: "https://pokeapi.co/api/v2/pokedex/2/")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
@@ -122,7 +144,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         else{
             let query = searchBar.text!.lowercased()
             print(query)
-            secondary = pokemon.filter({ (value:[String : Any]) -> Bool in
+            secondary = secondary.filter({ (value:[String : Any]) -> Bool in
                 
                 let name = (value["pokemon_species"] as! [String:Any])["name"] as! String
                 

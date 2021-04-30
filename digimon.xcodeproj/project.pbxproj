@@ -21,6 +21,8 @@
 		2D7F882C2638B45F0004AFDF /* AreasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F882B2638B45F0004AFDF /* AreasViewController.swift */; };
 		2DAFDF73260FA74F00325984 /* ItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DAFDF72260FA74F00325984 /* ItemsViewController.swift */; };
 		2DBCF3A325D71F84009E0174 /* DexEntryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCF3A225D71F84009E0174 /* DexEntryController.swift */; };
+		2DD1E73E263B6DEB000669DD /* MainAreaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD1E73D263B6DEB000669DD /* MainAreaCell.swift */; };
+		2DD1E743263B6E06000669DD /* InnterAreaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD1E742263B6E06000669DD /* InnterAreaCell.swift */; };
 		59AC7953022D182F94470180 /* Pods_digimon_digimonUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B804A3906EE84B4DC309FB1D /* Pods_digimon_digimonUITests.framework */; };
 		5A9BB2E753CD9C612363ED7D /* Pods_digimonTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 949270C468B6E68888965BF6 /* Pods_digimonTests.framework */; };
 		A3B9726539EB9F26DCFDD9CD /* Pods_digimon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9153CC8FE1022C9C16C44E8A /* Pods_digimon.framework */; };
@@ -64,6 +66,8 @@
 		2D7F882B2638B45F0004AFDF /* AreasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreasViewController.swift; sourceTree = "<group>"; };
 		2DAFDF72260FA74F00325984 /* ItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsViewController.swift; sourceTree = "<group>"; };
 		2DBCF3A225D71F84009E0174 /* DexEntryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DexEntryController.swift; sourceTree = "<group>"; };
+		2DD1E73D263B6DEB000669DD /* MainAreaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAreaCell.swift; sourceTree = "<group>"; };
+		2DD1E742263B6E06000669DD /* InnterAreaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnterAreaCell.swift; sourceTree = "<group>"; };
 		60C58F67CF2C8C3A945B5A83 /* Pods-digimonTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digimonTests.release.xcconfig"; path = "Target Support Files/Pods-digimonTests/Pods-digimonTests.release.xcconfig"; sourceTree = "<group>"; };
 		6DFB89A6D4E80DFA7A4DE6EE /* Pods-digimon-digimonUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digimon-digimonUITests.release.xcconfig"; path = "Target Support Files/Pods-digimon-digimonUITests/Pods-digimon-digimonUITests.release.xcconfig"; sourceTree = "<group>"; };
 		89B085D61E9E59872AEE7999 /* Pods-digimon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digimon.debug.xcconfig"; path = "Target Support Files/Pods-digimon/Pods-digimon.debug.xcconfig"; sourceTree = "<group>"; };
@@ -188,6 +192,8 @@
 				2D7C9B9025CCF24A00A94181 /* PokeCell.swift */,
 				2D08509D2627539A0028E533 /* ItemCell.swift */,
 				2D3B57AF2633A67A0031CDD6 /* InnerItemCell.swift */,
+				2DD1E73D263B6DEB000669DD /* MainAreaCell.swift */,
+				2DD1E742263B6E06000669DD /* InnterAreaCell.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -441,6 +447,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D7F882C2638B45F0004AFDF /* AreasViewController.swift in Sources */,
+				2DD1E73E263B6DEB000669DD /* MainAreaCell.swift in Sources */,
+				2DD1E743263B6E06000669DD /* InnterAreaCell.swift in Sources */,
 				2D7C9B4F25CCEFE400A94181 /* PokemonViewController.swift in Sources */,
 				2D3B57B02633A67A0031CDD6 /* InnerItemCell.swift in Sources */,
 				2DAFDF73260FA74F00325984 /* ItemsViewController.swift in Sources */,

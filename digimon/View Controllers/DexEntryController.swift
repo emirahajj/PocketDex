@@ -64,32 +64,38 @@ class DexEntryController: UIViewController {
         "fairy" : UIColor(red: 0.8863, green: 0.6157, blue: 0.6745, alpha: 1.0) /* #e29dac */,
     ]
     
-    var pokeURL : String! //pokemon/<number> endpoint string
-    var dexInfo = [String: Any]() //gets the pokemon/1 JSON
+    var pokeURL : String! //https://pokeapi.co/api/v2/pokemon/<name>/ endpoint
+    var dexInfo = [String: Any]() //stores the JSON from above response
+    
     var picInfo = [String: Any]()
-    var formattedName = String()
+    var formattedName = String() //capitalized name
     var speciesInfo = [String: Any]()
     var picString : String!
     var APIcall = String()
     var id = String()
     var evoChainURL = String()
     
+    //top view
+    @IBOutlet weak var topColor: UIView! //top view that holds pokemon, pokeball image, and pokedex #
     @IBOutlet weak var pokeBall: UIImageView!
+    @IBOutlet weak var dexEntryLabel: UILabel! //pokedex entry number
+    @IBOutlet weak var dexPicture: UIImageView! //main pokemon image
+    
+    //stat bars
     @IBOutlet weak var speedBar: UIProgressView!
     @IBOutlet weak var spDefBar: UIProgressView!
     @IBOutlet weak var spAtkBar: UIProgressView!
     @IBOutlet weak var defenseBar: UIProgressView!
     @IBOutlet weak var attackBar: UIProgressView!
     @IBOutlet weak var hpBar: UIProgressView!
+    
     @IBOutlet weak var typeButton: UIButton!
-    @IBOutlet weak var topColor: UIView!
-    @IBOutlet weak var dexEntryLabel: UILabel!
-    @IBOutlet weak var dexPicture: UIImageView!
-    @IBOutlet weak var pokemonNameLabel: UILabel!
-    //@IBOutlet weak var pokeTypeLabel: UILabel!
+    @IBOutlet weak var pokemonNameLabel: UILabel! //pokemon name
     @IBOutlet weak var hpLabel: UILabel!
     @IBOutlet weak var attackLabel: UILabel!
     @IBOutlet weak var defenseLabel: UILabel!
+    @IBOutlet weak var stackView: UIStackView!
+
     
     func APICall(_ a : String, complete: @escaping ([String:Any])->()) {
         var result = [String:Any]()
@@ -139,6 +145,7 @@ class DexEntryController: UIViewController {
         
         topColor.layer.shadowRadius = 3.0
         
+        //first API call to get the stats in the progress bars
         APICall(pokeURL) {theResponse in
             
             //extract pokemon type and format button
@@ -181,11 +188,11 @@ class DexEntryController: UIViewController {
         //print(pokeID)
         let speciesURL = "https://pokeapi.co/api/v2/pokemon-species/\(pokeID)/"
         
+        //calls the specied URL to get the evolution chain
         APICall(speciesURL) {theResponse in
             self.evoChainURL = (theResponse["evolution_chain"] as! [String:Any])["url"] as! String
             
             self.getEvoChain(self.evoChainURL)
-            //print()
             
             let color = (theResponse["color"] as! [String: Any])["name"] as! String
             
@@ -210,63 +217,99 @@ class DexEntryController: UIViewController {
 
     }
     
+    func createEvoContainerView(obj: NSObject) -> UIView {
+        //object we're passing is "species." it has "name" and "url" keys
+        
+        let pokeName = obj.value(forKey: "name") as! String
+        let num = (obj.value(forKey: "url") as! String).dropFirst(42).dropLast()
+        
+        let firstContainerView = UIStackView()
+        
+        firstContainerView.translatesAutoresizingMaskIntoConstraints = false;
+        firstContainerView.distribution = .equalSpacing
+        firstContainerView.alignment = .center
+        firstContainerView.axis
+            = .vertical
+//        view.addSubview(firstContainerView)
+        firstContainerView.translatesAutoresizingMaskIntoConstraints = false;
+        firstContainerView.frame = CGRect(x: 0, y: 0, width: 110, height: 110)
+        firstContainerView.widthAnchor.constraint(equalToConstant: 110).isActive = true
+        firstContainerView.heightAnchor.constraint(equalToConstant: 110).isActive = true
+        
+        firstContainerView.layer.borderColor = UIColor.black.cgColor
+        firstContainerView.layer.borderWidth = 1
+        firstContainerView.layer.backgroundColor = UIColor.brown.cgColor
+        
+        
+        
+        
+        let label = UILabel()
+        //label styling
+        label.text = pokeName.capitalized
+        label.sizeToFit()
+        label.font = UIFont(name: "Apple SD Gothic Neo Bold", size: 14.0)
+        //label.frame = CGRect(x:0, y:0, width: 100, height: 20)
+        label.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        label.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        label.textColor = UIColor.white
+        label.textAlignment = .center
 
-    
-    @IBOutlet weak var stackView: UIStackView!
+        let firstImage = UIImageView()
+        
+        //take care of image setting
+        let urls = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(num).png"
+        let url = URL(string: urls)!
+        firstImage.af.setImage(withURL: url)
+
+        firstContainerView.addArrangedSubview(firstImage)
+        firstContainerView.addArrangedSubview(label)
+
+        firstImage.frame = CGRect(x: 0, y: 0, width: 75, height: 75)
+        firstImage.contentMode = .scaleAspectFit
+        firstImage.layer.backgroundColor = UIColor.red.cgColor
+
+        
+        return firstContainerView
+    }
     
     
     func getEvoChain(_ url : String){
         stackView.translatesAutoresizingMaskIntoConstraints = false;
-        stackView.distribution = .fillEqually
+        stackView.distribution = .equalSpacing
+        stackView.alignment = .center
         stackView.axis
             = .horizontal
-        stackView.spacing = 20
         
         print(url)
         self.APICall(url) {evoResponse in
-            let basePoke = ((evoResponse["chain"] as! [String:Any])["species"] as! [String:Any])["name"] as! String
-            let basePokeNum = (((evoResponse["chain"] as! [String:Any])["species"] as! [String:Any])["url"] as! String).dropFirst(42).dropLast()
-            print(basePoke, basePokeNum)
             
-            for _ in 1...3 {
-                let containerView = UIView()
-                let label = UILabel()
-                let firstImage = UIImageView()
-                containerView.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-                //containerView.axis = .vertical
+            let species = (evoResponse["chain"] as! [String:Any])["species"] as! [String:Any]
+            
+            let newView = self.createEvoContainerView(obj: species as NSObject)
+            let newView1 = self.createEvoContainerView(obj: species as NSObject)
+            let newView2 = self.createEvoContainerView(obj: species as NSObject)
 
-                let urls = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(basePokeNum).png"
-                let url = URL(string: urls)!
-                firstImage.af.setImage(withURL: url)
-                firstImage.backgroundColor = UIColor.blue
-                
-                firstImage.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-//                firstImage.widthAnchor.constraint(equalTo: firstImage.widthAnchor).isActive = true
-//                firstImage.heightAnchor.constraint(equalTo: firstImage.heightAnchor).isActive = true
-                //firstImage.center = CGPoint(x: containerView.bounds.width/2, y: containerView.bounds.height/2)
-                
-                label.textColor = UIColor.white
-                label.backgroundColor = UIColor.red
-                label.text = basePoke
-                label.sizeToFit()
-                label.font = UIFont(name: "Apple SD Gothic Neo Bold", size: 14.0)
-                label.frame = CGRect(x:0, y:0, width: 100, height: 30)
-                
-                containerView.backgroundColor = UIColor.brown
-                containerView.addSubview(firstImage)
-                containerView.addSubview(label)
-                
-                NSLayoutConstraint.activate([
-                    label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-                    //containerView.bottomAnchor.constraint(equalTo: self.stackView.bottomAnchor),
-                    //label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-                    //label.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor)
-                ])
-                
-                self.view.addSubview(containerView)
 
-                self.stackView.addArrangedSubview(containerView)
-            }
+
+//            let first_array = evoResponse["evolves_to"] as! NSArray
+
+            self.stackView.addArrangedSubview(newView)
+            self.stackView.addArrangedSubview(newView1)
+            self.stackView.addArrangedSubview(newView2)
+            
+            
+
+
+
+                    
+//            for index in 0..<first_array.count{
+//                //can either be linear 2 or 3 or evolves once then to two separate ones
+//                if first_array.count == 1 {
+//
+//                }
+//
+//            }
+            
         }
     }
 }
