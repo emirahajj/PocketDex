@@ -68,40 +68,11 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
         }
         print(segControl.numberOfSegments)
         segControl.selectedSegmentIndex = 0
-        regionName.text = nameArray[segControl.selectedSegmentIndex]
+        regionName.text = nameArray[segControl.selectedSegmentIndex].capitalized
         
         //API call now
         
-        let url = URL(string: "https://pokeapi.co/api/v2/region/\(nameArray[segControl.selectedSegmentIndex])")!
-        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
-        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        let task = session.dataTask(with: request) { (data, response, error) in
-            // This will run when the network request returns
-            if let error = error {
-                print(error.localizedDescription)
-            } else if let data = data {
-                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-                
-                let locations = dataDictionary["locations"] as! [[String:Any]]
-                var cellDataLocations : [cellData] = []
-                for location in locations {
-                    let newCellData = cellData(opened: false, title: location["name"] as! String, sectionData: [])
-                    cellDataLocations.append(newCellData)
-                }
-                
-                self.areas = cellDataLocations
-                
-                for subCategory in self.subcategories {
-                    let newSub = cellData(opened: false, title: subCategory, sectionData: [])
-                    self.areas.append(newSub)
-                }
-                self.tableView.reloadData()
-
-
-            }
-        }
-
-        task.resume()
+        self.fetchAreas(self)
 
 
         // Do any additional setup after loading the view.
@@ -140,14 +111,51 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
         }
 
     }
+    
+    func fetchAreas(_ sender: Any) {
+        
+        let url = URL(string: "https://pokeapi.co/api/v2/region/\(nameArray[segControl.selectedSegmentIndex])")!
+        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
+        let task = session.dataTask(with: request) { (data, response, error) in
+            // This will run when the network request returns
+            if let error = error {
+                print(error.localizedDescription)
+            } else if let data = data {
+                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
+                
+                let locations = dataDictionary["locations"] as! [[String:Any]]
+                var cellDataLocations : [cellData] = []
+                for location in locations {
+                    let newCellData = cellData(opened: false, title: location["name"] as! String, sectionData: [])
+                    cellDataLocations.append(newCellData)
+                }
+                
+                self.areas = cellDataLocations.sorted {$0.title < $1.title }
+                //self.areas = self.areas.sorted {$0.title < $1.title }
+                
+                for subCategory in self.subcategories {
+                    let newSub = cellData(opened: false, title: subCategory, sectionData: [])
+                    self.areas.append(newSub)
+                }
+                self.tableView.reloadData()
 
+
+            }
+        }
+
+        task.resume()
+
+        
+    }
     @IBAction func onLeftSwipe(_ sender: Any) {
         if segControl.selectedSegmentIndex < 4 {
             segControl.selectedSegmentIndex += 1
-            regionName.text = nameArray[segControl.selectedSegmentIndex]
+            regionName.text = nameArray[segControl.selectedSegmentIndex].capitalized
             let newOffset = CGPoint(x: scrollView.contentOffset.x + view.frame.width, y: scrollView.contentOffset.y)
             scrollView.setContentOffset(newOffset, animated: true)
         }
+        self.fetchAreas(self)
 
     }
     
@@ -158,7 +166,8 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
             let newOffset = CGPoint(x: scrollView.contentOffset.x - (view.frame.width), y: scrollView.contentOffset.y)
             scrollView.setContentOffset(newOffset, animated: true)
         }
-        regionName.text = nameArray[segControl.selectedSegmentIndex]
+        regionName.text = nameArray[segControl.selectedSegmentIndex].capitalized
+        self.fetchAreas(self)
 
 
     }

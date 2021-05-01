@@ -20,9 +20,9 @@ class PokeCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        digiPic.layer.shadowColor = UIColor.white.cgColor
-        digiPic.layer.shadowOpacity = 0.2
-        digiPic.layer.shadowRadius = 0.5
+        digiPic.layer.shadowColor = UIColor.darkGray.cgColor
+        digiPic.layer.shadowOpacity = 1
+        digiPic.layer.shadowRadius = 3
         digiPic.layer.shadowOffset = CGSize(width: 0, height: 2)
 
 

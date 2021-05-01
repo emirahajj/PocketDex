@@ -67,8 +67,10 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             let layer = CAGradientLayer()
             layer.frame = frame
             layer.startPoint = CGPoint(x: 0, y: 0.5)
-            layer.endPoint = CGPoint(x: 1, y: 0.5)
+            layer.endPoint = CGPoint(x: 0.5, y: 0)
             layer.colors = colors
+ 
+
             return layer
         }
     
@@ -96,12 +98,15 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         tableView.dataSource = self
         tableView.delegate = self
         
-        let blue = UIColor(red: 0.76, green: 0.95, blue: 0.53, alpha: 1.00)
+        let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
         let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00)
         let array = [blue.cgColor, green.cgColor]
         view.layer.insertSublayer(gradient(frame: view.bounds, colors:array ), at:0)
         
-        searchBar.layer.backgroundColor = UIColor.clear.cgColor
+//        searchBar.layer.backgroundColor = UIColor.clear.cgColor
+        searchBar.searchBarStyle = .minimal
+        searchBar.setBackgroundImage(UIImage(ciImage: .white), for: UIBarPosition(rawValue: 0)!, barMetrics:.default)
+        searchBar.searchTextField.attributedPlaceholder =  NSAttributedString.init(string: "Search Pokémon", attributes: [NSAttributedString.Key.foregroundColor:UIColor.lightGray])
         
                 
         // Do any additional setup after loading the view.
@@ -159,7 +164,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
+        return 2
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
@@ -179,15 +184,16 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         let myURL = (mypoke["pokemon_species"] as! [String:Any])["url"] as! String
 //            mypoke["url"] as! String // url like .../v2/pokemon/<number>/
         let number = Int(myURL.dropFirst(42).dropLast())!
+        let localDexNumber = mypoke["entry_number"] as! Int
         print(number)
         let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(number).png"
         let photoURL = URL(string: picstring)
         cell.digiPic.af.setImage(withURL: photoURL!)
         
-        var strlevel = String(number)
-        if (number < 10) {
+        var strlevel = String(localDexNumber)
+        if (localDexNumber < 10) {
             strlevel = "00\(strlevel)"
-        } else if (number >= 10 && number < 100){
+        } else if (localDexNumber >= 10 && localDexNumber < 100){
             strlevel = "0\(strlevel)"
         }
         cell.digiLevel.text = strlevel
