@@ -71,12 +71,6 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
 
         task.resume()
-        
-
-        //then iterate to create cellData objects to add to the tableViewData array
-        
- 
-        // Do any additional setup after loading the view.
     }
     
     
@@ -216,24 +210,44 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
 
                 task.resume()
             }
-        } else {
-            //put the other API call in here!
-//            if tableViewData[indexPath.section].sectionData[indexPath.row - 1].opened == true {
-//
-//                tableViewData[indexPath.section].sectionData[indexPath.row - 1].opened = false
-//                let sections = IndexSet.init(integer: tableViewData[indexPath.section].sectionData[indexPath.row - 1].sectionData.count)
-//                print(sections)
-//                tableView.reloadSections(sections, with: .none)
-//            } else {
-//                tableViewData[indexPath.section].sectionData[indexPath.row - 1].opened = true
-//                let sections = IndexSet.init(integer: tableViewData[indexPath.section].sectionData[indexPath.row - 1].sectionData.count)
-//                tableViewData[indexPath.section].sectionData[indexPath.row - 1].sectionData = ["text"]
-//                print(sections)
-//
-//                tableView.reloadSections(sections, with: .none)
-//            }
-//            tableView.reloadSections(<#T##sections: IndexSet##IndexSet#>, with: <#T##UITableView.RowAnimation#>)
-            //print("hey")
+        } else { //popup goes here
+            
+            //make api call 
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let myAlert = storyboard.instantiateViewController(withIdentifier: "alert") as? AlertController {
+                
+                let url = URL(string: "https://pokeapi.co/api/v2/item/\(tableViewData[indexPath.section].sectionData[indexPath.row - 1])")!
+                let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+                let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
+                let task = session.dataTask(with: request) { (data, response, error) in
+                    // This will run when the network request returns
+                    if let error = error {
+                        print(error.localizedDescription)
+                    } else if let data = data {
+                        let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
+                        //tableviewdata[indexpath.section].sectionData = [our new aray]
+                        let effect = ((dataDictionary["effect_entries"] as! [[String:Any]])[0])["short_effect"] as! String
+                        
+                        myAlert.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
+                        myAlert.labelText = self.tableViewData[indexPath.section].sectionData[indexPath.row - 1]
+                        myAlert.descText = effect
+                        myAlert.costText = String(dataDictionary["cost"] as! Int)
+                        myAlert.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
+                        self.present(myAlert, animated: true, completion: nil)
+
+                        
+                        
+                    }
+                }
+                
+
+                task.resume()
+
+            
+            }
+//            myAlert.itemName!.text = "hey"
+
+            
             
         } //we can put a segue here to go to that items individual page
     }

@@ -21,10 +21,13 @@ extension UIProgressView{
         self.layer.sublayers![1].cornerRadius = 5
         self.clipsToBounds = true
         self.subviews[1].clipsToBounds = true
+        self.trackTintColor = UIColor.darkGray.withAlphaComponent(0.4)
     }
 }
 
-class DexEntryController: UIViewController {
+class DexEntryController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+
+    
     
     //I want it to display: pokemon name, evolution (+ levels), moveset
     
@@ -74,6 +77,7 @@ class DexEntryController: UIViewController {
     var APIcall = String()
     var id = String()
     var evoChainURL = String()
+    var moveset = [[String:Any]]()
     
     //top view
     @IBOutlet weak var topColor: UIView! //top view that holds pokemon, pokeball image, and pokedex #
@@ -102,8 +106,13 @@ class DexEntryController: UIViewController {
     @IBOutlet weak var attackLabel: UILabel!
     @IBOutlet weak var defenseLabel: UILabel!
     @IBOutlet weak var stackView: UIStackView!
-
+    @IBOutlet weak var secondaryStack: UIStackView!
     
+    @IBOutlet weak var viewHeight: NSLayoutConstraint!
+    @IBOutlet weak var tableViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var tableView: UITableView!
+    
+    //@IBOutlet weak var scrollView: UIScrollView!
     func APICall(_ a : String, complete: @escaping ([String:Any])->()) {
         var result = [String:Any]()
         let url1 = URL(string: a)!
@@ -148,6 +157,9 @@ class DexEntryController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tableView.delegate = self
+        tableView.dataSource = self
         
         
         let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
@@ -203,6 +215,13 @@ class DexEntryController: UIViewController {
             self.spDefAmt.text = String(Int(spDef))
             let speed = ((statArr[5] as [String:Any])["base_stat"] as! Double)
             self.speedAmt.text = String(Int(speed))
+            
+            
+            self.moveset = theResponse["moves"] as! [[String:Any]]
+            self.tableView.reloadData()
+            self.tableViewHeight.constant = self.tableView.contentSize.height
+            self.viewHeight.constant = self.scrollView.contentSize.height
+            
 
 
             //self.hpLabel.text = String(hp)
@@ -237,13 +256,17 @@ class DexEntryController: UIViewController {
             self.spAtkBar.progressTintColor = self.colors[color]!
             self.spDefBar.progressTintColor = self.colors[color]!
             self.speedBar.progressTintColor = self.colors[color]!
-
-
-            
         }
-        
-        //print(evoChainURL, "hey");
-
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return moveset.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "moveCell") as! MoveCell
+        cell.moveName.text = ((moveset[indexPath.row])["move"] as! [String:Any])["name"] as? String
+        return cell
     }
     //creates a view given a species object to add to the stackView for the evolution chain
     func createEvoContainerView(obj: NSObject) -> UIView {
@@ -308,10 +331,12 @@ class DexEntryController: UIViewController {
     
     func getEvoChain(_ url : String){
         stackView.translatesAutoresizingMaskIntoConstraints = false;
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .fillEqually
         stackView.alignment = .center
         stackView.axis
             = .horizontal
+        
+
         
         print(url)
         self.APICall(url) {evoResponse in
@@ -319,6 +344,8 @@ class DexEntryController: UIViewController {
             let species = (evoResponse["chain"] as! [String:Any])["species"] as! [String:Any]
             
             let newView = self.createEvoContainerView(obj: species as NSObject)
+            let bottom = self.createEvoContainerView(obj: species as NSObject)
+
 //            let newView1 = self.createEvoContainerView(obj: species as NSObject)
 //            let newView2 = self.createEvoContainerView(obj: species as NSObject)
 
@@ -326,6 +353,7 @@ class DexEntryController: UIViewController {
             print(first_array)
             
             self.stackView.addArrangedSubview(newView)
+            //self.secondaryStack.addArrangedSubview(bottom)
 
             
             for index in 0..<first_array.count{
@@ -336,24 +364,51 @@ class DexEntryController: UIViewController {
                     //get the inner species and evolves_to array
                     let next_species = next_obj["species"] as! [String:Any]
                     let next_view = self.createEvoContainerView(obj: next_species as NSObject)
+
                     
+                    //adds second pokemon
                     self.stackView.addArrangedSubview(next_view)
+                    //self.secondaryStack.addArrangedSubview(next_view2)
                     
                     let next_array = next_obj["evolves_to"] as! [[String:Any]]
                     if next_array.count == 1 {
+                        //create a new stack view here but make it vertical //220 high and 110 wide
+                        
                         let further_object = next_array[0]
                         let further_species = further_object["species"] as! [String:Any]
                         let further_view = self.createEvoContainerView(obj: further_species as NSObject)
+//                        let further_view2 = self.createEvoContainerView(obj: further_species as NSObject)
                         
                         self.stackView.addArrangedSubview(further_view)
+                        //when it evolves once then it branches
+                    } else if next_array.count == 2 {
                         
+                        let further_object1 = next_array[0]
+                        let further_species1 = further_object1["species"] as! [String:Any]
+                        let further_view1 = self.createEvoContainerView(obj: further_species1 as NSObject)
+
+
+                        let further_object2 = next_array[1]
+                        let further_species2 = further_object2["species"] as! [String:Any]
+                        let further_view2 = self.createEvoContainerView(obj: further_species2 as NSObject)
+
+                        let innerStack = UIStackView()
+                        innerStack.translatesAutoresizingMaskIntoConstraints = false;
+                        innerStack.distribution = .fillEqually
+                        innerStack.alignment = .center
+                        innerStack.axis
+                            = .vertical
+                        
+                        innerStack.translatesAutoresizingMaskIntoConstraints = false;
+                        innerStack.frame = CGRect(x: 0, y: 0, width: 110, height: 220)
+                        innerStack.widthAnchor.constraint(equalToConstant: 110).isActive = true
+                        innerStack.heightAnchor.constraint(equalToConstant: 220).isActive = true
+                        
+                        innerStack.addArrangedSubview(further_view1)
+                        innerStack.addArrangedSubview(further_view2)
+                        
+                        self.stackView.addArrangedSubview(innerStack)
                     }
-
-                    
-                    
-
-                    
-                    
                 }
 
             }
