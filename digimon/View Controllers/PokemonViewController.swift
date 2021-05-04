@@ -23,22 +23,15 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     var picString = String() //string representing pokemon image
 
     @IBOutlet weak var pokeContent: UIView!
-    
     @IBOutlet weak var menuView: UIView!
-    @IBAction func buttonTap(_ sender: Any) {
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut) {
-            self.pokeContent.frame.origin.x = self.isMenuActive ? 0 : self.pokeContent.frame.width - (self.pokeContent.frame.width * 0.6)
-        } completion: { (finished) in
-            print("hi")
-            self.isMenuActive.toggle()
-        }
-
-    }
-    @IBOutlet weak var tableView: UITableView!
-    
+    @IBOutlet weak var tableView: UITableView! //for pokemon
     @IBOutlet weak var searchBar: UISearchBar!
+    
     let popUp = AYPopupPickerView()
     let gens = ["R/B/Y", "G/S/C", "R/S/E", "D/P", "Plat.", "HG/SS", "B/W", "B2/W2"]
+    
+    let version_groups = ["red-blue", "yellow", "gold-silver", "crystal", "ruby-sapphire", "emerald", "firered-leafgreen", "diamond-pearl", "platinum", "heartgold-soulsilver", "black-white", "black-2-white-2" , "x-y", "omega-ruby-alpha-sapphire", "sun-moon", "ultra-sun-ultra-moon"]
+    
     let genLookup = [
         "R/B/Y" : "https://pokeapi.co/api/v2/pokedex/1/",
         "G/S/C" : "https://pokeapi.co/api/v2/pokedex/3/",
@@ -78,8 +71,8 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     func gradient(frame:CGRect, colors:[CGColor]) -> CAGradientLayer {
             let layer = CAGradientLayer()
             layer.frame = frame
-            layer.startPoint = CGPoint(x: 0, y: 0.5)
-            layer.endPoint = CGPoint(x: 0.5, y: 0)
+            layer.startPoint = CGPoint(x: 0, y: 1)
+            layer.endPoint = CGPoint(x: 0, y: 0)
             layer.colors = colors
             return layer
         }
@@ -104,7 +97,26 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        super.view.layoutIfNeeded()
+        
+        let rect = CGRect(x: 0, y: 0, width: view.layer.bounds.width/3, height: view.layer.bounds.width)
+        let newView = UIView(frame:rect)
+        newView.backgroundColor = UIColor.cyan.withAlphaComponent(0.3)
+        newView.translatesAutoresizingMaskIntoConstraints = false
+        
 
+
+        view.addSubview(newView)
+        view.sendSubviewToBack(newView)
+        
+        newView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        newView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        newView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+//        newView.trailingAnchor.constraint(equalTo: pokeContent.leadingAnchor).isActive = true
+        newView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
+
+
+    
         
         let frost = UIVisualEffectView(effect: UIBlurEffect(style: .light))
         frost.frame = (self.tabBarController?.tabBar.bounds)!
@@ -127,7 +139,9 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
         let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00)
         let array = [blue.cgColor, green.cgColor]
+        pokeContent.layer.insertSublayer(gradient(frame: view.bounds, colors:array ), at:0)
         view.layer.insertSublayer(gradient(frame: view.bounds, colors:array ), at:0)
+
         
 //        searchBar.layer.backgroundColor = UIColor.clear.cgColor
         searchBar.searchBarStyle = .minimal
@@ -196,13 +210,13 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return gens.count
     }
+    
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return gens[row]
     }
     
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-
         let cell = tableView.dequeueReusableCell(withIdentifier: "PokeCell") as! PokeCell
         
         let mypoke = secondary[indexPath.row]
@@ -230,6 +244,17 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         cell.digiName.text = properName
         cell.myPic = picstring
         return cell
+    }
+    
+    @IBAction func buttonTap(_ sender: Any) {
+
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut) {
+            self.pokeContent.frame.origin.x = self.isMenuActive ? 0 : self.pokeContent.frame.width - (self.pokeContent.frame.width * 0.6)
+        } completion: { (finished) in
+            print("hi")
+            self.isMenuActive.toggle()
+        }
+
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
