@@ -77,7 +77,10 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     var APIcall = String()
     var id = String()
     var evoChainURL = String()
-    var moveset = [[String:Any]]()
+    var levelUpMoveset = [[String:Any]]()
+    var machineMoveset = [[String:Any]]()
+    var tutorMoveset = [[String:Any]]()
+
     
     //top view
     @IBOutlet weak var topColor: UIView! //top view that holds pokemon, pokeball image, and pokedex #
@@ -216,12 +219,30 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
             let speed = ((statArr[5] as [String:Any])["base_stat"] as! Double)
             self.speedAmt.text = String(Int(speed))
             
+            print("before reload", self.viewHeight)
             
-            self.moveset = theResponse["moves"] as! [[String:Any]]
+            //ultimately want to retrurn move object
+            //lets try just level up for now
+            self.levelUpMoveset = (theResponse["moves"] as! [[String:Any]]).filter{object in
+                let version_details = object["version_group_details"] as! [[String:Any]]
+                for obj in version_details {
+                    if let version_group_obj = (obj["move_learn_method"] as! [String: Any])["name"]{
+                        return version_group_obj as! String == "level-up"
+                    }
+                }
+                return false
+            }
+            
+            print(theResponse["moves"] as! [[String:Any]])
+            
+//            let level_up_moves =
+                
             self.tableView.reloadData()
-            self.tableViewHeight.constant = self.tableView.contentSize.height
-            self.viewHeight.constant = self.scrollView.contentSize.height
+
+            //self.tableViewHeight.constant = self.tableView.contentSize.height
+            //self.viewHeight.constant = self.scrollView.contentSize.height + self.tableViewHeight.constant
             
+           // print("after reload", self.tableView.contentSize.height)
 
 
             //self.hpLabel.text = String(hp)
@@ -260,12 +281,12 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return moveset.count
+        return levelUpMoveset.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "moveCell") as! MoveCell
-        cell.moveName.text = ((moveset[indexPath.row])["move"] as! [String:Any])["name"] as? String
+        cell.moveName.text = ((levelUpMoveset[indexPath.row])["move"] as! [String:Any])["name"] as? String
         return cell
     }
     //creates a view given a species object to add to the stackView for the evolution chain

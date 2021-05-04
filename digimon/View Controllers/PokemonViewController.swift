@@ -13,6 +13,7 @@ import AYPopupPickerView
 class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, UISearchBarDelegate {
 
     
+    var isMenuActive = false
     var myPic = String()
 
     var pokemon = [[String:Any]]() //dictionary that stores URL + pokemon names
@@ -21,7 +22,18 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     
     var picString = String() //string representing pokemon image
 
+    @IBOutlet weak var pokeContent: UIView!
+    
+    @IBOutlet weak var menuView: UIView!
+    @IBAction func buttonTap(_ sender: Any) {
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut) {
+            self.pokeContent.frame.origin.x = self.isMenuActive ? 0 : self.pokeContent.frame.width - (self.pokeContent.frame.width * 0.6)
+        } completion: { (finished) in
+            print("hi")
+            self.isMenuActive.toggle()
+        }
 
+    }
     @IBOutlet weak var tableView: UITableView!
     
     @IBOutlet weak var searchBar: UISearchBar!
@@ -69,26 +81,40 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             layer.startPoint = CGPoint(x: 0, y: 0.5)
             layer.endPoint = CGPoint(x: 0.5, y: 0)
             layer.colors = colors
- 
-
             return layer
         }
-    
     
     @IBOutlet weak var btn: UIButton!
     
     @IBAction func toggleGen(_ sender: Any) {
         var gen = String()
+        popUp.headerView.backgroundColor = UIColor.blue
+        popUp.pickerView.backgroundColor = UIColor.white
+        let blureffect = UIBlurEffect(style: .light)
+        let blurview = UIVisualEffectView(effect: blureffect)
+        blurview.frame = popUp.pickerView.bounds
+        popUp.pickerView.insertSubview(blurview, at: 0)
+//        popUp.pickerView.sendSubviewToBack(blurview)
         popUp.display(itemTitles: gens, doneHandler: {
                         let selectedIndex = self.popUp.pickerView.selectedRow(inComponent: 0);
                         gen = self.gens[selectedIndex];
-                        self.APIcall(genString: gen)
-                        self.btn.setTitle(self.gens[selectedIndex], for: .normal)})
+                        self.APIcall(genString: gen)})
 
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        
+        let frost = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+        frost.frame = (self.tabBarController?.tabBar.bounds)!
+        self.tabBarController?.tabBar.insertSubview(frost, at: 0)
+        
+        self.title = "PocketDex"
+        
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = true
 
         popUp.pickerView.dataSource = self
         popUp.pickerView.delegate = self
