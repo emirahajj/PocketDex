@@ -23,25 +23,39 @@ struct cellData {
 class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet weak var bagImage: UIImageView!
-    @IBOutlet weak var segControl: UISegmentedControl!
+//    @IBOutlet weak var segControl: UISegmentedControl!
     @IBOutlet weak var tableView: UITableView!
     
+    @IBOutlet weak var imageView: UIImageView!
     //try making another struct and embedding that as the section data of the first
     var tableViewData = [cellData]()
     
+    @IBOutlet weak var categoryLabel: UILabel!
     //segmented control
     let sections = ["machines", "pokeballs", "medicine", "berries", "mail", "battle","key","misc"]
     var subcategories : [String] = []
+    var segControl = UISegmentedControl(items: ["machines", "pokeballs", "medicine", "berries", "mail", "battle","key","misc"])
+
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
+        
+        segControl.selectedSegmentIndex = 0
+        
+        let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
+        let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00)
+        let array = [blue.cgColor, green.cgColor]
+        view.layer.insertSublayer(gradient(frame: view.bounds, colors:array ), at:0)
 
         
         //get the selected index item-pocket
         let bagPocket = sections[segControl.selectedSegmentIndex]
+        
+        categoryLabel.text = bagPocket.capitalized
+
         print(bagPocket)
         
         //get the item-categories that belong to the selected index
@@ -73,6 +87,14 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         task.resume()
     }
     
+    func gradient(frame:CGRect, colors:[CGColor]) -> CAGradientLayer {
+            let layer = CAGradientLayer()
+            layer.frame = frame
+            layer.startPoint = CGPoint(x: 0, y: 1)
+            layer.endPoint = CGPoint(x: 0, y: 0)
+            layer.colors = colors
+            return layer
+        }
     
     @IBAction func onSwipeLeft(_ sender: Any) {
         segControl.selectedSegmentIndex += 1
@@ -87,6 +109,8 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     @IBAction func onSegChange(_ sender: Any) {
         let bagPocket = sections[segControl.selectedSegmentIndex]
+        categoryLabel.text = bagPocket.capitalized
+        imageView.image = UIImage(named: "\(bagPocket).png")
         
         let url = URL(string: "https://pokeapi.co/api/v2/item-pocket/\(bagPocket)")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
@@ -156,7 +180,9 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
             let cell = tableView.dequeueReusableCell(withIdentifier: "InnerItemCell") as! InnerItemCell
 
             cell.label?.text = formatName(string: tableViewData[indexPath.section].title)
-            cell.backgroundColor = UIColor.init(red: 0.9, green: 0.36, blue: 0.34, alpha: 1.0)
+            cell.backgroundColor = UIColor(red: 0.38, green: 0.27, blue: 0.57, alpha: 1.00)
+            
+
             return cell
 
         } else {
@@ -165,7 +191,6 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
             //need to take care of TM/HM sprites
             let imageURL = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/\(tableViewData[indexPath.section].sectionData[indexPath.row - 1]).png")
             cell.itemImage2?.af.setImage(withURL: imageURL!)
-            cell.backgroundColor = UIColor.white
             return cell
         }
     }

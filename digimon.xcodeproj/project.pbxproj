@@ -21,6 +21,7 @@
 		2D7C9B6D25CCEFE500A94181 /* digimonUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C9B6C25CCEFE500A94181 /* digimonUITests.swift */; };
 		2D7C9B9125CCF24A00A94181 /* PokeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C9B9025CCF24A00A94181 /* PokeCell.swift */; };
 		2D7F882C2638B45F0004AFDF /* AreasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F882B2638B45F0004AFDF /* AreasViewController.swift */; };
+		2DAED01326425617005AD659 /* SideMenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DAED01226425617005AD659 /* SideMenuCell.swift */; };
 		2DAFDF73260FA74F00325984 /* ItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DAFDF72260FA74F00325984 /* ItemsViewController.swift */; };
 		2DBCF3A325D71F84009E0174 /* DexEntryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCF3A225D71F84009E0174 /* DexEntryController.swift */; };
 		2DD1E73E263B6DEB000669DD /* MainAreaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD1E73D263B6DEB000669DD /* MainAreaCell.swift */; };
@@ -68,6 +69,7 @@
 		2D7C9B6E25CCEFE500A94181 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2D7C9B9025CCF24A00A94181 /* PokeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokeCell.swift; sourceTree = "<group>"; };
 		2D7F882B2638B45F0004AFDF /* AreasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreasViewController.swift; sourceTree = "<group>"; };
+		2DAED01226425617005AD659 /* SideMenuCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuCell.swift; sourceTree = "<group>"; };
 		2DAFDF72260FA74F00325984 /* ItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsViewController.swift; sourceTree = "<group>"; };
 		2DBCF3A225D71F84009E0174 /* DexEntryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DexEntryController.swift; sourceTree = "<group>"; };
 		2DD1E73D263B6DEB000669DD /* MainAreaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAreaCell.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 				2D3B57AF2633A67A0031CDD6 /* InnerItemCell.swift */,
 				2DD1E73D263B6DEB000669DD /* MainAreaCell.swift */,
 				2DD1E742263B6E06000669DD /* InnterAreaCell.swift */,
+				2DAED01226425617005AD659 /* SideMenuCell.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -453,6 +456,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D7F882C2638B45F0004AFDF /* AreasViewController.swift in Sources */,
+				2DAED01326425617005AD659 /* SideMenuCell.swift in Sources */,
 				2DD1E73E263B6DEB000669DD /* MainAreaCell.swift in Sources */,
 				2D6BEBAA263E598D006FE4E1 /* MoveCell.swift in Sources */,
 				2DD1E743263B6E06000669DD /* InnterAreaCell.swift in Sources */,

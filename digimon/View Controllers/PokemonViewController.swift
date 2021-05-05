@@ -12,25 +12,25 @@ import AYPopupPickerView
 
 class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, UISearchBarDelegate {
 
-    
     var isMenuActive = false
-    var myPic = String()
-
+    let menuTable = UITableView() //for side menu
     var pokemon = [[String:Any]]() //dictionary that stores URL + pokemon names
-    
     var secondary = [[String:Any]]() //duplicate of pokemon to use search feature
-    
     var picString = String() //string representing pokemon image
-
     @IBOutlet weak var pokeContent: UIView!
-    @IBOutlet weak var menuView: UIView!
     @IBOutlet weak var tableView: UITableView! //for pokemon
     @IBOutlet weak var searchBar: UISearchBar!
     
+
     let popUp = AYPopupPickerView()
     let gens = ["R/B/Y", "G/S/C", "R/S/E", "D/P", "Plat.", "HG/SS", "B/W", "B2/W2"]
-    
     let version_groups = ["red-blue", "yellow", "gold-silver", "crystal", "ruby-sapphire", "emerald", "firered-leafgreen", "diamond-pearl", "platinum", "heartgold-soulsilver", "black-white", "black-2-white-2" , "x-y", "omega-ruby-alpha-sapphire", "sun-moon", "ultra-sun-ultra-moon"]
+    let typesArray = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy", "unknown", "shadow"]
+    let menuContent = [
+        ["Gen I", "Gen II", "Gen III", "Gen IV", "Gen V", "Gen VI", "Gen VII"],
+        ["red-blue", "yellow", "gold-silver", "crystal", "ruby-sapphire", "emerald", "firered-leafgreen", "diamond-pearl", "platinum", "heartgold-soulsilver", "black-white", "black-2-white-2" , "x-y", "omega-ruby-alpha-sapphire", "sun-moon", "ultra-sun-ultra-moon"],
+        ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy", "unknown", "shadow"]]
+    let menuTitles = ["Generations", "Game Versions", "Types"]
     
     let genLookup = [
         "R/B/Y" : "https://pokeapi.co/api/v2/pokedex/1/",
@@ -43,7 +43,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         "B2/W2" : "https://pokeapi.co/api/v2/pokedex/9/",
     ]
     
-    let typesArray = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy", "unknown", "shadow"]
+
     
     func APIcall(genString: String) {
         let genInfo = genLookup[genString]! as String
@@ -95,46 +95,55 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
 
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        super.view.layoutIfNeeded()
+    func createSideMenu(view: UIView) {
         
-        let rect = CGRect(x: 0, y: 0, width: view.layer.bounds.width/3, height: view.layer.bounds.width)
+        let rect = CGRect(x: 0, y: 0, width: view.layer.bounds.width * 0.4, height: view.layer.bounds.width)
         let newView = UIView(frame:rect)
-        newView.backgroundColor = UIColor.cyan.withAlphaComponent(0.3)
-        newView.translatesAutoresizingMaskIntoConstraints = false
         
+        self.menuTable.frame = newView.frame
+        newView.backgroundColor = UIColor.white.withAlphaComponent(0.2)
+        newView.translatesAutoresizingMaskIntoConstraints = false
+        menuTable.translatesAutoresizingMaskIntoConstraints = false
 
-
+        
         view.addSubview(newView)
         view.sendSubviewToBack(newView)
+        newView.addSubview(self.menuTable)
         
-        newView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        newView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         newView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         newView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-//        newView.trailingAnchor.constraint(equalTo: pokeContent.leadingAnchor).isActive = true
-        newView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
-
-
+        newView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4).isActive = true
+        
+        menuTable.topAnchor.constraint(equalTo: newView.safeAreaLayoutGuide.topAnchor).isActive = true
+        menuTable.bottomAnchor.constraint(equalTo: newView.bottomAnchor).isActive = true
+        menuTable.leadingAnchor.constraint(equalTo: newView.leadingAnchor).isActive = true
+        menuTable.widthAnchor.constraint(equalTo: newView.widthAnchor).isActive = true
+        
+        menuTable.backgroundColor = UIColor.clear
+        
+        menuTable.reloadData()
+        
+        
+    }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        //super.view.layoutIfNeeded()
+        menuTable.delegate = self
+        menuTable.dataSource = self
         
-        let frost = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-        frost.frame = (self.tabBarController?.tabBar.bounds)!
-        self.tabBarController?.tabBar.insertSubview(frost, at: 0)
-        
-        self.title = "PocketDex"
-        
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = true
+        createSideMenu(view: view)
+
+
 
         popUp.pickerView.dataSource = self
         popUp.pickerView.delegate = self
-        
         searchBar.delegate = self
-        
         tableView.dataSource = self
         tableView.delegate = self
+
+        
         
         let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
         let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00)
@@ -143,7 +152,6 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         view.layer.insertSublayer(gradient(frame: view.bounds, colors:array ), at:0)
 
         
-//        searchBar.layer.backgroundColor = UIColor.clear.cgColor
         searchBar.searchBarStyle = .minimal
         searchBar.setBackgroundImage(UIImage(ciImage: .white), for: UIBarPosition(rawValue: 0)!, barMetrics:.default)
         searchBar.searchTextField.attributedPlaceholder =  NSAttributedString.init(string: "Search Pokémon", attributes: [NSAttributedString.Key.foregroundColor:UIColor.lightGray])
@@ -172,9 +180,133 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return secondary.count
+    func numberOfSections(in tableView: UITableView) -> Int {
+        switch tableView {
+        case menuTable:
+            return menuContent.count
+        default:
+             return 1
+        }
     }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+
+
+        switch tableView {
+        case menuTable:
+            let vw = UIView()
+            vw.translatesAutoresizingMaskIntoConstraints = false
+
+            let label = UILabel(frame:  CGRect(x: 0, y: 0, width: tableView.frame.width, height: 20))
+            //label.translatesAutoresizingMaskIntoConstraints = false
+
+
+            label.text = menuTitles[section]
+            label.textColor = UIColor.white
+            label.textAlignment = NSTextAlignment.center
+            label.font = UIFont.systemFont(ofSize: 16, weight: .black)
+
+            vw.backgroundColor = UIColor(red: 0.47, green: 0.33, blue: 0.69, alpha: 1.00)
+            vw.layer.cornerRadius = 6
+            vw.addSubview(label)
+
+//            label.centerXAnchor.constraint(equalTo: vw.centerXAnchor).isActive = true
+//            label.centerYAnchor.constraint(equalTo: vw.centerYAnchor).isActive = true
+
+            return vw
+        default:
+             return UIView()
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 25
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch tableView {
+        case menuTable:
+            return 20
+        default:
+            return UITableView.automaticDimension
+        }
+    }
+    
+//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        switch tableView {
+//        case menuTable:
+//            return menuTitles[section]
+//        default:
+//             return ""
+//        }
+//    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        switch tableView {
+        case menuTable:
+            return menuContent[section].count
+        default:
+             return secondary.count
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath) as! SideMenuCell
+        print(cell.labelText.text!)
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+        switch tableView {
+        case menuTable:
+            var cell = SideMenuCell()
+            cell.labelText = UILabel(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 20))
+            cell.labelText.adjustsFontSizeToFitWidth = true
+            cell.labelText.text = menuContent[indexPath.section][indexPath.row]
+            cell.labelText.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
+            cell.labelText.textColor = UIColor.black
+            cell.labelText.textAlignment = NSTextAlignment.center
+            //cell.heightAnchor.constraint(equalToConstant: 12).isActive = true
+            cell.addSubview(cell.labelText)
+            
+            cell.labelText.centerYAnchor.constraint(equalTo: cell.centerYAnchor).isActive = true
+            cell.labelText.centerXAnchor.constraint(equalTo: cell.centerXAnchor).isActive = true
+            cell.backgroundColor = UIColor.clear
+            
+            
+
+//            cell = tableView.dequeueReusableCell(withIdentifier: "PokeCell") as! PokeCell
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PokeCell") as! PokeCell
+            let mypoke = secondary[indexPath.row]
+            let name = (mypoke["pokemon_species"] as! [String:Any])["name"] as! String //name of pokemon
+            let myURL = (mypoke["pokemon_species"] as! [String:Any])["url"] as! String
+    //            mypoke["url"] as! String // url like .../v2/pokemon/<number>/
+            let number = Int(myURL.dropFirst(42).dropLast())!
+            let localDexNumber = mypoke["entry_number"] as! Int
+            print(number)
+            let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(number).png"
+            let photoURL = URL(string: picstring)
+            cell.digiPic.af.setImage(withURL: photoURL!)
+            
+            var strlevel = String(localDexNumber)
+            if (localDexNumber < 10) {
+                strlevel = "00\(strlevel)"
+            } else if (localDexNumber >= 10 && localDexNumber < 100){
+                strlevel = "0\(strlevel)"
+            }
+            cell.digiLevel.text = strlevel
+
+            //capitalizing first letter since its all lowercase
+            let properName = name.prefix(1).uppercased() + name.lowercased().dropFirst()
+            cell.properName = properName
+            cell.digiName.text = properName
+            cell.myPic = picstring
+            return cell
+        }
+    }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -216,40 +348,12 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PokeCell") as! PokeCell
-        
-        let mypoke = secondary[indexPath.row]
-        let name = (mypoke["pokemon_species"] as! [String:Any])["name"] as! String //name of pokemon
-        let myURL = (mypoke["pokemon_species"] as! [String:Any])["url"] as! String
-//            mypoke["url"] as! String // url like .../v2/pokemon/<number>/
-        let number = Int(myURL.dropFirst(42).dropLast())!
-        let localDexNumber = mypoke["entry_number"] as! Int
-        print(number)
-        let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(number).png"
-        let photoURL = URL(string: picstring)
-        cell.digiPic.af.setImage(withURL: photoURL!)
-        
-        var strlevel = String(localDexNumber)
-        if (localDexNumber < 10) {
-            strlevel = "00\(strlevel)"
-        } else if (localDexNumber >= 10 && localDexNumber < 100){
-            strlevel = "0\(strlevel)"
-        }
-        cell.digiLevel.text = strlevel
 
-        //capitalizing first letter since its all lowercase
-        let properName = name.prefix(1).uppercased() + name.lowercased().dropFirst()
-        cell.properName = properName
-        cell.digiName.text = properName
-        cell.myPic = picstring
-        return cell
-    }
     
     @IBAction func buttonTap(_ sender: Any) {
 
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut) {
-            self.pokeContent.frame.origin.x = self.isMenuActive ? 0 : self.pokeContent.frame.width - (self.pokeContent.frame.width * 0.6)
+            self.pokeContent.frame.origin.x = self.isMenuActive ? 0 : self.pokeContent.frame.width * 0.4
         } completion: { (finished) in
             print("hi")
             self.isMenuActive.toggle()
