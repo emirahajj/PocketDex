@@ -42,7 +42,15 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         "B/W" : "https://pokeapi.co/api/v2/pokedex/8/",
         "B2/W2" : "https://pokeapi.co/api/v2/pokedex/9/",
     ]
+    let dexEntryRanges = [1..<151, 152..<251, 252..<386, 387..<493, 494..<649, 650..<722]
+    var filterRanges = [Range<Int>]()
     
+    //if its within 1
+    
+    
+    let gameVersion = String()
+    let generation = String()
+    var searchType = String()
 
     
     func APIcall(genString: String) {
@@ -101,6 +109,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         let newView = UIView(frame:rect)
         
         self.menuTable.frame = newView.frame
+        self.menuTable.allowsMultipleSelection = true
         newView.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         newView.translatesAutoresizingMaskIntoConstraints = false
         menuTable.translatesAutoresizingMaskIntoConstraints = false
@@ -134,6 +143,8 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         menuTable.dataSource = self
         
         createSideMenu(view: view)
+        
+        print(type(of: filterRanges))
 
 
 
@@ -158,7 +169,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         
                 
         // Do any additional setup after loading the view.
-        let url = URL(string: "https://pokeapi.co/api/v2/pokedex/2/")!
+        let url = URL(string: "https://pokeapi.co/api/v2/pokedex/1/")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task = session.dataTask(with: request) { (data, response, error) in
@@ -251,8 +262,17 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as! SideMenuCell
-        print(cell.labelText.text!)
+        switch tableView {
+        case menuTable:
+            switch indexPath.section {
+            case 0:
+                print("generation")
+            default:
+                print("not a generation")
+            }
+        default:
+             break
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -357,7 +377,40 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         } completion: { (finished) in
             print("hi")
             self.isMenuActive.toggle()
+            self.tableView.isUserInteractionEnabled.toggle()
+            if (!self.isMenuActive){
+                
+                //change the filterRanges here
+                let indices = self.menuTable.indexPathsForSelectedRows!
+                print(type(of: indices))
+
+                self.filterRanges = indices.map({ (path: IndexPath) -> (Range<Int>) in
+                    return self.dexEntryRanges[path.row]
+                })
+
+                //print(self.menuTable.indexPathsForSelectedRows)
+                
+                self.secondary = self.pokemon.filter({ (value:[String : Any]) -> (Bool) in
+                    
+                    var isFound = false
+                    let myURL = (value["pokemon_species"] as! [String:Any])["url"] as! String
+                    let number = Int(myURL.dropFirst(42).dropLast())!
+                    for range in self.filterRanges {
+                        //have to or these somehow
+                        if range.contains(number) {
+                            return true
+                        }
+                        isFound = range.contains(number)
+                        
+                    }
+                    return isFound
+                })
+
+            }
+            
+            self.tableView.reloadData()
         }
+        print(filterRanges)
 
     }
     
