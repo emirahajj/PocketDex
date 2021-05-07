@@ -7,10 +7,9 @@
 
 import UIKit
 import AlamofireImage
-import AYPopupPickerView
 
 
-class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, UISearchBarDelegate {
+class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 
     var isMenuActive = false
     let menuTable = UITableView() //for side menu
@@ -22,7 +21,6 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     @IBOutlet weak var searchBar: UISearchBar!
     
 
-    let popUp = AYPopupPickerView()
     let gens = ["R/B/Y", "G/S/C", "R/S/E", "D/P", "Plat.", "HG/SS", "B/W", "B2/W2"]
     let version_groups = ["red-blue", "yellow", "gold-silver", "crystal", "ruby-sapphire", "emerald", "firered-leafgreen", "diamond-pearl", "platinum", "heartgold-soulsilver", "black-white", "black-2-white-2" , "x-y", "omega-ruby-alpha-sapphire", "sun-moon", "ultra-sun-ultra-moon"]
     let typesArray = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy", "unknown", "shadow"]
@@ -43,7 +41,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         "B2/W2" : "https://pokeapi.co/api/v2/pokedex/9/",
     ]
     let dexEntryRanges = [1..<151, 152..<251, 252..<386, 387..<493, 494..<649, 650..<722]
-    var filterRanges = [Range<Int>]()
+    var filterRanges:Set<Range<Int>> = []
     
     //if its within 1
     
@@ -85,23 +83,8 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             return layer
         }
     
-    @IBOutlet weak var btn: UIButton!
     
-    @IBAction func toggleGen(_ sender: Any) {
-        var gen = String()
-        popUp.headerView.backgroundColor = UIColor.blue
-        popUp.pickerView.backgroundColor = UIColor.white
-        let blureffect = UIBlurEffect(style: .light)
-        let blurview = UIVisualEffectView(effect: blureffect)
-        blurview.frame = popUp.pickerView.bounds
-        popUp.pickerView.insertSubview(blurview, at: 0)
-//        popUp.pickerView.sendSubviewToBack(blurview)
-        popUp.display(itemTitles: gens, doneHandler: {
-                        let selectedIndex = self.popUp.pickerView.selectedRow(inComponent: 0);
-                        gen = self.gens[selectedIndex];
-                        self.APIcall(genString: gen)})
 
-    }
     
     func createSideMenu(view: UIView) {
         
@@ -133,6 +116,8 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         
         menuTable.reloadData()
         
+        print(MemoryLayout.size(ofValue: self.menuTable))
+        
         
     }
     
@@ -144,12 +129,12 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         
         createSideMenu(view: view)
         
+        
         print(type(of: filterRanges))
 
 
 
-        popUp.pickerView.dataSource = self
-        popUp.pickerView.delegate = self
+
         searchBar.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
@@ -159,7 +144,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
         let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00)
         let array = [blue.cgColor, green.cgColor]
-        pokeContent.layer.insertSublayer(gradient(frame: view.bounds, colors:array ), at:0)
+        pokeContent.layer.insertSublayer(gradient(frame: view.bounds, colors:array), at:0)
         view.layer.insertSublayer(gradient(frame: view.bounds, colors:array ), at:0)
 
         
@@ -170,7 +155,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
                 
         // Do any additional setup after loading the view.
         let url = URL(string: "https://pokeapi.co/api/v2/pokedex/1/")!
-        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+        let request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task = session.dataTask(with: request) { (data, response, error) in
             // This will run when the network request returns
@@ -261,12 +246,49 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
     
+    func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
+        switch tableView {
+        case menuTable:
+            switch indexPath.section {
+            case 0:
+                
+                filterRanges.remove(dexEntryRanges[indexPath.row])
+                if filterRanges.count == 0 {
+                    self.secondary = self.pokemon
+                }
+                //wanna change the filter
+//                let indices = self.menuTable.indexPathsForSelectedRows!.filter({ (path: IndexPath) -> (Bool) in
+//                    return (path.section == 0)
+//                })
+//
+//                self.filterRanges = indices.map({ (path: IndexPath) -> (Range<Int>) in
+//                    return self.dexEntryRanges[path.row]
+//                })
+                
+            default:
+                print("not a generation")
+            }
+        default:
+             break
+        }
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch tableView {
         case menuTable:
             switch indexPath.section {
             case 0:
-                print("generation")
+                
+                filterRanges.insert(dexEntryRanges[indexPath.row])
+                //wanna change the filter
+//                let indices = self.menuTable.indexPathsForSelectedRows!.filter({ (path: IndexPath) -> (Bool) in
+//                    return (path.section == 0)
+//                })
+//
+//                self.filterRanges = indices.map({ (path: IndexPath) -> (Range<Int>) in
+//                    return self.dexEntryRanges[path.row]
+//                })
+                
             default:
                 print("not a generation")
             }
@@ -306,6 +328,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             let number = Int(myURL.dropFirst(42).dropLast())!
             let localDexNumber = mypoke["entry_number"] as! Int
             print(number)
+            //let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-viii/icons/\(number).png"
             let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(number).png"
             let photoURL = URL(string: picstring)
             cell.digiPic.af.setImage(withURL: photoURL!)
@@ -381,16 +404,10 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             if (!self.isMenuActive){
                 
                 //change the filterRanges here
-                let indices = self.menuTable.indexPathsForSelectedRows!
-                print(type(of: indices))
-
-                self.filterRanges = indices.map({ (path: IndexPath) -> (Range<Int>) in
-                    return self.dexEntryRanges[path.row]
-                })
-
-                //print(self.menuTable.indexPathsForSelectedRows)
+                //will throw an error if you click on another section that has section that go past
                 
-                self.secondary = self.pokemon.filter({ (value:[String : Any]) -> (Bool) in
+                if (self.menuTable.indexPathsForSelectedRows?.count ?? 0 > 0){
+                    self.secondary = self.pokemon.filter({ (value:[String : Any]) -> (Bool) in
                     
                     var isFound = false
                     let myURL = (value["pokemon_species"] as! [String:Any])["url"] as! String
@@ -404,7 +421,11 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
                         
                     }
                     return isFound
-                })
+                })}
+                
+//                if (self.menuTable.indexPathsForSelectedRows?.count == 0) {
+//                    self.secondary = self.pokemon
+//                }
 
             }
             
