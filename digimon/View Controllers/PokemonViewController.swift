@@ -307,12 +307,29 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             let mypoke = secondary[indexPath.row]
             let name = (mypoke["pokemon_species"] as! [String:Any])["name"] as! String //name of pokemon
             let localDexNumber = mypoke["entry_number"] as! Int
-            let cellPicString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/\(localDexNumber).png"
-            let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(localDexNumber).png"
+            let cellPicString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(localDexNumber).png"
+            //let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(localDexNumber).png"
+            let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(localDexNumber).png"
             let photoURL = URL(string: cellPicString)
             cell.digiPic.af.setImage(withURL: photoURL!)
             cell.digiPic.layer.magnificationFilter = CALayerContentsFilter.nearest
             //cell.digiPic.backgroundColor = UIColor.red
+            
+            APICall("https://pokeapi.co/api/v2/pokemon/\(localDexNumber)") {response in
+                let types = response["types"] as! [[String:Any]]
+                var type1 = String()
+                var type2 = String()
+                
+                if types.count == 2 {
+                    type1 = ((types[0] as! [String:Any])["type"] as! [String:Any])["name"] as! String
+                    type2 = ((types[1] as! [String:Any])["type"] as! [String:Any])["name"] as! String
+                } else {
+                    type2 = ((types[0] as! [String:Any])["type"] as! [String:Any])["name"] as! String
+                }
+                cell.type1.text = type1
+                cell.type2.text = type2
+
+            }
         
             cell.digiLevel.text = String(format: "%03d", localDexNumber)
 

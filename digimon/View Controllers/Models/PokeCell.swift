@@ -16,6 +16,8 @@ class PokeCell: UITableViewCell {
     var myPic : String!
     var properName: String!
 
+    @IBOutlet weak var type1: UILabel!
+    @IBOutlet weak var type2: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
