@@ -67,6 +67,8 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         "fairy" : UIColor(red: 0.8863, green: 0.6157, blue: 0.6745, alpha: 1.0) /* #e29dac */,
     ]
     
+    let moveTriggers = ["level-up", "machine", "tutor"]
+    
     var pokeURL : String! //https://pokeapi.co/api/v2/pokemon/<name>/ endpoint
     var dexInfo = [String: Any]() //stores the JSON from above response
     
@@ -77,9 +79,10 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     var APIcall = String()
     var id = String()
     var evoChainURL = String()
-    var levelUpMoveset = [[String:Any]]()
-    var machineMoveset = [[String:Any]]()
-    var tutorMoveset = [[String:Any]]()
+    var totalMoveSet = [[String:Any]]()
+    var filteredMoveSet = [[String:Any]]()
+    var moveCriteria = "level-up"
+
 
     
     //top view
@@ -87,6 +90,7 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var pokeBall: UIImageView!
     @IBOutlet weak var dexEntryLabel: UILabel! //pokedex entry number
     @IBOutlet weak var dexPicture: UIImageView! //main pokemon image
+    @IBOutlet weak var moveSegment: UISegmentedControl!
     
     //stat bars
     @IBOutlet weak var speedBar: UIProgressView!
@@ -158,6 +162,28 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         self.typeButton.titleLabel!.layer.shadowOpacity = 1.0
     }
     
+    func filterMoves() {
+        filteredMoveSet = totalMoveSet.filter{object in
+            let version_details = object["version_group_details"] as! [[String:Any]]
+            for obj in version_details {
+                if let version_group_obj = (obj["move_learn_method"] as! [String: Any])["name"]{
+                    return version_group_obj as! String == moveCriteria
+                }
+            }
+            return false
+        }
+        tableView.reloadData()
+        
+    }
+    
+    @IBAction func segTap(_ sender: Any) {
+        moveCriteria = moveTriggers[moveSegment.selectedSegmentIndex]
+        print(moveTriggers[moveSegment.selectedSegmentIndex])
+        filterMoves()
+        tableView.reloadData()
+
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -173,6 +199,8 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         //set the image
         let url = URL(string: picString)!
         dexPicture.af.setImage(withURL: url)
+        dexPicture.layer.magnificationFilter = CALayerContentsFilter.nearest
+
         dexPicture.layer.shadowColor = UIColor.darkGray.cgColor
         dexPicture.layer.shadowRadius = 7
         dexPicture.layer.shadowOpacity = 1
@@ -219,35 +247,17 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
             let speed = ((statArr[5] as [String:Any])["base_stat"] as! Double)
             self.speedAmt.text = String(Int(speed))
             
-            print("before reload", self.viewHeight)
+            //print("before reload", self.viewHeight)
             
-            //ultimately want to retrurn move object
-            //lets try just level up for now
-            self.levelUpMoveset = (theResponse["moves"] as! [[String:Any]]).filter{object in
-                let version_details = object["version_group_details"] as! [[String:Any]]
-                for obj in version_details {
-                    if let version_group_obj = (obj["move_learn_method"] as! [String: Any])["name"]{
-                        return version_group_obj as! String == "level-up"
-                    }
-                }
-                return false
-            }
-            
-            print(theResponse["moves"] as! [[String:Any]])
-            
-//            let level_up_moves =
-                
+            //setting all the moves a pokemon can learn
+            self.totalMoveSet = theResponse["moves"] as! [[String:Any]]
+            self.filterMoves()
             self.tableView.reloadData()
 
             //self.tableViewHeight.constant = self.tableView.contentSize.height
             //self.viewHeight.constant = self.scrollView.contentSize.height + self.tableViewHeight.constant
             
-           // print("after reload", self.tableView.contentSize.height)
 
-
-            //self.hpLabel.text = String(hp)
-            //self.attackLabel.text = String(attack)
-            //self.defenseLabel.text = String(defense)
             
             UIView.animate(withDuration: 0.5, delay: 6.5, options: .curveEaseInOut){
                 self.hpBar.setProgress(Float(hp/255), animated: true)
@@ -279,14 +289,15 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
             self.speedBar.progressTintColor = self.colors[color]!
         }
     }
+
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return levelUpMoveset.count
+        return filteredMoveSet.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "moveCell") as! MoveCell
-        cell.moveName.text = ((levelUpMoveset[indexPath.row])["move"] as! [String:Any])["name"] as? String
+        cell.moveName.text = ((filteredMoveSet[indexPath.row])["move"] as! [String:Any])["name"] as? String
         return cell
     }
     //creates a view given a species object to add to the stackView for the evolution chain
@@ -328,18 +339,21 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         label.textAlignment = .center
 
         //image creation + styling
-        let firstImage = UIImageView()
-        let urls = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(num).png"
+        let firstImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 75, height: 75))
+        let urls = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/\(num).png"
         let url = URL(string: urls)!
         firstImage.af.setImage(withURL: url)
-        firstImage.frame = CGRect(x: 0, y: 0, width: 75, height: 75)
+        firstImage.layer.magnificationFilter = CALayerContentsFilter.nearest
+
+//        firstImage.frame =
         firstImage.contentMode = .scaleAspectFit
         firstImage.layer.shadowColor = UIColor.darkGray.cgColor
         firstImage.layer.shadowRadius = 7
         firstImage.layer.shadowOpacity = 1
         firstImage.layer.shadowOffset = CGSize.init(width: 0, height: 7)
         //firstImage.layer.backgroundColor = UIColor.red.cgColor
-        
+        firstImage.widthAnchor.constraint(equalToConstant: 75).isActive = true
+        firstImage.heightAnchor.constraint(equalToConstant: 75).isActive = true
         //adding to view
         firstContainerView.addArrangedSubview(firstImage)
         firstContainerView.addArrangedSubview(label)

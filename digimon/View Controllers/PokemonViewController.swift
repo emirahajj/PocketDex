@@ -23,11 +23,11 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
 
     let gens = ["R/B/Y", "G/S/C", "R/S/E", "D/P", "Plat.", "HG/SS", "B/W", "B2/W2"]
     let version_groups = ["red-blue", "yellow", "gold-silver", "crystal", "ruby-sapphire", "emerald", "firered-leafgreen", "diamond-pearl", "platinum", "heartgold-soulsilver", "black-white", "black-2-white-2" , "x-y", "omega-ruby-alpha-sapphire", "sun-moon", "ultra-sun-ultra-moon"]
-    let typesArray = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy", "unknown", "shadow"]
+    let typesArray = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy"]
     let menuContent = [
         ["Gen I", "Gen II", "Gen III", "Gen IV", "Gen V", "Gen VI", "Gen VII"],
         ["red-blue", "yellow", "gold-silver", "crystal", "ruby-sapphire", "emerald", "firered-leafgreen", "diamond-pearl", "platinum", "heartgold-soulsilver", "black-white", "black-2-white-2" , "x-y", "omega-ruby-alpha-sapphire", "sun-moon", "ultra-sun-ultra-moon"],
-        ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy", "unknown", "shadow"]]
+        ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy"]]
     let menuTitles = ["Generations", "Game Versions", "Types"]
     
     let genLookup = [
@@ -40,38 +40,37 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         "B/W" : "https://pokeapi.co/api/v2/pokedex/8/",
         "B2/W2" : "https://pokeapi.co/api/v2/pokedex/9/",
     ]
-    let dexEntryRanges = [1..<151, 152..<251, 252..<386, 387..<493, 494..<649, 650..<722]
+    //array of integer ranges to represent which generation to filter by
+    let dexEntryRanges = [1..<151, 152..<251, 252..<386, 387..<493, 494..<649, 650..<722, 722..<809]
+    
+    //the set that will contain the ranges to filter by
     var filterRanges:Set<Range<Int>> = []
     
-    //if its within 1
     
     
     let gameVersion = String()
     let generation = String()
     var searchType = String()
+    var filterTypes:Set<String> = []
 
     
-    func APIcall(genString: String) {
-        let genInfo = genLookup[genString]! as String
-        
-        let url = URL(string: genInfo)!
-        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+    func APICall(_ a : String, complete: @escaping ([String:Any])->()) {
+        var result = [String:Any]()
+        let url1 = URL(string: a)!
+        //print("URL: \(url1)")
+        let request = URLRequest(url: url1, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        let task = session.dataTask(with: request) { (data, response, error) in
+        let task = session.dataTask(with: request) {(data, response, error) in
             // This will run when the network request returns
             if let error = error {
                 print(error.localizedDescription)
             } else if let data = data {
-                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-                
-                self.secondary = dataDictionary["pokemon_entries"] as! [[String:Any]]
-                self.pokemon = dataDictionary["pokemon_entries"] as! [[String:Any]]
-                self.tableView.setContentOffset(.zero, animated: true)
-                self.tableView.reloadData()
+                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed]) as! [String: Any]
+                result = dataDictionary as [String: Any]
+                complete(result)
             }
         }
         task.resume()
-        
     }
     
     func gradient(frame:CGRect, colors:[CGColor]) -> CAGradientLayer {
@@ -126,21 +125,12 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         //super.view.layoutIfNeeded()
         menuTable.delegate = self
         menuTable.dataSource = self
-        
-        createSideMenu(view: view)
-        
-        
-        print(type(of: filterRanges))
-
-
-
-
         searchBar.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
 
-        
-        
+        createSideMenu(view: view)
+
         let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
         let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00)
         let array = [blue.cgColor, green.cgColor]
@@ -153,12 +143,10 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         searchBar.searchTextField.attributedPlaceholder =  NSAttributedString.init(string: "Search Pokémon", attributes: [NSAttributedString.Key.foregroundColor:UIColor.lightGray])
         
                 
-        // Do any additional setup after loading the view.
         let url = URL(string: "https://pokeapi.co/api/v2/pokedex/1/")!
         let request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task = session.dataTask(with: request) { (data, response, error) in
-            // This will run when the network request returns
             if let error = error {
                 print(error.localizedDescription)
             } else if let data = data {
@@ -228,14 +216,6 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
     
-//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        switch tableView {
-//        case menuTable:
-//            return menuTitles[section]
-//        default:
-//             return ""
-//        }
-//    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch tableView {
@@ -250,21 +230,18 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         switch tableView {
         case menuTable:
             switch indexPath.section {
+            //generation toggle
             case 0:
                 
                 filterRanges.remove(dexEntryRanges[indexPath.row])
                 if filterRanges.count == 0 {
                     self.secondary = self.pokemon
                 }
-                //wanna change the filter
-//                let indices = self.menuTable.indexPathsForSelectedRows!.filter({ (path: IndexPath) -> (Bool) in
-//                    return (path.section == 0)
-//                })
-//
-//                self.filterRanges = indices.map({ (path: IndexPath) -> (Range<Int>) in
-//                    return self.dexEntryRanges[path.row]
-//                })
-                
+
+            case 2:
+                filterTypes = []
+                self.secondary = self.pokemon
+
             default:
                 print("not a generation")
             }
@@ -277,17 +254,22 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         switch tableView {
         case menuTable:
             switch indexPath.section {
+            //generations
             case 0:
                 
                 filterRanges.insert(dexEntryRanges[indexPath.row])
-                //wanna change the filter
-//                let indices = self.menuTable.indexPathsForSelectedRows!.filter({ (path: IndexPath) -> (Bool) in
-//                    return (path.section == 0)
-//                })
-//
-//                self.filterRanges = indices.map({ (path: IndexPath) -> (Range<Int>) in
-//                    return self.dexEntryRanges[path.row]
-//                })
+
+            //game versions
+            case 2:
+                searchType = typesArray[indexPath.row]
+//                let num = String(indexPath.row + 1)
+                APICall("https://pokeapi.co/api/v2/type/\(searchType)"){response in
+                    let pokemonArray = response["pokemon"] as! [[String:Any]]
+                    self.filterTypes = Set(pokemonArray.map { ($0["pokemon"] as! [String:Any])["name"] as! String })
+                    print(self.filterTypes)
+
+                    
+                }
                 
             default:
                 print("not a generation")
@@ -306,6 +288,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             cell.labelText.adjustsFontSizeToFitWidth = true
             cell.labelText.text = menuContent[indexPath.section][indexPath.row]
             cell.labelText.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
+            cell.labelText.font = UIFont(name: "Menlo-Bold", size: 12)
             cell.labelText.textColor = UIColor.black
             cell.labelText.textAlignment = NSTextAlignment.center
             //cell.heightAnchor.constraint(equalToConstant: 12).isActive = true
@@ -323,23 +306,15 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             let cell = tableView.dequeueReusableCell(withIdentifier: "PokeCell") as! PokeCell
             let mypoke = secondary[indexPath.row]
             let name = (mypoke["pokemon_species"] as! [String:Any])["name"] as! String //name of pokemon
-            let myURL = (mypoke["pokemon_species"] as! [String:Any])["url"] as! String
-    //            mypoke["url"] as! String // url like .../v2/pokemon/<number>/
-            let number = Int(myURL.dropFirst(42).dropLast())!
             let localDexNumber = mypoke["entry_number"] as! Int
-            print(number)
-            //let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-viii/icons/\(number).png"
-            let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(number).png"
-            let photoURL = URL(string: picstring)
+            let cellPicString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/\(localDexNumber).png"
+            let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(localDexNumber).png"
+            let photoURL = URL(string: cellPicString)
             cell.digiPic.af.setImage(withURL: photoURL!)
-            
-            var strlevel = String(localDexNumber)
-            if (localDexNumber < 10) {
-                strlevel = "00\(strlevel)"
-            } else if (localDexNumber >= 10 && localDexNumber < 100){
-                strlevel = "0\(strlevel)"
-            }
-            cell.digiLevel.text = strlevel
+            cell.digiPic.layer.magnificationFilter = CALayerContentsFilter.nearest
+            //cell.digiPic.backgroundColor = UIColor.red
+        
+            cell.digiLevel.text = String(format: "%03d", localDexNumber)
 
             //capitalizing first letter since its all lowercase
             let properName = name.prefix(1).uppercased() + name.lowercased().dropFirst()
@@ -359,7 +334,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         //secondary = []
         if searchText == "" {
-            secondary = pokemon
+            filter()
         }
         else{
             let query = searchBar.text!.lowercased()
@@ -406,26 +381,10 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
                 //change the filterRanges here
                 //will throw an error if you click on another section that has section that go past
                 
-                if (self.menuTable.indexPathsForSelectedRows?.count ?? 0 > 0){
-                    self.secondary = self.pokemon.filter({ (value:[String : Any]) -> (Bool) in
-                    
-                    var isFound = false
-                    let myURL = (value["pokemon_species"] as! [String:Any])["url"] as! String
-                    let number = Int(myURL.dropFirst(42).dropLast())!
-                    for range in self.filterRanges {
-                        //have to or these somehow
-                        if range.contains(number) {
-                            return true
-                        }
-                        isFound = range.contains(number)
-                        
-                    }
-                    return isFound
-                })}
+                //the actual function that does the filtering by generations picked
+                self.filter()
                 
-//                if (self.menuTable.indexPathsForSelectedRows?.count == 0) {
-//                    self.secondary = self.pokemon
-//                }
+
 
             }
             
@@ -433,6 +392,38 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         }
         print(filterRanges)
 
+    }
+    
+    func filter() {
+        //there is a generation to fill
+        if (!filterRanges.isEmpty){
+            self.secondary = self.pokemon.filter({ (value:[String : Any]) -> (Bool) in
+                let name = (value["pokemon_species"] as! [String:Any])["name"] as! String
+
+            
+            var isFound = false
+            let number = value["entry_number"] as! Int
+            for range in self.filterRanges {
+                //have to or these somehow
+                if range.contains(number) {
+                    return true
+                }
+                isFound = range.contains(number)
+                
+            }
+            return isFound
+            })}
+        //no generation, that means all the filters below it
+        else if (filterRanges.isEmpty) {
+            secondary = pokemon
+        }
+        if (!self.filterTypes.isEmpty){
+            self.secondary = self.secondary.filter({ (value:[String : Any]) -> (Bool) in
+                //get name of pokemon currently in that list
+                //then ask if that name is contained within the filterTypes array taht holds the names of all the pokemon of that type
+                let name = (value["pokemon_species"] as! [String:Any])["name"] as! String
+                return self.filterTypes.contains(name)
+        })}
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -446,7 +437,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         let index = tableView.indexPath(for: cell)!
                 
         //the url for the pokemon information--remmeber this is just the name +
-        //print(pokemon[index.row])
+        //)
         var pokeURL = (secondary[index.row]["pokemon_species"] as! [String:Any])["url"] as! String
         pokeURL = "https://pokeapi.co/api/v2/pokemon/" + pokeURL.dropFirst(42)
         print(pokeURL)
