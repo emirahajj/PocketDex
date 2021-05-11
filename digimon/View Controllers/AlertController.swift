@@ -24,7 +24,7 @@ class AlertController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         if let text = labelText {
-            self.itemName.text = text
+            self.itemName.text = text.replacingOccurrences(of: "-", with: " ").capitalized
         }
         if let text1 = descText {
             self.desLabel.text = text1
@@ -33,7 +33,18 @@ class AlertController: UIViewController {
             self.costLabel.text = text2
         }
         
+        let frost = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
+        frost.frame = view.bounds
+        view.insertSubview(frost, at: 0)
         view.backgroundColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.3)
+        card.layer.cornerRadius = 15
+        card.backgroundColor = UIColor(red: 0.38, green: 0.27, blue: 0.57, alpha: 1.0)
+        card.layer.shadowColor = UIColor.darkGray.cgColor
+        card.layer.shadowRadius = 15
+        card.layer.shadowOpacity = 1.0
+        card.layer.shadowOffset = CGSize(width: 0, height: 7)
+        
+
 
         // Do any additional setup after loading the view.
     }

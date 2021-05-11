@@ -1,0 +1,78 @@
+//
+//  favPokemonController.swift
+//  digimon
+//
+//  Created by Emira Hajj on 5/10/21.
+//
+
+import UIKit
+import CoreData
+
+class favPokemonController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    private var models = [FavPokemon]()
+
+    
+    @IBOutlet weak var favtableView: UITableView!
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        getAllFavs()
+
+    }
+    
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        title = "Favorite Pokemon"
+        favtableView.delegate = self
+        favtableView.dataSource = self
+        
+        
+        //createFav(_name: "Bulbasair", _id: 001)
+
+        // Do any additional setup after loading the view.
+    }
+    
+    
+    func getAllFavs() {
+        do {
+            models = try context.fetch(FavPokemon.fetchRequest())
+            DispatchQueue.main.async {
+                self.favtableView.reloadData()
+            }
+        } catch {
+            print("nice try")
+        }
+    }
+    
+
+    
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return models.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let model = models[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "PokeCell") as! PokeCell
+        cell.digiName.text = model.name
+        cell.digiLevel.text = String(model.id)
+        return cell
+    }
+    
+    
+
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destination.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
+}

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class PokeCell: UITableViewCell {
     
@@ -15,7 +16,10 @@ class PokeCell: UITableViewCell {
     var APIstring = String()
     var myPic : String!
     var properName: String!
+        
 
+    @IBOutlet weak var type1: UILabel!
+    @IBOutlet weak var type2: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -7,7 +7,7 @@
 
 import UIKit
 import Alamofire
-
+import CoreData
 
 extension UIProgressView{
 
@@ -26,60 +26,34 @@ extension UIProgressView{
 }
 
 class DexEntryController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
     
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    private var models = [FavPokemon]()
+
+
+    let pokemonColors = dict.init().colors
+    let typeColors = dict.init().typeColors
     
     //I want it to display: pokemon name, evolution (+ levels), moveset
     
     @IBOutlet weak var scrollView: UIScrollView!
     
-    let colors = [
-        "black": UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)/* #000000 */,
-        "blue": UIColor(red: 0.149, green: 0.5216, blue: 0.8275, alpha: 1.0) /* #2685d3 */,
-        "brown": UIColor(red: 0.5098, green: 0.2588, blue: 0.0706, alpha: 1.0) /* #824212 */,
-        "gray": UIColor(red: 0.6431, green: 0.6471, blue: 0.6471, alpha: 1.0) /* #a4a5a5 */,
-        "green": UIColor(red: 0.5137, green: 0.9098, blue: 0.1882, alpha: 1.0) /* #83e830 */,
-        "pink": UIColor(red: 0.9765, green: 0.5451, blue: 0.7059, alpha: 1.0) /* #f98bb4 */,
-        "purple": UIColor(red: 0.749, green: 0.3294, blue: 0.6157, alpha: 1.0) /* #bf549d */,
-        "red": UIColor(red: 0.9882, green: 0.3255, blue: 0.1765, alpha: 1.0) /* #fc532d */,
-        "white": UIColor(red: 1, green: 1, blue: 1, alpha: 1.0) /* #ffffff */,
-        "yellow": UIColor(red: 0.9569, green: 0.902, blue: 0.2667, alpha: 1.0) /* #f4e644 */
-    ]
-  
-    let typeColors = [
-        "normal" : UIColor(red: 0.6588, green: 0.6588, blue: 0.4902, alpha: 1.0) /* #a8a87d */,
-        "fighting" : UIColor(red: 0.6941, green: 0.2392, blue: 0.1922, alpha: 1.0) /* #b13d31 */,
-        "flying" : UIColor(red: 0.6431, green: 0.5686, blue: 0.9176, alpha: 1.0) /* #a491ea */,
-        "poison" : UIColor(red: 0.5804, green: 0.2745, blue: 0.6078, alpha: 1.0) /* #94469b */,
-        "ground" : UIColor(red: 0.8588, green: 0.7569, blue: 0.4588, alpha: 1.0) /* #dbc175 */,
-        "rock" : UIColor(red: 0.7059, green: 0.6314, blue: 0.2941, alpha: 1.0) /* #b4a14b */,
-        "bug" : UIColor(red: 0.6706, green: 0.7176, blue: 0.2588, alpha: 1.0) /* #abb742 */,
-        "ghost" : UIColor(red: 0.4235, green: 0.349, blue: 0.5804, alpha: 1.0) /* #6c5994 */,
-        "steel" : UIColor(red: 0.7216, green: 0.7216, blue: 0.8078, alpha: 1.0) /* #b8b8ce */,
-        "fire" : UIColor(red: 0.8824, green: 0.5255, blue: 0.2667, alpha: 1.0) /* #e18644 */,
-        "water" : UIColor(red: 0.4392, green: 0.5608, blue: 0.9137, alpha: 1.0) /* #708fe9 */,
-        "grass" : UIColor(red: 0.5451, green: 0.7765, blue: 0.3765, alpha: 1.0) /* #8bc660 */,
-        "electric" : UIColor(red: 0.9451, green: 0.8196, blue: 0.3294, alpha: 1.0) /* #f1d154 */,
-        "psychic" : UIColor(red: 0.902, green: 0.3882, blue: 0.5333, alpha: 1.0) /* #e66388 */,
-        "ice" : UIColor(red: 0.651, green: 0.8392, blue: 0.8431, alpha: 1.0) /* #a6d6d7 */,
-        "dragon" : UIColor(red: 0.4118, green: 0.2314, blue: 0.9373, alpha: 1.0) /* #693bef */,
-        "dark" : UIColor(red: 0.4235, green: 0.349, blue: 0.2902, alpha: 1.0) /* #6c594a */,
-        "fairy" : UIColor(red: 0.8863, green: 0.6157, blue: 0.6745, alpha: 1.0) /* #e29dac */,
-    ]
+    let moveTriggers = ["level-up", "machine", "tutor"]
     
     var pokeURL : String! //https://pokeapi.co/api/v2/pokemon/<name>/ endpoint
     var dexInfo = [String: Any]() //stores the JSON from above response
     
     var picInfo = [String: Any]()
-    var formattedName = String() //capitalized name
-    var speciesInfo = [String: Any]()
+    var formattedName = String() //capitalized pokemon name
+    var speciesInfo = [String: Any]() //dictionary that holds species info
     var picString : String!
-    var APIcall = String()
     var id = String()
     var evoChainURL = String()
-    var levelUpMoveset = [[String:Any]]()
-    var machineMoveset = [[String:Any]]()
-    var tutorMoveset = [[String:Any]]()
+    var totalMoveSet = [[String:Any]]()
+    var filteredMoveSet = [[String:Any]]()
+    var moveCriteria = "level-up"
+
 
     
     //top view
@@ -87,6 +61,7 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var pokeBall: UIImageView!
     @IBOutlet weak var dexEntryLabel: UILabel! //pokedex entry number
     @IBOutlet weak var dexPicture: UIImageView! //main pokemon image
+    @IBOutlet weak var moveSegment: UISegmentedControl!
     
     //stat bars
     @IBOutlet weak var speedBar: UIProgressView!
@@ -115,7 +90,63 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var tableViewHeight: NSLayoutConstraint!
     @IBOutlet weak var tableView: UITableView!
     
+    @IBOutlet weak var favIcon: UIButton!
     //@IBOutlet weak var scrollView: UIScrollView!
+    
+    
+    func createFav(_name: String, _id: Int) {
+        let newPokemon = FavPokemon(context: context)
+        newPokemon.name = _name
+        newPokemon.id = Int64(_id)
+        
+        do {
+            try context.save()
+            //getAllFavs()
+            
+        } catch {
+            print("couldn't save!")
+        }
+    }
+    
+    func deleteFav(item: FavPokemon) {
+        
+        context.delete(item)
+        
+        do {
+            try context.save()
+            
+        } catch {
+            print("couldn't save!")
+        }
+        
+    }
+    
+    func exists(name: String) -> (Bool) {
+        let fetchOne = NSFetchRequest<FavPokemon>(entityName: "FavPokemon")
+        fetchOne.fetchLimit = 1
+        fetchOne.predicate = NSPredicate(format: "name == %@", name)
+        
+        do {
+            let count = try context.count(for: fetchOne)
+            if count > 0 {
+                print("It exists!")
+                return true
+            } else {
+                print("No dice...")
+                return false
+            }
+        } catch let error as NSError{
+            print("Couldn't fetch. \(error)")
+            return false
+        }
+    }
+    
+    @IBAction func addFav(_ sender: Any) {
+        
+
+        createFav(_name: formattedName, _id: Int(id)!)
+    }
+    
     func APICall(_ a : String, complete: @escaping ([String:Any])->()) {
         var result = [String:Any]()
         let url1 = URL(string: a)!
@@ -141,8 +172,6 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
             layer.startPoint = CGPoint(x: 0, y: 0.5)
             layer.endPoint = CGPoint(x: 0.5, y: 0)
             layer.colors = colors
- 
-
             return layer
         }
     
@@ -151,15 +180,40 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         let capType = a.prefix(1).uppercased() + a.lowercased().dropFirst()
         self.typeButton.titleLabel?.text = capType
         self.typeButton.setTitle(capType, for: .normal)
-        self.typeButton.backgroundColor = self.typeColors[a]
+        
+        self.typeButton.backgroundColor = typeColors[a]
         self.typeButton.layer.cornerRadius = 8
         self.typeButton.titleLabel?.layer.shadowColor = UIColor.black.cgColor
         self.typeButton.titleLabel?.layer.shadowOffset = CGSize(width: -0.15, height: 0.5)
         self.typeButton.titleLabel!.layer.shadowOpacity = 1.0
     }
     
+    func filterMoves() {
+        filteredMoveSet = totalMoveSet.filter{object in
+            let version_details = object["version_group_details"] as! [[String:Any]]
+            for obj in version_details {
+                if let version_group_obj = (obj["move_learn_method"] as! [String: Any])["name"]{
+                    return version_group_obj as! String == moveCriteria
+                }
+            }
+            return false
+        }
+        tableView.reloadData()
+        
+    }
+    
+    @IBAction func segTap(_ sender: Any) {
+        moveCriteria = moveTriggers[moveSegment.selectedSegmentIndex]
+        print(moveTriggers[moveSegment.selectedSegmentIndex])
+        filterMoves()
+        tableView.reloadData()
+
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        exists(name: formattedName)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -173,6 +227,8 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         //set the image
         let url = URL(string: picString)!
         dexPicture.af.setImage(withURL: url)
+        dexPicture.layer.magnificationFilter = CALayerContentsFilter.nearest
+
         dexPicture.layer.shadowColor = UIColor.darkGray.cgColor
         dexPicture.layer.shadowRadius = 7
         dexPicture.layer.shadowOpacity = 1
@@ -185,6 +241,11 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         topColor.layer.shadowRadius = 7
         topColor.layer.shadowOpacity = 1
         topColor.layer.shadowOffset = CGSize.init(width: 0, height: 7)
+        
+        
+        if exists(name: formattedName) {
+            favIcon.setImage(UIImage(systemName: "star.fill"), for: .normal)
+        }
 
 
 
@@ -219,35 +280,17 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
             let speed = ((statArr[5] as [String:Any])["base_stat"] as! Double)
             self.speedAmt.text = String(Int(speed))
             
-            print("before reload", self.viewHeight)
+            //print("before reload", self.viewHeight)
             
-            //ultimately want to retrurn move object
-            //lets try just level up for now
-            self.levelUpMoveset = (theResponse["moves"] as! [[String:Any]]).filter{object in
-                let version_details = object["version_group_details"] as! [[String:Any]]
-                for obj in version_details {
-                    if let version_group_obj = (obj["move_learn_method"] as! [String: Any])["name"]{
-                        return version_group_obj as! String == "level-up"
-                    }
-                }
-                return false
-            }
-            
-            print(theResponse["moves"] as! [[String:Any]])
-            
-//            let level_up_moves =
-                
+            //setting all the moves a pokemon can learn
+            self.totalMoveSet = theResponse["moves"] as! [[String:Any]]
+            self.filterMoves()
             self.tableView.reloadData()
 
             //self.tableViewHeight.constant = self.tableView.contentSize.height
             //self.viewHeight.constant = self.scrollView.contentSize.height + self.tableViewHeight.constant
             
-           // print("after reload", self.tableView.contentSize.height)
 
-
-            //self.hpLabel.text = String(hp)
-            //self.attackLabel.text = String(attack)
-            //self.defenseLabel.text = String(defense)
             
             UIView.animate(withDuration: 0.5, delay: 6.5, options: .curveEaseInOut){
                 self.hpBar.setProgress(Float(hp/255), animated: true)
@@ -270,23 +313,24 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
             
             let color = (theResponse["color"] as! [String: Any])["name"] as! String
             
-            self.topColor.backgroundColor = self.colors[color]
-            self.hpBar.progressTintColor = self.colors[color]!
-            self.attackBar.progressTintColor = self.colors[color]!
-            self.defenseBar.progressTintColor = self.colors[color]!
-            self.spAtkBar.progressTintColor = self.colors[color]!
-            self.spDefBar.progressTintColor = self.colors[color]!
-            self.speedBar.progressTintColor = self.colors[color]!
+            self.topColor.backgroundColor = self.pokemonColors[color]
+            self.hpBar.progressTintColor = self.pokemonColors[color]!
+            self.attackBar.progressTintColor = self.pokemonColors[color]!
+            self.defenseBar.progressTintColor = self.pokemonColors[color]!
+            self.spAtkBar.progressTintColor = self.pokemonColors[color]!
+            self.spDefBar.progressTintColor = self.pokemonColors[color]!
+            self.speedBar.progressTintColor = self.pokemonColors[color]!
         }
     }
+
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return levelUpMoveset.count
+        return filteredMoveSet.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "moveCell") as! MoveCell
-        cell.moveName.text = ((levelUpMoveset[indexPath.row])["move"] as! [String:Any])["name"] as? String
+        cell.moveName.text = ((filteredMoveSet[indexPath.row])["move"] as! [String:Any])["name"] as? String
         return cell
     }
     //creates a view given a species object to add to the stackView for the evolution chain
@@ -328,18 +372,21 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         label.textAlignment = .center
 
         //image creation + styling
-        let firstImage = UIImageView()
-        let urls = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(num).png"
+        let firstImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 75, height: 75))
+        let urls = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/\(num).png"
         let url = URL(string: urls)!
         firstImage.af.setImage(withURL: url)
-        firstImage.frame = CGRect(x: 0, y: 0, width: 75, height: 75)
+        firstImage.layer.magnificationFilter = CALayerContentsFilter.nearest
+
+//        firstImage.frame =
         firstImage.contentMode = .scaleAspectFit
         firstImage.layer.shadowColor = UIColor.darkGray.cgColor
         firstImage.layer.shadowRadius = 7
         firstImage.layer.shadowOpacity = 1
         firstImage.layer.shadowOffset = CGSize.init(width: 0, height: 7)
         //firstImage.layer.backgroundColor = UIColor.red.cgColor
-        
+        firstImage.widthAnchor.constraint(equalToConstant: 75).isActive = true
+        firstImage.heightAnchor.constraint(equalToConstant: 75).isActive = true
         //adding to view
         firstContainerView.addArrangedSubview(firstImage)
         firstContainerView.addArrangedSubview(label)
