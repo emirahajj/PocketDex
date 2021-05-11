@@ -21,11 +21,14 @@
 		2D7C9B6D25CCEFE500A94181 /* digimonUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C9B6C25CCEFE500A94181 /* digimonUITests.swift */; };
 		2D7C9B9125CCF24A00A94181 /* PokeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C9B9025CCF24A00A94181 /* PokeCell.swift */; };
 		2D7F882C2638B45F0004AFDF /* AreasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F882B2638B45F0004AFDF /* AreasViewController.swift */; };
+		2DADC0D6264A025500E5C59A /* pokemon.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2DADC0D4264A025500E5C59A /* pokemon.xcdatamodeld */; };
+		2DADC0DB264A0F1400E5C59A /* favPokemonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DADC0DA264A0F1300E5C59A /* favPokemonController.swift */; };
 		2DAED01326425617005AD659 /* SideMenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DAED01226425617005AD659 /* SideMenuCell.swift */; };
 		2DAFDF73260FA74F00325984 /* ItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DAFDF72260FA74F00325984 /* ItemsViewController.swift */; };
 		2DBCF3A325D71F84009E0174 /* DexEntryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCF3A225D71F84009E0174 /* DexEntryController.swift */; };
 		2DD1E73E263B6DEB000669DD /* MainAreaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD1E73D263B6DEB000669DD /* MainAreaCell.swift */; };
 		2DD1E743263B6E06000669DD /* InnterAreaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD1E742263B6E06000669DD /* InnterAreaCell.swift */; };
+		2DD21CD4264847A000AD4414 /* Dict.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD21CD3264847A000AD4414 /* Dict.swift */; };
 		59AC7953022D182F94470180 /* Pods_digimon_digimonUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B804A3906EE84B4DC309FB1D /* Pods_digimon_digimonUITests.framework */; };
 		5A9BB2E753CD9C612363ED7D /* Pods_digimonTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 949270C468B6E68888965BF6 /* Pods_digimonTests.framework */; };
 		A3B9726539EB9F26DCFDD9CD /* Pods_digimon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9153CC8FE1022C9C16C44E8A /* Pods_digimon.framework */; };
@@ -69,11 +72,14 @@
 		2D7C9B6E25CCEFE500A94181 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2D7C9B9025CCF24A00A94181 /* PokeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokeCell.swift; sourceTree = "<group>"; };
 		2D7F882B2638B45F0004AFDF /* AreasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreasViewController.swift; sourceTree = "<group>"; };
+		2DADC0D5264A025500E5C59A /* pokemon.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = pokemon.xcdatamodel; sourceTree = "<group>"; };
+		2DADC0DA264A0F1300E5C59A /* favPokemonController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = favPokemonController.swift; sourceTree = "<group>"; };
 		2DAED01226425617005AD659 /* SideMenuCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuCell.swift; sourceTree = "<group>"; };
 		2DAFDF72260FA74F00325984 /* ItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsViewController.swift; sourceTree = "<group>"; };
 		2DBCF3A225D71F84009E0174 /* DexEntryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DexEntryController.swift; sourceTree = "<group>"; };
 		2DD1E73D263B6DEB000669DD /* MainAreaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAreaCell.swift; sourceTree = "<group>"; };
 		2DD1E742263B6E06000669DD /* InnterAreaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnterAreaCell.swift; sourceTree = "<group>"; };
+		2DD21CD3264847A000AD4414 /* Dict.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dict.swift; sourceTree = "<group>"; };
 		60C58F67CF2C8C3A945B5A83 /* Pods-digimonTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digimonTests.release.xcconfig"; path = "Target Support Files/Pods-digimonTests/Pods-digimonTests.release.xcconfig"; sourceTree = "<group>"; };
 		6DFB89A6D4E80DFA7A4DE6EE /* Pods-digimon-digimonUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digimon-digimonUITests.release.xcconfig"; path = "Target Support Files/Pods-digimon-digimonUITests/Pods-digimon-digimonUITests.release.xcconfig"; sourceTree = "<group>"; };
 		89B085D61E9E59872AEE7999 /* Pods-digimon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digimon.debug.xcconfig"; path = "Target Support Files/Pods-digimon/Pods-digimon.debug.xcconfig"; sourceTree = "<group>"; };
@@ -129,6 +135,7 @@
 		2D7C9B3E25CCEFE400A94181 = {
 			isa = PBXGroup;
 			children = (
+				2DADC0D4264A025500E5C59A /* pokemon.xcdatamodeld */,
 				2D7C9B4925CCEFE400A94181 /* digimon */,
 				2D7C9B6025CCEFE500A94181 /* digimonTests */,
 				2D7C9B6B25CCEFE500A94181 /* digimonUITests */,
@@ -189,6 +196,7 @@
 				2D7F882B2638B45F0004AFDF /* AreasViewController.swift */,
 				2D7C9B4E25CCEFE400A94181 /* PokemonViewController.swift */,
 				2DBDA62D26081B050071AB29 /* Models */,
+				2DADC0DA264A0F1300E5C59A /* favPokemonController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -203,6 +211,7 @@
 				2DD1E73D263B6DEB000669DD /* MainAreaCell.swift */,
 				2DD1E742263B6E06000669DD /* InnterAreaCell.swift */,
 				2DAED01226425617005AD659 /* SideMenuCell.swift */,
+				2DD21CD3264847A000AD4414 /* Dict.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -458,10 +467,13 @@
 				2D7F882C2638B45F0004AFDF /* AreasViewController.swift in Sources */,
 				2DAED01326425617005AD659 /* SideMenuCell.swift in Sources */,
 				2DD1E73E263B6DEB000669DD /* MainAreaCell.swift in Sources */,
+				2DADC0DB264A0F1400E5C59A /* favPokemonController.swift in Sources */,
 				2D6BEBAA263E598D006FE4E1 /* MoveCell.swift in Sources */,
 				2DD1E743263B6E06000669DD /* InnterAreaCell.swift in Sources */,
+				2DADC0D6264A025500E5C59A /* pokemon.xcdatamodeld in Sources */,
 				2D7C9B4F25CCEFE400A94181 /* PokemonViewController.swift in Sources */,
 				2D6BEBA2263E2534006FE4E1 /* AlertController.swift in Sources */,
+				2DD21CD4264847A000AD4414 /* Dict.swift in Sources */,
 				2D3B57B02633A67A0031CDD6 /* InnerItemCell.swift in Sources */,
 				2DAFDF73260FA74F00325984 /* ItemsViewController.swift in Sources */,
 				2D7C9B4B25CCEFE400A94181 /* AppDelegate.swift in Sources */,
@@ -803,6 +815,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		2DADC0D4264A025500E5C59A /* pokemon.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				2DADC0D5264A025500E5C59A /* pokemon.xcdatamodel */,
+			);
+			currentVersion = 2DADC0D5264A025500E5C59A /* pokemon.xcdatamodel */;
+			path = pokemon.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 2D7C9B3F25CCEFE400A94181 /* Project object */;
 }

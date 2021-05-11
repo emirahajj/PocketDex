@@ -7,7 +7,7 @@
 
 import UIKit
 import Alamofire
-
+import CoreData
 
 extension UIProgressView{
 
@@ -26,46 +26,18 @@ extension UIProgressView{
 }
 
 class DexEntryController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
     
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    private var models = [FavPokemon]()
+
+
+    let pokemonColors = dict.init().colors
+    let typeColors = dict.init().typeColors
     
     //I want it to display: pokemon name, evolution (+ levels), moveset
     
     @IBOutlet weak var scrollView: UIScrollView!
-    
-    let colors = [
-        "black": UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)/* #000000 */,
-        "blue": UIColor(red: 0.149, green: 0.5216, blue: 0.8275, alpha: 1.0) /* #2685d3 */,
-        "brown": UIColor(red: 0.5098, green: 0.2588, blue: 0.0706, alpha: 1.0) /* #824212 */,
-        "gray": UIColor(red: 0.6431, green: 0.6471, blue: 0.6471, alpha: 1.0) /* #a4a5a5 */,
-        "green": UIColor(red: 0.5137, green: 0.9098, blue: 0.1882, alpha: 1.0) /* #83e830 */,
-        "pink": UIColor(red: 0.9765, green: 0.5451, blue: 0.7059, alpha: 1.0) /* #f98bb4 */,
-        "purple": UIColor(red: 0.749, green: 0.3294, blue: 0.6157, alpha: 1.0) /* #bf549d */,
-        "red": UIColor(red: 0.9882, green: 0.3255, blue: 0.1765, alpha: 1.0) /* #fc532d */,
-        "white": UIColor(red: 1, green: 1, blue: 1, alpha: 1.0) /* #ffffff */,
-        "yellow": UIColor(red: 0.9569, green: 0.902, blue: 0.2667, alpha: 1.0) /* #f4e644 */
-    ]
-  
-    let typeColors = [
-        "normal" : UIColor(red: 0.6588, green: 0.6588, blue: 0.4902, alpha: 1.0) /* #a8a87d */,
-        "fighting" : UIColor(red: 0.6941, green: 0.2392, blue: 0.1922, alpha: 1.0) /* #b13d31 */,
-        "flying" : UIColor(red: 0.6431, green: 0.5686, blue: 0.9176, alpha: 1.0) /* #a491ea */,
-        "poison" : UIColor(red: 0.5804, green: 0.2745, blue: 0.6078, alpha: 1.0) /* #94469b */,
-        "ground" : UIColor(red: 0.8588, green: 0.7569, blue: 0.4588, alpha: 1.0) /* #dbc175 */,
-        "rock" : UIColor(red: 0.7059, green: 0.6314, blue: 0.2941, alpha: 1.0) /* #b4a14b */,
-        "bug" : UIColor(red: 0.6706, green: 0.7176, blue: 0.2588, alpha: 1.0) /* #abb742 */,
-        "ghost" : UIColor(red: 0.4235, green: 0.349, blue: 0.5804, alpha: 1.0) /* #6c5994 */,
-        "steel" : UIColor(red: 0.7216, green: 0.7216, blue: 0.8078, alpha: 1.0) /* #b8b8ce */,
-        "fire" : UIColor(red: 0.8824, green: 0.5255, blue: 0.2667, alpha: 1.0) /* #e18644 */,
-        "water" : UIColor(red: 0.4392, green: 0.5608, blue: 0.9137, alpha: 1.0) /* #708fe9 */,
-        "grass" : UIColor(red: 0.5451, green: 0.7765, blue: 0.3765, alpha: 1.0) /* #8bc660 */,
-        "electric" : UIColor(red: 0.9451, green: 0.8196, blue: 0.3294, alpha: 1.0) /* #f1d154 */,
-        "psychic" : UIColor(red: 0.902, green: 0.3882, blue: 0.5333, alpha: 1.0) /* #e66388 */,
-        "ice" : UIColor(red: 0.651, green: 0.8392, blue: 0.8431, alpha: 1.0) /* #a6d6d7 */,
-        "dragon" : UIColor(red: 0.4118, green: 0.2314, blue: 0.9373, alpha: 1.0) /* #693bef */,
-        "dark" : UIColor(red: 0.4235, green: 0.349, blue: 0.2902, alpha: 1.0) /* #6c594a */,
-        "fairy" : UIColor(red: 0.8863, green: 0.6157, blue: 0.6745, alpha: 1.0) /* #e29dac */,
-    ]
     
     let moveTriggers = ["level-up", "machine", "tutor"]
     
@@ -73,10 +45,9 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     var dexInfo = [String: Any]() //stores the JSON from above response
     
     var picInfo = [String: Any]()
-    var formattedName = String() //capitalized name
-    var speciesInfo = [String: Any]()
+    var formattedName = String() //capitalized pokemon name
+    var speciesInfo = [String: Any]() //dictionary that holds species info
     var picString : String!
-    var APIcall = String()
     var id = String()
     var evoChainURL = String()
     var totalMoveSet = [[String:Any]]()
@@ -119,7 +90,63 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var tableViewHeight: NSLayoutConstraint!
     @IBOutlet weak var tableView: UITableView!
     
+    @IBOutlet weak var favIcon: UIButton!
     //@IBOutlet weak var scrollView: UIScrollView!
+    
+    
+    func createFav(_name: String, _id: Int) {
+        let newPokemon = FavPokemon(context: context)
+        newPokemon.name = _name
+        newPokemon.id = Int64(_id)
+        
+        do {
+            try context.save()
+            //getAllFavs()
+            
+        } catch {
+            print("couldn't save!")
+        }
+    }
+    
+    func deleteFav(item: FavPokemon) {
+        
+        context.delete(item)
+        
+        do {
+            try context.save()
+            
+        } catch {
+            print("couldn't save!")
+        }
+        
+    }
+    
+    func exists(name: String) -> (Bool) {
+        let fetchOne = NSFetchRequest<FavPokemon>(entityName: "FavPokemon")
+        fetchOne.fetchLimit = 1
+        fetchOne.predicate = NSPredicate(format: "name == %@", name)
+        
+        do {
+            let count = try context.count(for: fetchOne)
+            if count > 0 {
+                print("It exists!")
+                return true
+            } else {
+                print("No dice...")
+                return false
+            }
+        } catch let error as NSError{
+            print("Couldn't fetch. \(error)")
+            return false
+        }
+    }
+    
+    @IBAction func addFav(_ sender: Any) {
+        
+
+        createFav(_name: formattedName, _id: Int(id)!)
+    }
+    
     func APICall(_ a : String, complete: @escaping ([String:Any])->()) {
         var result = [String:Any]()
         let url1 = URL(string: a)!
@@ -145,8 +172,6 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
             layer.startPoint = CGPoint(x: 0, y: 0.5)
             layer.endPoint = CGPoint(x: 0.5, y: 0)
             layer.colors = colors
- 
-
             return layer
         }
     
@@ -155,7 +180,8 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         let capType = a.prefix(1).uppercased() + a.lowercased().dropFirst()
         self.typeButton.titleLabel?.text = capType
         self.typeButton.setTitle(capType, for: .normal)
-        self.typeButton.backgroundColor = self.typeColors[a]
+        
+        self.typeButton.backgroundColor = typeColors[a]
         self.typeButton.layer.cornerRadius = 8
         self.typeButton.titleLabel?.layer.shadowColor = UIColor.black.cgColor
         self.typeButton.titleLabel?.layer.shadowOffset = CGSize(width: -0.15, height: 0.5)
@@ -187,6 +213,8 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        exists(name: formattedName)
+        
         tableView.delegate = self
         tableView.dataSource = self
         
@@ -213,6 +241,11 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         topColor.layer.shadowRadius = 7
         topColor.layer.shadowOpacity = 1
         topColor.layer.shadowOffset = CGSize.init(width: 0, height: 7)
+        
+        
+        if exists(name: formattedName) {
+            favIcon.setImage(UIImage(systemName: "star.fill"), for: .normal)
+        }
 
 
 
@@ -280,13 +313,13 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
             
             let color = (theResponse["color"] as! [String: Any])["name"] as! String
             
-            self.topColor.backgroundColor = self.colors[color]
-            self.hpBar.progressTintColor = self.colors[color]!
-            self.attackBar.progressTintColor = self.colors[color]!
-            self.defenseBar.progressTintColor = self.colors[color]!
-            self.spAtkBar.progressTintColor = self.colors[color]!
-            self.spDefBar.progressTintColor = self.colors[color]!
-            self.speedBar.progressTintColor = self.colors[color]!
+            self.topColor.backgroundColor = self.pokemonColors[color]
+            self.hpBar.progressTintColor = self.pokemonColors[color]!
+            self.attackBar.progressTintColor = self.pokemonColors[color]!
+            self.defenseBar.progressTintColor = self.pokemonColors[color]!
+            self.spAtkBar.progressTintColor = self.pokemonColors[color]!
+            self.spDefBar.progressTintColor = self.pokemonColors[color]!
+            self.speedBar.progressTintColor = self.pokemonColors[color]!
         }
     }
 

@@ -11,35 +11,22 @@ import AlamofireImage
 
 class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 
-    var isMenuActive = false
-    let menuTable = UITableView() //for side menu
+    var isMenuActive = false //boolean to control side menu
+    let menuTable = UITableView() //tableview for side menu
     var pokemon = [[String:Any]]() //dictionary that stores URL + pokemon names
     var secondary = [[String:Any]]() //duplicate of pokemon to use search feature
     var picString = String() //string representing pokemon image
+    
     @IBOutlet weak var pokeContent: UIView!
     @IBOutlet weak var tableView: UITableView! //for pokemon
     @IBOutlet weak var searchBar: UISearchBar!
     
-
-    let gens = ["R/B/Y", "G/S/C", "R/S/E", "D/P", "Plat.", "HG/SS", "B/W", "B2/W2"]
-    let version_groups = ["red-blue", "yellow", "gold-silver", "crystal", "ruby-sapphire", "emerald", "firered-leafgreen", "diamond-pearl", "platinum", "heartgold-soulsilver", "black-white", "black-2-white-2" , "x-y", "omega-ruby-alpha-sapphire", "sun-moon", "ultra-sun-ultra-moon"]
-    let typesArray = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy"]
-    let menuContent = [
-        ["Gen I", "Gen II", "Gen III", "Gen IV", "Gen V", "Gen VI", "Gen VII"],
-        ["red-blue", "yellow", "gold-silver", "crystal", "ruby-sapphire", "emerald", "firered-leafgreen", "diamond-pearl", "platinum", "heartgold-soulsilver", "black-white", "black-2-white-2" , "x-y", "omega-ruby-alpha-sapphire", "sun-moon", "ultra-sun-ultra-moon"],
-        ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy"]]
-    let menuTitles = ["Generations", "Game Versions", "Types"]
+    let menuContent = dict.init().menuContent
+    let menuTitles = dict.init().menuTitles
+    let gens = dict.init().gens
+    let typesArray = dict.init().typesArray
     
-    let genLookup = [
-        "R/B/Y" : "https://pokeapi.co/api/v2/pokedex/1/",
-        "G/S/C" : "https://pokeapi.co/api/v2/pokedex/3/",
-        "R/S/E" : "https://pokeapi.co/api/v2/pokedex/4/",
-        "D/P" : "https://pokeapi.co/api/v2/pokedex/5/",
-        "Plat." : "https://pokeapi.co/api/v2/pokedex/6/",
-        "HG/SS" : "https://pokeapi.co/api/v2/pokedex/7/",
-        "B/W" : "https://pokeapi.co/api/v2/pokedex/8/",
-        "B2/W2" : "https://pokeapi.co/api/v2/pokedex/9/",
-    ]
+
     //array of integer ranges to represent which generation to filter by
     let dexEntryRanges = [1..<151, 152..<251, 252..<386, 387..<493, 494..<649, 650..<722, 722..<809]
     
@@ -315,21 +302,21 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             cell.digiPic.layer.magnificationFilter = CALayerContentsFilter.nearest
             //cell.digiPic.backgroundColor = UIColor.red
             
-            APICall("https://pokeapi.co/api/v2/pokemon/\(localDexNumber)") {response in
-                let types = response["types"] as! [[String:Any]]
-                var type1 = String()
-                var type2 = String()
-                
-                if types.count == 2 {
-                    type1 = ((types[0] as! [String:Any])["type"] as! [String:Any])["name"] as! String
-                    type2 = ((types[1] as! [String:Any])["type"] as! [String:Any])["name"] as! String
-                } else {
-                    type2 = ((types[0] as! [String:Any])["type"] as! [String:Any])["name"] as! String
-                }
-                cell.type1.text = type1
-                cell.type2.text = type2
-
-            }
+//            APICall("https://pokeapi.co/api/v2/pokemon/\(localDexNumber)") {response in
+//                let types = response["types"] as! [[String:Any]]
+//                var type1 = String()
+//                var type2 = String()
+//                
+//                if types.count == 2 {
+//                    type1 = ((types[0])["type"] as! [String:Any])["name"] as! String
+//                    type2 = ((types[1])["type"] as! [String:Any])["name"] as! String
+//                } else {
+//                    type2 = ((types[0])["type"] as! [String:Any])["name"] as! String
+//                }
+//                cell.type1.text = type1
+//                cell.type2.text = type2
+//
+//            }
         
             cell.digiLevel.text = String(format: "%03d", localDexNumber)
 
