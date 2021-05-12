@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 import CoreData
 
 class favPokemonController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -26,7 +27,6 @@ class favPokemonController: UIViewController, UITableViewDelegate, UITableViewDa
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Favorite Pokemon"
         favtableView.delegate = self
         favtableView.dataSource = self
         
@@ -59,6 +59,10 @@ class favPokemonController: UIViewController, UITableViewDelegate, UITableViewDa
         let model = models[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "PokeCell") as! PokeCell
         cell.digiName.text = model.name
+        let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(model.id).png"
+        let photoURL = URL(string: picstring)
+        cell.digiPic.af.setImage(withURL: photoURL!)
+        cell.digiPic.layer.magnificationFilter = CALayerContentsFilter.nearest
         cell.digiLevel.text = String(model.id)
         return cell
     }

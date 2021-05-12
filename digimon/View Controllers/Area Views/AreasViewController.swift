@@ -36,6 +36,11 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
         tableView.dataSource = self
         tableView.delegate = self
         
+        let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
+        let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00)
+        let array = [blue.cgColor, green.cgColor]
+        view.layer.insertSublayer(dict.init().gradient(frame: view.bounds, colors:array ), at:0)
+        
         let contentHeight = scrollView.bounds.height
         let contentWidth = scrollView.bounds.width * 5
         scrollView.contentSize = CGSize(width: contentWidth, height: contentHeight)
@@ -50,10 +55,10 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
             let frame = CGRect(x: offset, y: 0, width: view.bounds.width, height: 300)
             
             let imgGradient = CAGradientLayer()
-            imgGradient.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 300)
+            imgGradient.frame = scrollView.bounds
             let customColor = UIColor(red: 0.24, green: 0.25, blue: 0.37, alpha: 1.00)
             
-            imgGradient.colors = [UIColor.clear.cgColor, customColor.cgColor]
+            imgGradient.colors = [UIColor.white.cgColor, UIColor.clear.cgColor]
             imgGradient.locations = [0, 0.9]
             
             
@@ -61,8 +66,12 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
             iView.image = imageArray[index]
             iView.clipsToBounds = true
             iView.contentMode = .scaleToFill
-            iView.layer.insertSublayer(imgGradient, at: 0)
+            iView.backgroundColor = UIColor.clear
+            iView.layer.mask = imgGradient
             scrollView.addSubview(iView)
+
+           
+            
 
             offset += subviewWidth
         }
@@ -100,7 +109,7 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
         
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "MainAreaCell") as! MainAreaCell
-            cell.backgroundColor = UIColor(red: 0.24, green: 0.25, blue: 0.37, alpha: 1.00)
+            //cell.backgroundColor = UIColor(red: 0.24, green: 0.25, blue: 0.37, alpha: 1.00)
             cell.areaName?.text = formatName(string: areas[indexPath.section].title)
             return cell
         } else { //this is one of the inner location cells

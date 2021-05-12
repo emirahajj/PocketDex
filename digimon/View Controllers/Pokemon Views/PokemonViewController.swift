@@ -295,7 +295,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             let name = (mypoke["pokemon_species"] as! [String:Any])["name"] as! String //name of pokemon
             let localDexNumber = mypoke["entry_number"] as! Int
             let cellPicString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(localDexNumber).png"
-            //let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(localDexNumber).png"
+
             let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(localDexNumber).png"
             let photoURL = URL(string: cellPicString)
             cell.digiPic.af.setImage(withURL: photoURL!)

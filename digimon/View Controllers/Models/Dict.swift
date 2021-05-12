@@ -72,4 +72,13 @@ struct dict {
         "B/W" : "https://pokeapi.co/api/v2/pokedex/8/",
         "B2/W2" : "https://pokeapi.co/api/v2/pokedex/9/",
     ]
+    
+    func gradient(frame:CGRect, colors:[CGColor]) -> CAGradientLayer {
+            let layer = CAGradientLayer()
+            layer.frame = frame
+            layer.startPoint = CGPoint(x: 0, y: 1)
+            layer.endPoint = CGPoint(x: 0, y: 0)
+            layer.colors = colors
+            return layer
+        }
 }
