@@ -121,30 +121,34 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
     
-    func exists(name: String) -> (Bool) {
+    func exists(name: String) -> [FavPokemon] {
         let fetchOne = NSFetchRequest<FavPokemon>(entityName: "FavPokemon")
         fetchOne.fetchLimit = 1
         fetchOne.predicate = NSPredicate(format: "name == %@", name)
+        var count = [FavPokemon]()
         
         do {
-            let count = try context.count(for: fetchOne)
-            if count > 0 {
-                print("It exists!")
-                return true
-            } else {
-                print("No dice...")
-                return false
-            }
+            count = try context.fetch(fetchOne)
         } catch let error as NSError{
             print("Couldn't fetch. \(error)")
-            return false
         }
+        return count
     }
     
     @IBAction func addFav(_ sender: Any) {
+        if exists(name: formattedName).count > 0{
+            //if it's already favorited, delete it and hollow out the button
+            let itemToDelete = exists(name: formattedName)
+            favIcon.setImage(UIImage(systemName: "star"), for: .normal)
+            //how to delete tho?
+            deleteFav(item: itemToDelete[0])
+        }
+        else {
+            //its not a favorite, create a fav then fill in the button
+            favIcon.setImage(UIImage(systemName: "star.fill"), for: .normal)
+            createFav(_name: formattedName, _id: Int(id)!)
+        }
         
-
-        createFav(_name: formattedName, _id: Int(id)!)
     }
     
     func APICall(_ a : String, complete: @escaping ([String:Any])->()) {
@@ -243,7 +247,7 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         topColor.layer.shadowOffset = CGSize.init(width: 0, height: 7)
         
         
-        if exists(name: formattedName) {
+        if exists(name: formattedName).count > 0 {
             favIcon.setImage(UIImage(systemName: "star.fill"), for: .normal)
         }
 

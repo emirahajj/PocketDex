@@ -14,16 +14,10 @@ struct cellData {
     var title = String()
     var sectionData = [String]()
 }
-//struct innerData {
-//    var opened = Bool()
-//    var title = String()
-//    var sectionData = [String]()
-//}
 
 class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet weak var bagImage: UIImageView!
-//    @IBOutlet weak var segControl: UISegmentedControl!
     @IBOutlet weak var tableView: UITableView!
     
     @IBOutlet weak var imageView: UIImageView!
