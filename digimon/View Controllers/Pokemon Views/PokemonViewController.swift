@@ -16,6 +16,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     var pokemon = [[String:Any]]() //dictionary that stores URL + pokemon names
     var secondary = [[String:Any]]() //duplicate of pokemon to use search feature
     var picString = String() //string representing pokemon image
+    let defaults = UserDefaults.standard
     
     @IBOutlet weak var pokeContent: UIView!
     @IBOutlet weak var tableView: UITableView! //for pokemon
@@ -25,6 +26,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     let menuTitles = dict.init().menuTitles
     let gens = dict.init().gens
     let typesArray = dict.init().typesArray
+    let versionGroups = dict.init().version_groups
     
 
     //array of integer ranges to represent which generation to filter by
@@ -241,13 +243,13 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         switch tableView {
         case menuTable:
             switch indexPath.section {
-            //generations
-            case 0:
+            case 0: //generations--adds range to the array to query the master pokemon list with
                 
                 filterRanges.insert(dexEntryRanges[indexPath.row])
-
-            //game versions
-            case 2:
+            case 1: //game versions
+                defaults.set(versionGroups[indexPath.row], forKey: "versionGroup")
+            
+            case 2: //types
                 searchType = typesArray[indexPath.row]
 //                let num = String(indexPath.row + 1)
                 APICall("https://pokeapi.co/api/v2/type/\(searchType)"){response in
