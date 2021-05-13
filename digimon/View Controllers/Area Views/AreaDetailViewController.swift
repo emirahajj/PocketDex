@@ -52,12 +52,35 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
         APICall("https://pokeapi.co/api/v2/location-area/\(areaName)/"){theResponse in
             print("hey")
             //print(theResponse)
-            self.pokemon_encounters = theResponse["pokemon_encounters"] as! [[String:Any]]
+            //self.pokemon_encounters = theResponse["pokemon_encounters"] as! [[String:Any]]
+            
+            let allEncounters = theResponse["pokemon_encounters"] as! [[String:Any]]
+            
+            
+            let filteredByVersion = allEncounters.filter({ (value:[String : Any]) -> Bool in
+                
+                let versionDetails = (value["version_details"]) as! [[String:Any]]
+                
+                for version in versionDetails {
+                    let versionName = (version["version"] as! [String:Any])["name"] as! String
+                    let truth = (dict.init().gameVersion2VersionGroup[self.versionGroup]?.contains(versionName))!
+                    if (truth){
+                        return true
+                    }
+                }
+                return (false)
+                 
+            })
+            
+            self.pokemon_encounters = filteredByVersion
+            
             //self.version_details = theResponse["version_details"] as! [[String:Any]]
             print(self.pokemon_encounters)
             self.tableView.reloadData()
 
         }
+        
+        
         
         print(defaults.object(forKey: "versionGroup") as! String) //able to print default version group
         
@@ -97,18 +120,18 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
         let cell = tableView.dequeueReusableCell(withIdentifier: "EncounterCell") as! EncounterCell
         let versionDetails = (pokemon_encounters[indexPath.section])["version_details"] as! [[String:Any]]
         //another filter step here afterVersionDetails
-        
-        let filteredArray = ((pokemon_encounters[indexPath.section])["version_details"] as! [[String:Any]]).filter({ (value:[String : Any]) -> Bool in
-            
+
+        let filteredArray = (versionDetails).filter({ (value:[String : Any]) -> Bool in
+
             let name = (value["version"] as! [String:Any])["name"] as! String
             //print(name)
-            
+
             let truth = dict.init().gameVersion2VersionGroup[versionGroup]?.contains(name)
 
             return (truth!)
-             
+
         })
-        
+
         
         let cellInfo = filteredArray[indexPath.row]
         let version = (cellInfo["version"] as! [String:Any])["name"] as! String
