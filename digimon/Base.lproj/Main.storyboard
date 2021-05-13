@@ -446,6 +446,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="mnC-2Q-xSQ"/>
                     <connections>
+                        <outlet property="locationName" destination="CtZ-dW-Lmi" id="Aaa-K6-Cgz"/>
                         <outlet property="tableView" destination="GZE-IX-JPi" id="Xj1-wK-oqZ"/>
                     </connections>
                 </viewController>
@@ -1085,8 +1086,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="bag" catalog="system" width="128" height="128"/>
         <image name="bag" width="327" height="320"/>
+        <image name="bag" catalog="system" width="128" height="128"/>
         <image name="bag.fill" catalog="system" width="128" height="128"/>
         <image name="machines" width="100" height="100"/>
         <image name="poke.png" width="860" height="903"/>

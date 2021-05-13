@@ -70,6 +70,24 @@ struct dict {
 //        "ultra-sun-ultra-moon": ["alola"]
     ]
     
+    let gameVersion2VersionGroup = [
+        "red-blue": ["red", "blue"],
+        "yellow": ["yellow"],
+        "firered-leafgreen": ["firered", "leafgreen"],
+        "gold-silver": ["gold", "silver"],
+        "crystal": ["crystal"],
+        "heartgold-soulsilver": ["heartgold", "soulsilver"],
+        "ruby-sapphire": ["ruby", "sapphire"],
+        "omega-ruby-alpha-sapphire": ["omega-ruby", "alpha-sapphire"],
+        "emerald": ["emerald"],
+        "diamond-pearl": ["diamond", "pearl"],
+        "platinum": ["platinum"],
+        "black-white": ["black", "white"],
+        "black-2-white-2": ["black-2", "white-2"],
+        "x-y": ["x", "y"],
+    
+    ]
+    
     //all pokemon types
     let typesArray = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy"]
     

@@ -10,10 +10,12 @@ import UIKit
 class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     
+    @IBOutlet weak var locationName: UILabel!
     @IBOutlet weak var tableView: UITableView!
     
     let defaults = UserDefaults.standard
     var areaName = String()
+    var versionGroup = String()
     
     var version_details = [[String:Any]]()
     var pokemon_encounters = [[String:Any]]()
@@ -39,6 +41,10 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        locationName.text = areaName
+        versionGroup = defaults.object(forKey: "versionGroup") as! String
+
+        
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -53,7 +59,7 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
 
         }
         
-        print(defaults.object(forKey: "versionGroup") as! String) //able to print default
+        print(defaults.object(forKey: "versionGroup") as! String) //able to print default version group
         
 
 
@@ -61,11 +67,25 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
         //should filter out here tha matches game version
-        return ((pokemon_encounters[section])["version_details"] as! [[String:Any]]).count
+        
+        let filteredArray = ((pokemon_encounters[section])["version_details"] as! [[String:Any]]).filter({ (value:[String : Any]) -> Bool in
+            
+            let name = (value["version"] as! [String:Any])["name"] as! String
+            print(name)
+            
+            let truth = dict.init().gameVersion2VersionGroup[versionGroup]?.contains(name)
+
+            return (truth!)
+             
+        })
+    
+        return (filteredArray).count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
+        //maybe another filter here to filter out sections that have 1 or more pkmn
         return pokemon_encounters.count
     }
     
@@ -76,7 +96,21 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "EncounterCell") as! EncounterCell
         let versionDetails = (pokemon_encounters[indexPath.section])["version_details"] as! [[String:Any]]
-        let cellInfo = versionDetails[indexPath.row]
+        //another filter step here afterVersionDetails
+        
+        let filteredArray = ((pokemon_encounters[indexPath.section])["version_details"] as! [[String:Any]]).filter({ (value:[String : Any]) -> Bool in
+            
+            let name = (value["version"] as! [String:Any])["name"] as! String
+            //print(name)
+            
+            let truth = dict.init().gameVersion2VersionGroup[versionGroup]?.contains(name)
+
+            return (truth!)
+             
+        })
+        
+        
+        let cellInfo = filteredArray[indexPath.row]
         let version = (cellInfo["version"] as! [String:Any])["name"] as! String
         //let maxChance = cellInfo["max_chance"] as! String
         let encounterDetails = cellInfo["encounter_details"] as! [[String:Any]]
