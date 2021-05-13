@@ -50,6 +50,26 @@ struct dict {
     //version groups
     let version_groups = ["red-blue", "yellow", "gold-silver", "crystal", "ruby-sapphire", "emerald", "firered-leafgreen", "diamond-pearl", "platinum", "heartgold-soulsilver", "black-white", "black-2-white-2" , "x-y", "omega-ruby-alpha-sapphire", "sun-moon", "ultra-sun-ultra-moon"]
     
+    
+    let versionGroupLocationLookup = [
+        "red-blue": ["kanto"],
+        "yellow": ["kanto"],
+        "firered-leafgreen": ["kanto"],
+        "gold-silver": ["kanto", "johto"],
+        "crystal": ["kanto", "johto"],
+        "heartgold-soulsilver": ["kanto", "johto"],
+        "ruby-sapphire": ["hoenn"],
+        "omega-ruby-alpha-sapphire": ["hoenn"],
+        "emerald": ["hoenn"],
+        "diamond-pearl": ["sinnoh"],
+        "platinum": ["sinnoh"],
+        "black-white": ["unova"],
+        "black-2-white-2": ["unova"],
+        "x-y": ["kalos"],
+//        "sun-moon": ["alola"],
+//        "ultra-sun-ultra-moon": ["alola"]
+    ]
+    
     //all pokemon types
     let typesArray = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy"]
     

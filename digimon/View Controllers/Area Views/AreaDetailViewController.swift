@@ -13,6 +13,7 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBOutlet weak var tableView: UITableView!
     
     let defaults = UserDefaults.standard
+    var areaName = String()
     
     var version_details = [[String:Any]]()
     var pokemon_encounters = [[String:Any]]()
@@ -41,8 +42,8 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
         
         tableView.delegate = self
         tableView.dataSource = self
-        
-        APICall("https://pokeapi.co/api/v2/location-area/295/"){theResponse in
+        print(areaName)
+        APICall("https://pokeapi.co/api/v2/location-area/\(areaName)/"){theResponse in
             print("hey")
             //print(theResponse)
             self.pokemon_encounters = theResponse["pokemon_encounters"] as! [[String:Any]]
@@ -60,7 +61,8 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        //should filter out here tha matches game version
+        return ((pokemon_encounters[section])["version_details"] as! [[String:Any]]).count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -68,11 +70,26 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return ((pokemon_encounters[section] as! [String:Any])["pokemon"] as! [String:Any])["name"] as! String
+        return ((pokemon_encounters[section])["pokemon"] as! [String:Any])["name"] as! String
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "EncounterCell") as! EncounterCell
+        let versionDetails = (pokemon_encounters[indexPath.section])["version_details"] as! [[String:Any]]
+        let cellInfo = versionDetails[indexPath.row]
+        let version = (cellInfo["version"] as! [String:Any])["name"] as! String
+        //let maxChance = cellInfo["max_chance"] as! String
+        let encounterDetails = cellInfo["encounter_details"] as! [[String:Any]]
+        let minLevel = (encounterDetails[0])["min_level"] as! Int
+        let chance = (encounterDetails[0])["chance"] as! Int
+        let maxLevel = (encounterDetails[0])["max_level"] as! Int
+        let method = ((encounterDetails[0])["method"] as! [String:Any])["name"] as! String
+
+        cell.versionLabel.text = version
+        cell.chanceAmt.text = String(chance)
+        cell.method.text = method
+        cell.minLevelAmt.text = String(minLevel)
+        cell.maxLevelAmt.text = String(maxLevel)
         return cell
     }
     

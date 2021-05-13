@@ -15,14 +15,28 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var regionName: UILabel!
     let segControl = UISegmentedControl()
-
+    let defaults = UserDefaults.standard
     
-    var imageArray : [UIImage] = [UIImage(named: "kanto.png")!, UIImage(named: "johto.png")!, UIImage(named: "hoenn.png")!, UIImage(named: "sinnoh.png")!, UIImage(named: "unova.png")!]
+    var imageArray = [UIImage]()
     
-    let nameArray = ["kanto", "johto", "hoenn", "sinnoh", "unova"]
+    var nameArray = [String]()
     
     var areas = [cellData]()
     var subcategories : [String] = []
+    
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(false)
+//        let gameVersion = defaults.object(forKey: "versionGroup") as! String
+//        nameArray = dict.init().versionGroupLocationLookup[gameVersion]!
+//        print(gameVersion)
+//        imageArray = nameArray.map { UIImage(named: "\($0).png")!}
+//        print(imageArray)
+//        regionName.text = nameArray[segControl.selectedSegmentIndex].capitalized
+//        fetchAreas(self)
+//
+//
+//
+//    }
 
     
 
@@ -30,8 +44,18 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
     //put in a single view that will hold everything inside the scrollview and add the imageViews to that view
     
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(false)
+        
+        segControl.removeAllSegments()
+        
+        
+        let gameVersion = defaults.object(forKey: "versionGroup") as! String
+        nameArray = dict.init().versionGroupLocationLookup[gameVersion]!
+        print(gameVersion)
+        imageArray = nameArray.map { UIImage(named: "\($0).png")!}
+        print(imageArray)
+        
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -42,7 +66,7 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
         view.layer.insertSublayer(dict.init().gradient(frame: view.bounds, colors:array ), at:0)
         
         let contentHeight = scrollView.bounds.height
-        let contentWidth = scrollView.bounds.width * 5
+        let contentWidth = scrollView.bounds.width * CGFloat(imageArray.count)
         scrollView.contentSize = CGSize(width: contentWidth, height: contentHeight)
         scrollView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 300)
 //        scrollView.backgroundColor = UIColor.red
@@ -69,10 +93,6 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
             iView.backgroundColor = UIColor.clear
             iView.layer.mask = imgGradient
             scrollView.addSubview(iView)
-
-           
-            
-
             offset += subviewWidth
         }
         print(segControl.numberOfSegments)
@@ -115,6 +135,7 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
         } else { //this is one of the inner location cells
             let cell = tableView.dequeueReusableCell(withIdentifier: "InnterAreaCell") as! InnterAreaCell
             cell.innerAreaName.text = formatName(string: areas[indexPath.section].sectionData[indexPath.row - 1])
+            cell.id = areas[indexPath.section].sectionData[indexPath.row - 1]
             return cell
 
         }
@@ -201,7 +222,7 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
         
     }
     @IBAction func onLeftSwipe(_ sender: Any) {
-        if segControl.selectedSegmentIndex < 4 {
+        if segControl.selectedSegmentIndex < imageArray.count - 1 {
             segControl.selectedSegmentIndex += 1
             regionName.text = nameArray[segControl.selectedSegmentIndex].capitalized
             let newOffset = CGPoint(x: scrollView.contentOffset.x + view.frame.width, y: scrollView.contentOffset.y)
@@ -224,14 +245,21 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
 
     }
     
-    /*
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+     //In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+//         Get the new view controller using segue.destination.
+//         Pass the selected object to the new view controller.
+        //the inner area cell gets triggers the segue
+        
+        //ensuring the sender is the type of cell we want
+        let cell = sender as! InnterAreaCell
+        
+        let detailsViewController =  segue.destination as! AreaDetailViewController
+        
+        //setting the movie variable in the MovieDetailsViewController file to the movie we just extracted
+        detailsViewController.areaName = cell.id
+        
     }
-    */
-
 }

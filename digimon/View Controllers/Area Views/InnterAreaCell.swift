@@ -11,6 +11,8 @@ class InnterAreaCell: UITableViewCell {
 
     @IBOutlet weak var innerAreaName: UILabel!
     
+    var id = String()
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

@@ -141,6 +141,7 @@
 			children = (
 				2DBCF3A225D71F84009E0174 /* DexEntryController.swift */,
 				2D7C9B4E25CCEFE400A94181 /* PokemonViewController.swift */,
+				2D7C9B9025CCF24A00A94181 /* PokeCell.swift */,
 				2DADC0DA264A0F1300E5C59A /* favPokemonController.swift */,
 			);
 			path = "Pokemon Views";
@@ -150,6 +151,8 @@
 			isa = PBXGroup;
 			children = (
 				2D6BEBA1263E2534006FE4E1 /* AlertController.swift */,
+				2D08509D2627539A0028E533 /* ItemCell.swift */,
+				2D3B57AF2633A67A0031CDD6 /* InnerItemCell.swift */,
 				2DAFDF72260FA74F00325984 /* ItemsViewController.swift */,
 			);
 			path = "Items Views";
@@ -159,6 +162,9 @@
 			isa = PBXGroup;
 			children = (
 				2D7F882B2638B45F0004AFDF /* AreasViewController.swift */,
+				2DD1E73D263B6DEB000669DD /* MainAreaCell.swift */,
+				2D6CBC28264B8CBF006E2892 /* EncounterCell.swift */,
+				2DD1E742263B6E06000669DD /* InnterAreaCell.swift */,
 				2D6CBC17264B7A4F006E2892 /* AreaDetailViewController.swift */,
 			);
 			path = "Area Views";
@@ -197,7 +203,6 @@
 				2D7C9B5525CCEFE500A94181 /* LaunchScreen.storyboard */,
 				2D7C9B5825CCEFE500A94181 /* Info.plist */,
 				2D7C9B5325CCEFE500A94181 /* Assets.xcassets */,
-				2D6CBC28264B8CBF006E2892 /* EncounterCell.swift */,
 			);
 			path = digimon;
 			sourceTree = "<group>";
@@ -235,11 +240,6 @@
 			isa = PBXGroup;
 			children = (
 				2D6BEBA9263E598D006FE4E1 /* MoveCell.swift */,
-				2D7C9B9025CCF24A00A94181 /* PokeCell.swift */,
-				2D08509D2627539A0028E533 /* ItemCell.swift */,
-				2D3B57AF2633A67A0031CDD6 /* InnerItemCell.swift */,
-				2DD1E73D263B6DEB000669DD /* MainAreaCell.swift */,
-				2DD1E742263B6E06000669DD /* InnterAreaCell.swift */,
 				2DAED01226425617005AD659 /* SideMenuCell.swift */,
 				2DD21CD3264847A000AD4414 /* Dict.swift */,
 			);
