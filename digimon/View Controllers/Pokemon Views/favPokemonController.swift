@@ -14,8 +14,6 @@ class favPokemonController: UIViewController, UITableViewDelegate, UITableViewDa
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private var models = [FavPokemon]()
-
-    
     @IBOutlet weak var favtableView: UITableView!
     
     
@@ -29,7 +27,7 @@ class favPokemonController: UIViewController, UITableViewDelegate, UITableViewDa
         super.viewDidLoad()
         favtableView.delegate = self
         favtableView.dataSource = self
-        
+        view.addGradient(frame: view.frame)
         
         //createFav(_name: "Bulbasair", _id: 001)
 
@@ -47,8 +45,6 @@ class favPokemonController: UIViewController, UITableViewDelegate, UITableViewDa
             print("nice try")
         }
     }
-    
-
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

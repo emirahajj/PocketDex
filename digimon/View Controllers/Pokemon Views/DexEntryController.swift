@@ -9,33 +9,16 @@ import UIKit
 import Alamofire
 import CoreData
 
-extension UIProgressView{
-
-    override open func awakeFromNib() {
-        super.awakeFromNib()
-        changeStyles()
-    }
-    func changeStyles(){
-        self.transform = CGAffineTransform(scaleX: 1, y: 2)
-        self.layer.cornerRadius = 5
-        self.layer.sublayers![1].cornerRadius = 5
-        self.clipsToBounds = true
-        self.subviews[1].clipsToBounds = true
-        self.trackTintColor = UIColor.darkGray.withAlphaComponent(0.4)
-    }
-}
-
 class DexEntryController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private var models = [FavPokemon]()
-
-
+    
+    let APImanager = APIHelper()
     let pokemonColors = dict.init().colors
     let typeColors = dict.init().typeColors
     
-    //I want it to display: pokemon name, evolution (+ levels), moveset
     
     @IBOutlet weak var scrollView: UIScrollView!
     
@@ -86,12 +69,23 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var secondaryStack: UIStackView!
     
+    
     @IBOutlet weak var viewHeight: NSLayoutConstraint!
-    @IBOutlet weak var tableViewHeight: NSLayoutConstraint!
+    
     @IBOutlet weak var tableView: UITableView!
     
+    @IBOutlet weak var tableViewHeight: NSLayoutConstraint!
     @IBOutlet weak var favIcon: UIButton!
     //@IBOutlet weak var scrollView: UIScrollView!
+    
+    override func viewWillLayoutSubviews() {
+        super.updateViewConstraints()
+        self.tableViewHeight?.constant = self.tableView.contentSize.height
+        self.viewHeight?.constant = self.scrollView.contentSize.height
+
+        print("viewHeight ", self.viewHeight?.constant)
+        print("contentSize: ", self.scrollView.contentSize.height)
+    }
     
     
     func createFav(_name: String, _id: Int) {
@@ -151,46 +145,10 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
     
-    func APICall(_ a : String, complete: @escaping ([String:Any])->()) {
-        var result = [String:Any]()
-        let url1 = URL(string: a)!
-        //print("URL: \(url1)")
-        let request = URLRequest(url: url1, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10)
-        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        let task = session.dataTask(with: request) {(data, response, error) in
-            // This will run when the network request returns
-            if let error = error {
-                print(error.localizedDescription)
-            } else if let data = data {
-                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed]) as! [String: Any]
-                result = dataDictionary as [String: Any]
-                complete(result)
-            }
-        }
-        task.resume()
-    }
-    
-    func gradient(frame:CGRect, colors:[CGColor]) -> CAGradientLayer {
-            let layer = CAGradientLayer()
-            layer.frame = frame
-            layer.startPoint = CGPoint(x: 0, y: 0.5)
-            layer.endPoint = CGPoint(x: 0.5, y: 0)
-            layer.colors = colors
-            return layer
-        }
+
     
     //param: lowercase string representing pokemon type
-    func buttonStyle(_ a : String){
-        let capType = a.prefix(1).uppercased() + a.lowercased().dropFirst()
-        self.typeButton.titleLabel?.text = capType
-        self.typeButton.setTitle(capType, for: .normal)
-        
-        self.typeButton.backgroundColor = typeColors[a]
-        self.typeButton.layer.cornerRadius = 8
-        self.typeButton.titleLabel?.layer.shadowColor = UIColor.black.cgColor
-        self.typeButton.titleLabel?.layer.shadowOffset = CGSize(width: -0.15, height: 0.5)
-        self.typeButton.titleLabel!.layer.shadowOpacity = 1.0
-    }
+
     
     func filterMoves() {
         filteredMoveSet = totalMoveSet.filter{object in
@@ -205,28 +163,34 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.reloadData()
         
     }
-    
+    //function run when user taps on another segment
     @IBAction func segTap(_ sender: Any) {
         moveCriteria = moveTriggers[moveSegment.selectedSegmentIndex]
         print(moveTriggers[moveSegment.selectedSegmentIndex])
         filterMoves()
+        //allows whatever is constrained relative to the the bottom of this tableview to be constrained to how many rows are in the tableview
+        self.tableViewHeight?.constant = self.tableView.contentSize.height
+        //self.viewHeight?.constant = self.scrollView.contentSize.height
+        
+        //self.viewWillLayoutSubviews()
+        
+        
         tableView.reloadData()
 
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        scrollView.contentSize.height = 2000
+        //self.viewHeight?.constant = self.scrollView.contentSize.height
+
         
         exists(name: formattedName)
         
         tableView.delegate = self
         tableView.dataSource = self
         
-        
-        let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
-        let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00)
-        let array = [blue.cgColor, green.cgColor]
-        view.layer.insertSublayer(gradient(frame: view.bounds, colors:array ), at:0)
+        view.addGradient(frame: view.bounds)
         
         //set the image
         let url = URL(string: picString)!
@@ -255,12 +219,12 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
 
         
         //first API call to get the stats in the progress bars
-        APICall(pokeURL) {theResponse in
+        APImanager.APICall(pokeURL) {theResponse in
             
             //extract pokemon type and format button
             let types = (((theResponse["types"] as! NSArray)[0] as! [String:Any])["type"] as! [String:Any])
             let type = types["name"] as! String
-            self.buttonStyle(type)
+            self.typeButton.buttonStyle(type)
             
             //setting the number
             self.dexEntryLabel.text = "#" + self.id
@@ -310,7 +274,7 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         let speciesURL = "https://pokeapi.co/api/v2/pokemon-species/\(pokeID)/"
         
         //calls the species URL to get the evolution chain, stats, etc
-        APICall(speciesURL) {theResponse in
+        APImanager.APICall(speciesURL) {theResponse in
             self.evoChainURL = (theResponse["evolution_chain"] as! [String:Any])["url"] as! String
             
             self.getEvoChain(self.evoChainURL)
@@ -394,8 +358,6 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         //adding to view
         firstContainerView.addArrangedSubview(firstImage)
         firstContainerView.addArrangedSubview(label)
-
-
         
         return firstContainerView
     }
@@ -411,7 +373,7 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
 
         
         print(url)
-        self.APICall(url) {evoResponse in
+        self.APImanager.APICall(url) {evoResponse in
             
             let species = (evoResponse["chain"] as! [String:Any])["species"] as! [String:Any]
             

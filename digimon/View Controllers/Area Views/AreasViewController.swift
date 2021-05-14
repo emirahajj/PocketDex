@@ -7,13 +7,16 @@
 
 import UIKit
 
+extension UIView {
+    
+}
+
 class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate {
 
-    
-    
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var regionName: UILabel!
+    
     let segControl = UISegmentedControl()
     let defaults = UserDefaults.standard
     
@@ -24,46 +27,24 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
     var areas = [cellData]()
     var subcategories : [String] = []
     
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(false)
-//        let gameVersion = defaults.object(forKey: "versionGroup") as! String
-//        nameArray = dict.init().versionGroupLocationLookup[gameVersion]!
-//        print(gameVersion)
-//        imageArray = nameArray.map { UIImage(named: "\($0).png")!}
-//        print(imageArray)
-//        regionName.text = nameArray[segControl.selectedSegmentIndex].capitalized
-//        fetchAreas(self)
-//
-//
-//
-//    }
-
-    
-
-    
-    //put in a single view that will hold everything inside the scrollview and add the imageViews to that view
-    
-
+        
+    //utilizing viewDidAppear so that the content refreshes when the user goes back to change the game version
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(false)
+        
+        tableView.dataSource = self
+        tableView.delegate = self
         
         segControl.removeAllSegments()
         
         
         let gameVersion = defaults.object(forKey: "versionGroup") as! String
         nameArray = dict.init().versionGroupLocationLookup[gameVersion]!
-        print(gameVersion)
         imageArray = nameArray.map { UIImage(named: "\($0).png")!}
-        print(imageArray)
         
         
-        tableView.dataSource = self
-        tableView.delegate = self
-        
-        let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
-        let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00)
-        let array = [blue.cgColor, green.cgColor]
-        view.layer.insertSublayer(dict.init().gradient(frame: view.bounds, colors:array ), at:0)
+
+        view.addGradient(frame: view.frame)
         
         let contentHeight = scrollView.bounds.height
         let contentWidth = scrollView.bounds.width * CGFloat(imageArray.count)
@@ -143,13 +124,13 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 0 { //if its a collapsible row
-            if areas[indexPath.section].opened == true {
+        if indexPath.row == 0 { //these are the title rows
+            if areas[indexPath.section].opened == true { //if its open, close it
                 //if it's open, when its clicked, the inner ones go away
                 areas[indexPath.section].opened = false
                 let sections = IndexSet.init(integer: indexPath.section)
                 tableView.reloadSections(sections, with: .none)
-            } else { //it's not already opened, open it and make the API call
+            } else { //if it's closed, make the API call and populate new cells with that response
                 areas[indexPath.section].opened = true
                 
                 let sections = IndexSet.init(integer: indexPath.section)
@@ -167,12 +148,17 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
                         //tableviewdata[indexpath.section].sectionData = [our new aray]
                         let categorieObjects = dataDictionary["areas"] as! [[String:Any]]
                         var categoryNames: [String] = []
-                        for category in categorieObjects {
-//                             let innerSection = innerData(opened: false, title: category["name"] as! String, sectionData: [])
-                            categoryNames.append(category["name"] as! String)
+                        if categorieObjects.count == 0 {
+                            categoryNames.append("Sorry, no pokemon in this area!")
+                        } else {
+                            for category in categorieObjects {
+    //                             let innerSection = innerData(opened: false, title: category["name"] as! String, sectionData: [])
+                                categoryNames.append(category["name"] as! String)
+                            }
                         }
+
                         self.areas[indexPath.section].sectionData = categoryNames
-                        self.tableView.reloadSections(sections, with: .none)
+                        self.tableView.reloadSections(sections, with: .automatic)
                     }
                 }
                 
@@ -221,6 +207,9 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
 
         
     }
+    
+    //only applicable for game versions where the user can explore two regions
+    //i.e. gold/silver/crystal/heartgold/soulsilver
     @IBAction func onLeftSwipe(_ sender: Any) {
         if segControl.selectedSegmentIndex < imageArray.count - 1 {
             segControl.selectedSegmentIndex += 1
@@ -229,10 +218,10 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
             scrollView.setContentOffset(newOffset, animated: true)
         }
         self.fetchAreas(self)
-
     }
     
-    
+    //only applicable for game versions where the user can explore two regions
+    //i.e. gold/silver/crystal/heartgold/soulsilver
     @IBAction func onRightSwipe(_ sender: Any) {
         if segControl.selectedSegmentIndex > 0 {
             segControl.selectedSegmentIndex -= 1
@@ -246,11 +235,21 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
     }
     
     // MARK: - Navigation
+    
+    //some locations don't have any pokemon. So instead of making an API call for every cell and then filtering that response in this view,
+    //when a user taps on a location cell to view all subareas, we let them know there are no pokemon in that area, and prevent the
+    //the segue to the AreaDetailVC
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        let cell = sender as! InnterAreaCell
+        if (cell.id).contains("Sorry,") {
+            return false
+        }
+        return true
+    }
 
-     //In a storyboard-based application, you will often want to do a little preparation before navigation
+    //need to pass the cell id (the name of the location area) to the next view
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//         Get the new view controller using segue.destination.
-//         Pass the selected object to the new view controller.
+
         //the inner area cell gets triggers the segue
         
         //ensuring the sender is the type of cell we want
@@ -258,7 +257,6 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
         
         let detailsViewController =  segue.destination as! AreaDetailViewController
         
-        //setting the movie variable in the MovieDetailsViewController file to the movie we just extracted
         detailsViewController.areaName = cell.id
         
     }
