@@ -988,16 +988,6 @@
                                                     <action selector="addFav:" destination="8FJ-oi-aue" eventType="touchUpInside" id="wnW-yb-rLb"/>
                                                 </connections>
                                             </button>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qU5-WY-5iU">
-                                                <rect key="frame" x="169" y="1392" width="42" height="21"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="42" id="KMB-cF-Sj7"/>
-                                                    <constraint firstAttribute="height" constant="21" id="h8A-Fx-nNn"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
@@ -1008,14 +998,12 @@
                                             <constraint firstItem="ga7-3f-saO" firstAttribute="top" secondItem="bfe-hU-zPb" secondAttribute="top" id="EU9-rp-vuY"/>
                                             <constraint firstItem="V9X-cp-k7H" firstAttribute="top" secondItem="ga7-3f-saO" secondAttribute="bottom" constant="23" id="EnY-U0-1fU"/>
                                             <constraint firstItem="xYe-nT-yNU" firstAttribute="top" secondItem="iqn-Ec-aXj" secondAttribute="bottom" constant="187" id="PC6-2S-Fhz"/>
-                                            <constraint firstItem="qU5-WY-5iU" firstAttribute="top" secondItem="XBG-ow-bBE" secondAttribute="bottom" constant="40" id="Pce-pm-ttm"/>
                                             <constraint firstAttribute="trailing" secondItem="ga7-3f-saO" secondAttribute="trailing" id="ULe-Zr-mby"/>
                                             <constraint firstItem="ga7-3f-saO" firstAttribute="leading" secondItem="bfe-hU-zPb" secondAttribute="leading" id="ZPO-OK-1ae"/>
                                             <constraint firstItem="iqn-Ec-aXj" firstAttribute="top" secondItem="V9X-cp-k7H" secondAttribute="bottom" constant="8" id="cXp-6n-YgK"/>
                                             <constraint firstItem="iqn-Ec-aXj" firstAttribute="centerX" secondItem="bfe-hU-zPb" secondAttribute="centerX" id="dMk-nz-FTo"/>
                                             <constraint firstItem="pJg-es-pSE" firstAttribute="top" secondItem="xYe-nT-yNU" secondAttribute="bottom" constant="8" id="gSN-tg-rKk"/>
                                             <constraint firstItem="TYA-fi-xpD" firstAttribute="centerX" secondItem="bfe-hU-zPb" secondAttribute="centerX" id="hKW-si-gGK"/>
-                                            <constraint firstItem="qU5-WY-5iU" firstAttribute="leading" secondItem="bfe-hU-zPb" secondAttribute="leading" constant="169" id="iTE-dU-ocu"/>
                                             <constraint firstItem="XBG-ow-bBE" firstAttribute="top" secondItem="TYA-fi-xpD" secondAttribute="bottom" constant="46" id="icN-Zp-YRS"/>
                                             <constraint firstAttribute="trailing" secondItem="XBG-ow-bBE" secondAttribute="trailing" constant="22" id="ju1-qo-DZw"/>
                                             <constraint firstItem="pJg-es-pSE" firstAttribute="centerX" secondItem="bfe-hU-zPb" secondAttribute="centerX" id="lPS-ft-e6f"/>
@@ -1099,8 +1087,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="bag" width="327" height="320"/>
         <image name="bag" catalog="system" width="128" height="128"/>
+        <image name="bag" width="327" height="320"/>
         <image name="bag.fill" catalog="system" width="128" height="128"/>
         <image name="machines" width="100" height="100"/>
         <image name="poke.png" width="860" height="903"/>
