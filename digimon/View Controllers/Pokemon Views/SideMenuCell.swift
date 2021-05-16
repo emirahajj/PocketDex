@@ -9,9 +9,10 @@ import UIKit
 
 class SideMenuCell: UITableViewCell {
     
-    var labelText = UILabel() //IB outlets are not connected when you instantiate a VC hence, we need the if let
+    var labelText = UILabel()
 
-
+    @IBOutlet weak var versionLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

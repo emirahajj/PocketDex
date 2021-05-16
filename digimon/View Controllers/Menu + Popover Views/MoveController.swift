@@ -37,7 +37,7 @@ class MoveController: UIViewController, UITableViewDataSource, UITableViewDelega
         frost.frame = view.bounds
         view.insertSubview(frost, at: 0)
         view.backgroundColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.3)
-        cardView.layer.cornerRadius = 15
+        moveTable.layer.cornerRadius = 15
         cardView.layer.shadowColor = UIColor.darkGray.cgColor
         cardView.layer.shadowRadius = 15
         cardView.layer.shadowOpacity = 1.0
@@ -61,14 +61,7 @@ class MoveController: UIViewController, UITableViewDataSource, UITableViewDelega
         moveCriteria = moveTriggers[segControl.selectedSegmentIndex]
         print(moveTriggers[segControl.selectedSegmentIndex])
         filterMoves()
-        //allows whatever is constrained relative to the the bottom of this tableview to be constrained to how many rows are in the tableview
-        //self.moveTable?.constant = self.moveTable.contentSize.height
-        //self.viewHeight?.constant = self.scrollView.contentSize.height
-        
-        //self.viewWillLayoutSubviews()
-        
-        
-        moveTable.reloadData()
+        //moveTable.reloadData()
         
     }
     func filterMoves() {

@@ -88,20 +88,38 @@ struct dict {
         "black-white": ["black", "white"],
         "black-2-white-2": ["black-2", "white-2"],
         "x-y": ["x", "y"],
-    
     ]
+    
+    let dexEntryRanges = [1..<151, 152..<251, 252..<386, 387..<493, 494..<649, 650..<722, 722..<809]
+
+    
+    let versionGroupRanges = [
+        "red-blue": 1..<151,
+        "yellow": 1..<151,
+        "gold-silver": 1..<251,
+        "crystal": 1..<251,
+        "firered-leafgreen": 1..<251,
+        "emerald": 1..<386,
+        "ruby-sapphire": 1..<386,
+        "heartgold-soulsilver": 1..<493,
+        "diamond-pearl": 1..<493,
+        "platinum": 1..<493,
+        "black-white": 1..<649,
+        "black-2-white-2": 1..<649,
+        "omega-ruby-alpha-sapphire":1..<722,
+        "x-y": 1..<722,
+    ]
+
     
     //all pokemon types
     let typesArray = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy"]
     
     //2D array for side menu content
     let menuContent = [
-        ["Gen I", "Gen II", "Gen III", "Gen IV", "Gen V", "Gen VI", "Gen VII"],
-        ["red-blue", "yellow", "gold-silver", "crystal", "ruby-sapphire", "emerald", "firered-leafgreen", "diamond-pearl", "platinum", "heartgold-soulsilver", "black-white", "black-2-white-2" , "x-y", "omega-ruby-alpha-sapphire", "sun-moon", "ultra-sun-ultra-moon"],
         ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy"]]
     
     //section titles for side menu
-    let menuTitles = ["Generations", "Game Versions", "Types"]
+    let menuTitles = ["Types"]
     
     let DexEntryColors = [UIColor(red: 0.06, green: 0.13, blue: 0.15, alpha: 1.00).cgColor, UIColor(red: 0.17, green: 0.33, blue: 0.39, alpha: 1.00).cgColor]
     let mainPokemonColors = [UIColor(red: 0.95, green: 0.53, blue: 0.53, alpha: 1.00).cgColor, UIColor(red: 0.60, green: 0.00, blue: 1.00, alpha: 1.00).cgColor]

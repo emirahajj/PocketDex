@@ -116,6 +116,12 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        //do the filtering here
+        filter()
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //super.view.layoutIfNeeded()
@@ -124,6 +130,9 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         searchBar.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
+        
+        tabBarController?.tabBar.backgroundImage = UIImage(named: "transparent.png")
+        tabBarController?.tabBar.backgroundColor = UIColor(white: 1, alpha: 0.3)
 
         createSideMenu(view: view)
 
@@ -225,22 +234,8 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
         switch tableView {
         case menuTable:
-            switch indexPath.section {
-            //generation toggle
-            case 0:
-                
-                filterRanges.remove(dexEntryRanges[indexPath.row])
-                if filterRanges.count == 0 {
-                    self.secondary = self.pokemon
-                }
-
-            case 2:
-                filterTypes = []
-                self.secondary = self.pokemon
-
-            default:
-                print("not a generation")
-            }
+            filterTypes = []
+            self.secondary = self.pokemon
         default:
              break
         }
@@ -249,26 +244,12 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch tableView {
         case menuTable:
-            switch indexPath.section {
-            case 0: //generations--adds range to the array to query the master pokemon list with
-                
-                filterRanges.insert(dexEntryRanges[indexPath.row])
-            case 1: //game versions
-                defaults.set(versionGroups[indexPath.row], forKey: "versionGroup")
-            
-            case 2: //types
-                searchType = typesArray[indexPath.row]
+            searchType = typesArray[indexPath.row]
 //                let num = String(indexPath.row + 1)
-                APICall("https://pokeapi.co/api/v2/type/\(searchType)"){response in
-                    let pokemonArray = response["pokemon"] as! [[String:Any]]
-                    self.filterTypes = Set(pokemonArray.map { ($0["pokemon"] as! [String:Any])["name"] as! String })
-                    print(self.filterTypes)
-
-                    
-                }
-                
-            default:
-                print("not a generation")
+            APICall("https://pokeapi.co/api/v2/type/\(searchType)"){response in
+                let pokemonArray = response["pokemon"] as! [[String:Any]]
+                self.filterTypes = Set(pokemonArray.map { ($0["pokemon"] as! [String:Any])["name"] as! String })
+                print(self.filterTypes)
             }
         default:
              break
@@ -293,6 +274,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             cell.labelText.centerYAnchor.constraint(equalTo: cell.centerYAnchor).isActive = true
             cell.labelText.centerXAnchor.constraint(equalTo: cell.centerXAnchor).isActive = true
             cell.backgroundColor = UIColor.clear
+//            cell.selectionStyle = .
             
             
 
@@ -362,24 +344,8 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
 
         }
         tableView.reloadData()
-
     }
     
-    
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 2
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return gens.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return gens[row]
-    }
-    
-    
-
     
     @IBAction func buttonTap(_ sender: Any) {
 
@@ -390,15 +356,8 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             self.isMenuActive.toggle()
             self.tableView.isUserInteractionEnabled.toggle()
             if (!self.isMenuActive){
-                
-                //change the filterRanges here
-                //will throw an error if you click on another section that has section that go past
-                
                 //the actual function that does the filtering by generations picked
                 self.filter()
-                
-
-
             }
             
             self.tableView.reloadData()
@@ -409,60 +368,59 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     
     func filter() {
         //there is a generation to fill
-        if (!filterRanges.isEmpty){
-            self.secondary = self.pokemon.filter({ (value:[String : Any]) -> (Bool) in
-                let name = (value["pokemon_species"] as! [String:Any])["name"] as! String
+        let versionGroup = defaults.object(forKey: "versionGroup") as! String
+        self.secondary = self.pokemon.filter({ (value:[String : Any]) -> (Bool) in
+            let name = (value["pokemon_species"] as! [String:Any])["name"] as! String
 
-            
             var isFound = false
             let number = value["entry_number"] as! Int
-            for range in self.filterRanges {
-                //have to or these somehow
-                if range.contains(number) {
+                if dictionary.versionGroupRanges[versionGroup]!.contains(number) {
                     return true
                 }
-                isFound = range.contains(number)
-                
-            }
+                isFound = dictionary.versionGroupRanges[versionGroup]!.contains(number)
+
             return isFound
-            })}
-        //no generation, that means all the filters below it
-        else if (filterRanges.isEmpty) {
-            secondary = pokemon
-        }
+        })
         if (!self.filterTypes.isEmpty){
             self.secondary = self.secondary.filter({ (value:[String : Any]) -> (Bool) in
-                //get name of pokemon currently in that list
-                //then ask if that name is contained within the filterTypes array taht holds the names of all the pokemon of that type
                 let name = (value["pokemon_species"] as! [String:Any])["name"] as! String
                 return self.filterTypes.contains(name)
         })}
+        
+        tableView.reloadData()
+
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         print("i got called")
         
+        if segue.identifier == "toDexView" {
+            let cell = sender as! PokeCell
+
+            //getting the index of that tapped cell
+            let index = tableView.indexPath(for: cell)!
+                    
+            //the url for the pokemon information--remmeber this is just the name +
+            //)
+            var pokeURL = (secondary[index.row]["pokemon_species"] as! [String:Any])["url"] as! String
+            pokeURL = "https://pokeapi.co/api/v2/pokemon/" + pokeURL.dropFirst(42)
+            print(pokeURL)
+
+            //create a variable that represents the viewcontroller we cwant to navigate to
+            let dexViewController = segue.destination as! DexEntryController
+            
+            //need to pass image and url for API call to the next screen
+            dexViewController.pokeURL = pokeURL
+            dexViewController.picString = cell.myPic!
+            dexViewController.formattedName = cell.properName!
+            dexViewController.id = cell.digiLevel.text!
+        } else if segue.identifier == "toVersionSelect" {
+            
+        }
+        
 
         //ensuring the sender is the type of cell we want
-        let cell = sender as! PokeCell
 
-        //getting the index of that tapped cell
-        let index = tableView.indexPath(for: cell)!
-                
-        //the url for the pokemon information--remmeber this is just the name +
-        //)
-        var pokeURL = (secondary[index.row]["pokemon_species"] as! [String:Any])["url"] as! String
-        pokeURL = "https://pokeapi.co/api/v2/pokemon/" + pokeURL.dropFirst(42)
-        print(pokeURL)
-
-        //create a variable that represents the viewcontroller we cwant to navigate to
-        let dexViewController = segue.destination as! DexEntryController
-        
-        //need to pass image and url for API call to the next screen
-        dexViewController.pokeURL = pokeURL
-        dexViewController.picString = cell.myPic!
-        dexViewController.formattedName = cell.properName!
-        dexViewController.id = cell.digiLevel.text!
         
     
     }

@@ -37,6 +37,7 @@
 		2DD21CD4264847A000AD4414 /* Dict.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD21CD3264847A000AD4414 /* Dict.swift */; };
 		2DDED5E8264EDFCA00EDA415 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DDED5E7264EDFCA00EDA415 /* Extensions.swift */; };
 		2DDED5F3264EF28900EDA415 /* APICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DDED5F2264EF28900EDA415 /* APICaller.swift */; };
+		2DEACDA12651805800E09E09 /* GameVersionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEACDA02651805800E09E09 /* GameVersionController.swift */; };
 		59AC7953022D182F94470180 /* Pods_digimon_digimonUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B804A3906EE84B4DC309FB1D /* Pods_digimon_digimonUITests.framework */; };
 		5A9BB2E753CD9C612363ED7D /* Pods_digimonTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 949270C468B6E68888965BF6 /* Pods_digimonTests.framework */; };
 		A3B9726539EB9F26DCFDD9CD /* Pods_digimon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9153CC8FE1022C9C16C44E8A /* Pods_digimon.framework */; };
@@ -96,6 +97,7 @@
 		2DD21CD3264847A000AD4414 /* Dict.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dict.swift; sourceTree = "<group>"; };
 		2DDED5E7264EDFCA00EDA415 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		2DDED5F2264EF28900EDA415 /* APICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICaller.swift; sourceTree = "<group>"; };
+		2DEACDA02651805800E09E09 /* GameVersionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameVersionController.swift; sourceTree = "<group>"; };
 		60C58F67CF2C8C3A945B5A83 /* Pods-digimonTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digimonTests.release.xcconfig"; path = "Target Support Files/Pods-digimonTests/Pods-digimonTests.release.xcconfig"; sourceTree = "<group>"; };
 		6DFB89A6D4E80DFA7A4DE6EE /* Pods-digimon-digimonUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digimon-digimonUITests.release.xcconfig"; path = "Target Support Files/Pods-digimon-digimonUITests/Pods-digimon-digimonUITests.release.xcconfig"; sourceTree = "<group>"; };
 		89B085D61E9E59872AEE7999 /* Pods-digimon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digimon.debug.xcconfig"; path = "Target Support Files/Pods-digimon/Pods-digimon.debug.xcconfig"; sourceTree = "<group>"; };
@@ -154,10 +156,8 @@
 				2DBCF3A225D71F84009E0174 /* DexEntryController.swift */,
 				2D7C9B4E25CCEFE400A94181 /* PokemonViewController.swift */,
 				2D7C9B9025CCF24A00A94181 /* PokeCell.swift */,
-				2D6BEBA9263E598D006FE4E1 /* MoveCell.swift */,
 				2DAED01226425617005AD659 /* SideMenuCell.swift */,
 				2DADC0DA264A0F1300E5C59A /* favPokemonController.swift */,
-				2D8DB2C52650BF14007B99F9 /* MoveController.swift */,
 				2D8DB2CA2650E8E1007B99F9 /* StatsCell.swift */,
 			);
 			path = "Pokemon Views";
@@ -166,7 +166,6 @@
 		2D6CBC20264B8602006E2892 /* Items Views */ = {
 			isa = PBXGroup;
 			children = (
-				2D6BEBA1263E2534006FE4E1 /* AlertController.swift */,
 				2D08509D2627539A0028E533 /* ItemCell.swift */,
 				2D3B57AF2633A67A0031CDD6 /* InnerItemCell.swift */,
 				2DAFDF72260FA74F00325984 /* ItemsViewController.swift */,
@@ -248,12 +247,13 @@
 				2D6CBC1F264B85E2006E2892 /* Pokemon Views */,
 				2D6CBC20264B8602006E2892 /* Items Views */,
 				2D6CBC24264B8611006E2892 /* Area Views */,
-				2DBDA62D26081B050071AB29 /* Models */,
+				2DEACD9F2651802000E09E09 /* Menu + Popover Views */,
+				2DBDA62D26081B050071AB29 /* Helpers + Extensions */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
 		};
-		2DBDA62D26081B050071AB29 /* Models */ = {
+		2DBDA62D26081B050071AB29 /* Helpers + Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				2DD21CD3264847A000AD4414 /* Dict.swift */,
@@ -261,7 +261,18 @@
 				2DDED5F2264EF28900EDA415 /* APICaller.swift */,
 				2D8DB2C026509718007B99F9 /* Protocols.swift */,
 			);
-			path = Models;
+			path = "Helpers + Extensions";
+			sourceTree = "<group>";
+		};
+		2DEACD9F2651802000E09E09 /* Menu + Popover Views */ = {
+			isa = PBXGroup;
+			children = (
+				2DEACDA02651805800E09E09 /* GameVersionController.swift */,
+				2D8DB2C52650BF14007B99F9 /* MoveController.swift */,
+				2D6BEBA9263E598D006FE4E1 /* MoveCell.swift */,
+				2D6BEBA1263E2534006FE4E1 /* AlertController.swift */,
+			);
+			path = "Menu + Popover Views";
 			sourceTree = "<group>";
 		};
 		FF2D2C696B568522A03088B7 /* Frameworks */ = {
@@ -520,6 +531,7 @@
 				2D6BEBAA263E598D006FE4E1 /* MoveCell.swift in Sources */,
 				2DDED5E8264EDFCA00EDA415 /* Extensions.swift in Sources */,
 				2DD1E743263B6E06000669DD /* InnterAreaCell.swift in Sources */,
+				2DEACDA12651805800E09E09 /* GameVersionController.swift in Sources */,
 				2D6CBC18264B7A4F006E2892 /* AreaDetailViewController.swift in Sources */,
 				2D8DB2CB2650E8E1007B99F9 /* StatsCell.swift in Sources */,
 				2DADC0D6264A025500E5C59A /* pokemon.xcdatamodeld in Sources */,
