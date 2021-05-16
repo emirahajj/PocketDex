@@ -159,7 +159,8 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "InnerItemCell") as! InnerItemCell
 
-            cell.label?.text = dictionary.formatName(string: tableViewData[indexPath.section].title)
+            cell.label?.text = tableViewData[indexPath.section].title
+            cell.label.formatName()
             cell.backgroundColor = UIColor(red: 0.38, green: 0.27, blue: 0.57, alpha: 1.00)
             
 
@@ -167,7 +168,8 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
 
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell") as! ItemCell
-            cell.label?.text = dictionary.formatName(string: tableViewData[indexPath.section].sectionData[indexPath.row - 1])
+            cell.label?.text = tableViewData[indexPath.section].sectionData[indexPath.row - 1]
+            cell.label.formatName()
             //need to take care of TM/HM sprites
             let imageURL = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/\(tableViewData[indexPath.section].sectionData[indexPath.row - 1]).png")
             cell.itemImage2?.af.setImage(withURL: imageURL!)

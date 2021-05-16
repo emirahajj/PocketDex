@@ -32,7 +32,8 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        locationName.text = dictionary.formatName(string: areaName)
+        locationName.text = areaName
+        locationName.formatName()
         versionGroup = defaults.object(forKey: "versionGroup") as! String
         styleController(frame: view.frame)
 
@@ -83,7 +84,8 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
         let pokemonURL = ((pokemon_encounters[section])["pokemon"] as! [String:Any])["url"] as! String
 
         let number = pokemonURL.dropFirst(34).dropLast()
-        cell.nameLabel.text = dictionary.formatName(string: (name))
+        cell.nameLabel.text = name
+        cell.nameLabel.formatName()
         
         let URLstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(number).png"
         print(URLstring)
@@ -150,9 +152,11 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
         let maxLevel = (encounterDetails[0])["max_level"] as! Int
         let method = ((encounterDetails[0])["method"] as! [String:Any])["name"] as! String
 
-        cell.versionLabel.text = dictionary.formatName(string: version)
+        cell.versionLabel.text = version
+        cell.versionLabel.formatName()
         cell.chanceAmt.text = String(chance) + "%"
-        cell.method.text = dictionary.formatName(string: method)
+        cell.method.text = method
+        cell.method.formatName()
         cell.minLevelAmt.text = String(minLevel)
         cell.maxLevelAmt.text = String(maxLevel)
         return cell

@@ -11,6 +11,8 @@ class MoveCell: UITableViewCell {
     
     @IBOutlet weak var moveName: UILabel!
     
+    @IBOutlet weak var levelLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

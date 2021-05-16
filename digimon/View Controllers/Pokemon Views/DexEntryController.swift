@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Alamofire
 import CoreData
 
 class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITableViewDataSource {
@@ -40,6 +39,7 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
     var dexText = String()
     var statsArray = [[String:Any]]()
 
+    var downloadTask: URLSessionDownloadTask?
 
 
     @IBOutlet weak var statsTable: UITableView!
@@ -183,8 +183,12 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
         
         styleController(frame: view.frame)
         //set the image
-        let url = URL(string: picString)!
-        dexPicture.af.setImage(withURL: url)
+        //dexPicture.af.setImage(withURL: url)
+        dexPicture.image = UIImage(systemName: "square")
+        if let smallURL = URL(string: picString) {
+            downloadTask = dexPicture.loadImage(url: smallURL)
+        }
+
         dexPicture.layer.magnificationFilter = CALayerContentsFilter.nearest
 
         dexPicture.layer.shadowColor = UIColor.darkGray.cgColor
@@ -297,7 +301,12 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
         let firstImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 75, height: 75))
         let urls = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/\(num).png"
         let url = URL(string: urls)!
-        firstImage.af.setImage(withURL: url)
+        //firstImage.af.setImage(withURL: url)
+        
+        firstImage.image = UIImage(systemName: "square")
+        if let smallURL = URL(string: urls) {
+            downloadTask = firstImage.loadImage(url: smallURL)
+        }
         firstImage.layer.magnificationFilter = CALayerContentsFilter.nearest
 
         firstImage.contentMode = .scaleAspectFit

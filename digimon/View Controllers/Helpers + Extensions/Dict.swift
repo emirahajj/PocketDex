@@ -128,8 +128,5 @@ struct dict {
     let AreasColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
     
     
-    func formatName(string : String) -> String {
-        let newString = string.replacingOccurrences(of: "-", with: " ")
-        return newString.capitalized
-    }
+
 }
