@@ -7,11 +7,15 @@
 
 import UIKit
 
-extension UIView {
-    
-}
 
-class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate {
+
+class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, ViewStyle {
+    
+    func styleController(frame: CGRect) {
+        let GradientColors = dictionary.DexEntryColors
+        view.createGradientLayer(frame: frame, colors: GradientColors)
+    }
+    
 
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var tableView: UITableView!
@@ -26,11 +30,13 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
     
     var areas = [cellData]()
     var subcategories : [String] = []
+    let dictionary = dict.init()
     
         
     //utilizing viewDidAppear so that the content refreshes when the user goes back to change the game version
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(false)
+        styleController(frame: view.frame)
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -44,7 +50,6 @@ class AreasViewController: UIViewController, UIScrollViewDelegate, UITableViewDa
         
         
 
-        view.addGradient(frame: view.frame)
         
         let contentHeight = scrollView.bounds.height
         let contentWidth = scrollView.bounds.width * CGFloat(imageArray.count)

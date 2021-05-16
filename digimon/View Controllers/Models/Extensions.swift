@@ -11,14 +11,12 @@ import UIKit
 
 extension UIView {
 
-    func addGradient(frame: CGRect) {
-        let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor
-        let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor
+    func createGradientLayer(frame: CGRect, colors: [CGColor]) {
         let layer = CAGradientLayer()
         layer.frame = frame
         layer.startPoint = CGPoint(x: 0, y: 1)
         layer.endPoint = CGPoint(x: 0, y: 0)
-        layer.colors = [blue, green]
+        layer.colors = colors
         self.layer.insertSublayer(layer, at: 0)
     }
 }

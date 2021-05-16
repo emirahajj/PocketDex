@@ -9,17 +9,23 @@ import UIKit
 import Alamofire
 import CoreData
 
-class favPokemonController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class favPokemonController: UIViewController, UITableViewDelegate, UITableViewDataSource, ViewStyle {
+    
+    func styleController(frame: CGRect) {
+        let GradientColors = dictionary.mainPokemonColors
+        view.createGradientLayer(frame: frame, colors: GradientColors)
+    }
+    
 
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private var models = [FavPokemon]()
     @IBOutlet weak var favtableView: UITableView!
+    let dictionary = dict.init()
     
     
     override func viewDidAppear(_ animated: Bool) {
         getAllFavs()
-
     }
     
 
@@ -27,8 +33,7 @@ class favPokemonController: UIViewController, UITableViewDelegate, UITableViewDa
         super.viewDidLoad()
         favtableView.delegate = self
         favtableView.dataSource = self
-        view.addGradient(frame: view.frame)
-        
+        styleController(frame: view.frame)
         //createFav(_name: "Bulbasair", _id: 001)
 
         // Do any additional setup after loading the view.

@@ -10,7 +10,7 @@ import UIKit
 
 //struct that will store useful data like defined colors for types and version groups/generations
 struct dict {
-    //pokemon colors
+    //Pokemon colors. Used for background view in DexEntryController
     let colors = [
         "black": UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)/* #000000 */,
         "blue": UIColor(red: 0.149, green: 0.5216, blue: 0.8275, alpha: 1.0) /* #2685d3 */,
@@ -50,7 +50,8 @@ struct dict {
     //version groups
     let version_groups = ["red-blue", "yellow", "gold-silver", "crystal", "ruby-sapphire", "emerald", "firered-leafgreen", "diamond-pearl", "platinum", "heartgold-soulsilver", "black-white", "black-2-white-2" , "x-y", "omega-ruby-alpha-sapphire", "sun-moon", "ultra-sun-ultra-moon"]
     
-    
+    //dictioanry that stores a version groups corresponding playable region
+    //only three version groups can visit two regions
     let versionGroupLocationLookup = [
         "red-blue": ["kanto"],
         "yellow": ["kanto"],
@@ -70,6 +71,8 @@ struct dict {
 //        "ultra-sun-ultra-moon": ["alola"]
     ]
     
+    //a pokemons moveset is the same across a version group, but there are version specific pokemon between versions within a version group
+    //this dictionary will let us use the version group to filter moves and pokemon locations between versions
     let gameVersion2VersionGroup = [
         "red-blue": ["red", "blue"],
         "yellow": ["yellow"],
@@ -100,16 +103,12 @@ struct dict {
     //section titles for side menu
     let menuTitles = ["Generations", "Game Versions", "Types"]
     
-    let genLookup = [
-        "R/B/Y" : "https://pokeapi.co/api/v2/pokedex/1/",
-        "G/S/C" : "https://pokeapi.co/api/v2/pokedex/3/",
-        "R/S/E" : "https://pokeapi.co/api/v2/pokedex/4/",
-        "D/P" : "https://pokeapi.co/api/v2/pokedex/5/",
-        "Plat." : "https://pokeapi.co/api/v2/pokedex/6/",
-        "HG/SS" : "https://pokeapi.co/api/v2/pokedex/7/",
-        "B/W" : "https://pokeapi.co/api/v2/pokedex/8/",
-        "B2/W2" : "https://pokeapi.co/api/v2/pokedex/9/",
-    ]
+    let DexEntryColors = [UIColor(red: 0.95, green: 0.53, blue: 0.53, alpha: 1.00).cgColor, UIColor(red: 0.60, green: 0.00, blue: 1.00, alpha: 1.00).cgColor]
+    let mainPokemonColors = [UIColor(red: 0.95, green: 0.53, blue: 0.53, alpha: 1.00).cgColor, UIColor(red: 0.60, green: 0.00, blue: 1.00, alpha: 1.00).cgColor]
+    let FavPokemonColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
+    let ItemsColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
+    let AreasColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
+    
     
     func gradient(frame:CGRect, colors:[CGColor]) -> CAGradientLayer {
             let layer = CAGradientLayer()
@@ -119,4 +118,9 @@ struct dict {
             layer.colors = colors
             return layer
         }
+    
+    func formatName(string : String) -> String {
+        let newString = string.replacingOccurrences(of: "-", with: " ")
+        return newString.capitalized
+    }
 }

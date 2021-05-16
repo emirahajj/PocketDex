@@ -9,7 +9,12 @@ import UIKit
 import AlamofireImage
 
 
-class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
+class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, ViewStyle {
+    
+    func styleController(frame: CGRect) {
+        let GradientColors = dictionary.mainPokemonColors
+        view.createGradientLayer(frame: frame, colors: GradientColors)
+    }
 
     var isMenuActive = false //boolean to control side menu
     let menuTable = UITableView() //tableview for side menu
@@ -27,6 +32,8 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     let gens = dict.init().gens
     let typesArray = dict.init().typesArray
     let versionGroups = dict.init().version_groups
+    let dictionary = dict.init()
+    
     
 
     //array of integer ranges to represent which generation to filter by

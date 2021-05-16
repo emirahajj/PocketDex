@@ -25,12 +25,14 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
     var tableViewData = [cellData]()
     
     @IBOutlet weak var categoryLabel: UILabel!
+    
     //segmented control
     let sections = ["machines", "pokeballs", "medicine", "berries", "mail", "battle","key","misc"]
     var subcategories : [String] = []
     var segControl = UISegmentedControl(items: ["machines", "pokeballs", "medicine", "berries", "mail", "battle","key","misc"])
 
-    
+    let dictionary = dict.init()
+    let APImanager = APIHelper()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,31 +56,18 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         //get the item-categories that belong to the selected index
         
-        let url = URL(string: "https://pokeapi.co/api/v2/item-pocket/\(bagPocket)")!
-        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
-        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        let task = session.dataTask(with: request) { (data, response, error) in
-            // This will run when the network request returns
-            if let error = error {
-                print(error.localizedDescription)
-            } else if let data = data {
-                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-                
-                let categorieObjects = dataDictionary["categories"] as! [[String:Any]]
-                var newSubCategories : [cellData] = []
-                for category in categorieObjects {
-                    let newCellData = cellData(opened: false, title: category["name"] as! String, sectionData: [])
-                    newSubCategories.append(newCellData)
-                }
-                
-                self.tableViewData = newSubCategories
-                self.tableView.reloadData()
-
-
+        APImanager.APICall("https://pokeapi.co/api/v2/item-pocket/\(bagPocket)") {response in
+            let categorieObjects = response["categories"] as! [[String:Any]]
+            var newSubCategories : [cellData] = []
+            for category in categorieObjects {
+                let newCellData = cellData(opened: false, title: category["name"] as! String, sectionData: [])
+                newSubCategories.append(newCellData)
             }
+            
+            self.tableViewData = newSubCategories
+            self.tableView.reloadData()
         }
-
-        task.resume()
+        
     }
     
     func gradient(frame:CGRect, colors:[CGColor]) -> CAGradientLayer {
@@ -161,10 +150,7 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         return tableViewData.count
     }
     
-    func formatName(string : String) -> String {
-        let newString = string.replacingOccurrences(of: "-", with: " ")
-        return newString.capitalized
-    }
+
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -173,7 +159,7 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "InnerItemCell") as! InnerItemCell
 
-            cell.label?.text = formatName(string: tableViewData[indexPath.section].title)
+            cell.label?.text = dictionary.formatName(string: tableViewData[indexPath.section].title)
             cell.backgroundColor = UIColor(red: 0.38, green: 0.27, blue: 0.57, alpha: 1.00)
             
 
@@ -181,7 +167,7 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
 
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell") as! ItemCell
-            cell.label?.text = formatName(string: tableViewData[indexPath.section].sectionData[indexPath.row - 1])
+            cell.label?.text = dictionary.formatName(string: tableViewData[indexPath.section].sectionData[indexPath.row - 1])
             //need to take care of TM/HM sprites
             let imageURL = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/\(tableViewData[indexPath.section].sectionData[indexPath.row - 1]).png")
             cell.itemImage2?.af.setImage(withURL: imageURL!)

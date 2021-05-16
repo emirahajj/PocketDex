@@ -6,8 +6,15 @@
 //
 
 import UIKit
+import Alamofire
 
-class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ViewStyle {
+    
+    func styleController(frame: CGRect) {
+        let GradientColors = dictionary.AreasColors
+        view.createGradientLayer(frame: frame, colors: GradientColors)
+    }
+
 
     
     @IBOutlet weak var locationName: UILabel!
@@ -20,36 +27,21 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     var version_details = [[String:Any]]()
     var pokemon_encounters = [[String:Any]]()
     
-    func APICall(_ a : String, complete: @escaping ([String:Any])->()) {
-        var result = [String:Any]()
-        let url1 = URL(string: a)!
-        //print("URL: \(url1)")
-        let request = URLRequest(url: url1, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10)
-        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        let task = session.dataTask(with: request) {(data, response, error) in
-            // This will run when the network request returns
-            if let error = error {
-                print(error.localizedDescription)
-            } else if let data = data {
-                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed]) as! [String: Any]
-                result = dataDictionary as [String: Any]
-                complete(result)
-            }
-        }
-        task.resume()
-    }
+    let dictionary = dict.init()
+    let APImanager = APIHelper()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        locationName.text = areaName
+        locationName.text = dictionary.formatName(string: areaName)
         versionGroup = defaults.object(forKey: "versionGroup") as! String
+        styleController(frame: view.frame)
 
         
         
         tableView.delegate = self
         tableView.dataSource = self
         print(areaName)
-        APICall("https://pokeapi.co/api/v2/location-area/\(areaName)/"){theResponse in
+        APImanager.APICall("https://pokeapi.co/api/v2/location-area/\(areaName)/"){theResponse in
             print("hey")
             //print(theResponse)
             //self.pokemon_encounters = theResponse["pokemon_encounters"] as! [[String:Any]]
@@ -82,12 +74,29 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
         
         
         
-        print(defaults.object(forKey: "versionGroup") as! String) //able to print default version group
-        
-
-
-        // Do any additional setup after loading the view.
+        //print(defaults.object(forKey: "versionGroup") as! String) //able to print default version group
     }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "HeaderCell") as! HeaderCell
+        let name = ((pokemon_encounters[section])["pokemon"] as! [String:Any])["name"] as! String
+        let pokemonURL = ((pokemon_encounters[section])["pokemon"] as! [String:Any])["url"] as! String
+
+        let number = pokemonURL.dropFirst(34).dropLast()
+        cell.nameLabel.text = dictionary.formatName(string: (name))
+        
+        let URLstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(number).png"
+        print(URLstring)
+        let url = URL(string: URLstring)!
+
+        cell.pkmnImageView.af.setImage(withURL: url)
+        return cell.contentView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 65
+    }
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
@@ -96,7 +105,6 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
         let filteredArray = ((pokemon_encounters[section])["version_details"] as! [[String:Any]]).filter({ (value:[String : Any]) -> Bool in
             
             let name = (value["version"] as! [String:Any])["name"] as! String
-            print(name)
             
             let truth = dict.init().gameVersion2VersionGroup[versionGroup]?.contains(name)
 
@@ -126,7 +134,7 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
             let name = (value["version"] as! [String:Any])["name"] as! String
             //print(name)
 
-            let truth = dict.init().gameVersion2VersionGroup[versionGroup]?.contains(name)
+            let truth = dictionary.gameVersion2VersionGroup[versionGroup]?.contains(name)
 
             return (truth!)
 
@@ -142,9 +150,9 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
         let maxLevel = (encounterDetails[0])["max_level"] as! Int
         let method = ((encounterDetails[0])["method"] as! [String:Any])["name"] as! String
 
-        cell.versionLabel.text = version
-        cell.chanceAmt.text = String(chance)
-        cell.method.text = method
+        cell.versionLabel.text = dictionary.formatName(string: version)
+        cell.chanceAmt.text = String(chance) + "%"
+        cell.method.text = dictionary.formatName(string: method)
         cell.minLevelAmt.text = String(minLevel)
         cell.maxLevelAmt.text = String(maxLevel)
         return cell

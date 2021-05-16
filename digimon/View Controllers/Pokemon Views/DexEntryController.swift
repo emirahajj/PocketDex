@@ -9,8 +9,12 @@ import UIKit
 import Alamofire
 import CoreData
 
-class DexEntryController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class DexEntryController: UIViewController, UITableViewDelegate, UITableViewDataSource, ViewStyle {
     
+    func styleController(frame: CGRect) {
+        let GradientColors = dictionary.DexEntryColors
+        view.createGradientLayer(frame: frame, colors: GradientColors)
+    }
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private var models = [FavPokemon]()
@@ -18,6 +22,7 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     let APImanager = APIHelper()
     let pokemonColors = dict.init().colors
     let typeColors = dict.init().typeColors
+    let dictionary = dict.init()
     
     
     @IBOutlet weak var scrollView: UIScrollView!
@@ -36,6 +41,7 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     var totalMoveSet = [[String:Any]]()
     var filteredMoveSet = [[String:Any]]()
     var moveCriteria = "level-up"
+    let colors = dict.init().DexEntryColors
 
 
     
@@ -105,16 +111,27 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     func deleteFav(item: FavPokemon) {
         
         context.delete(item)
-        
         do {
             try context.save()
             
         } catch {
             print("couldn't save!")
         }
-        
     }
     
+    @IBAction func showMoves(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let myAlert = storyboard.instantiateViewController(withIdentifier: "alert") as? AlertController {
+            myAlert.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
+            //myAlert.labelText = self.tableViewData[indexPath.section].sectionData[indexPath.row - 1]
+            //myAlert.descText = effect
+            //myAlert.costText = String(dataDictionary["cost"] as! Int)
+            myAlert.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
+            self.present(myAlert, animated: true, completion: nil)
+        
+        }
+        
+    }
     func exists(name: String) -> [FavPokemon] {
         let fetchOne = NSFetchRequest<FavPokemon>(entityName: "FavPokemon")
         fetchOne.fetchLimit = 1
@@ -147,8 +164,6 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     
 
     
-    //param: lowercase string representing pokemon type
-
     
     func filterMoves() {
         filteredMoveSet = totalMoveSet.filter{object in
@@ -179,19 +194,23 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
 
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView.contentSize.height = 2000
         //self.viewHeight?.constant = self.scrollView.contentSize.height
-
         
+        //        self.layer.insertSublayer(layer, at: 0)
+        
+        //self.view.layer.insertSublayer(styleController(frame: view.frame, colors: colors), at: 0)
+
+        //view.layer.insertSublayer(styleController(frame: view.frame, colors: colors))
         exists(name: formattedName)
         
         tableView.delegate = self
         tableView.dataSource = self
         
-        view.addGradient(frame: view.bounds)
-        
+        styleController(frame: view.frame)
         //set the image
         let url = URL(string: picString)!
         dexPicture.af.setImage(withURL: url)
@@ -346,7 +365,6 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         firstImage.af.setImage(withURL: url)
         firstImage.layer.magnificationFilter = CALayerContentsFilter.nearest
 
-//        firstImage.frame =
         firstImage.contentMode = .scaleAspectFit
         firstImage.layer.shadowColor = UIColor.darkGray.cgColor
         firstImage.layer.shadowRadius = 7
@@ -367,11 +385,9 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         stackView.translatesAutoresizingMaskIntoConstraints = false;
         stackView.distribution = .fillEqually
         stackView.alignment = .center
-        stackView.axis
-            = .horizontal
+        stackView.axis = .horizontal
         
 
-        
         print(url)
         self.APImanager.APICall(url) {evoResponse in
             
@@ -430,10 +446,8 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
                         innerStack.translatesAutoresizingMaskIntoConstraints = false;
                         innerStack.distribution = .fillEqually
                         innerStack.alignment = .center
-                        innerStack.axis
-                            = .vertical
+                        innerStack.axis = .vertical
                         
-                        innerStack.translatesAutoresizingMaskIntoConstraints = false;
                         innerStack.frame = CGRect(x: 0, y: 0, width: 110, height: 220)
                         innerStack.widthAnchor.constraint(equalToConstant: 110).isActive = true
                         innerStack.heightAnchor.constraint(equalToConstant: 220).isActive = true
