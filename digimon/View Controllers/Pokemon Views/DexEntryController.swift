@@ -84,14 +84,14 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var favIcon: UIButton!
     //@IBOutlet weak var scrollView: UIScrollView!
     
-    override func viewWillLayoutSubviews() {
-        super.updateViewConstraints()
-        self.tableViewHeight?.constant = self.tableView.contentSize.height
-        self.viewHeight?.constant = self.scrollView.contentSize.height
-
-        print("viewHeight ", self.viewHeight?.constant)
-        print("contentSize: ", self.scrollView.contentSize.height)
-    }
+//    override func viewWillLayoutSubviews() {
+//        super.updateViewConstraints()
+//        self.tableViewHeight?.constant = self.tableView.contentSize.height
+//        self.viewHeight?.constant = self.scrollView.contentSize.height
+//
+//        print("viewHeight ", self.viewHeight?.constant)
+//        print("contentSize: ", self.scrollView.contentSize.height)
+//    }
     
     
     func createFav(_name: String, _id: Int) {
@@ -121,11 +121,9 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     
     @IBAction func showMoves(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let myAlert = storyboard.instantiateViewController(withIdentifier: "alert") as? AlertController {
+        if let myAlert = storyboard.instantiateViewController(withIdentifier: "moves") as? MoveController {
             myAlert.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
-            //myAlert.labelText = self.tableViewData[indexPath.section].sectionData[indexPath.row - 1]
-            //myAlert.descText = effect
-            //myAlert.costText = String(dataDictionary["cost"] as! Int)
+            myAlert.totalMoveSet = totalMoveSet
             myAlert.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
             self.present(myAlert, animated: true, completion: nil)
         
@@ -163,8 +161,6 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
 
-    
-    
     func filterMoves() {
         filteredMoveSet = totalMoveSet.filter{object in
             let version_details = object["version_group_details"] as! [[String:Any]]

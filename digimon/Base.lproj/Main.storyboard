@@ -103,7 +103,7 @@
                                                     <outlet property="digiPic" destination="h3V-7v-lRF" id="Np3-gF-RdB"/>
                                                     <outlet property="type1" destination="lUk-Vr-6ai" id="3ky-0l-Xbw"/>
                                                     <outlet property="type2" destination="IbK-Lm-oTg" id="AW7-eA-EvW"/>
-                                                    <segue destination="8FJ-oi-aue" kind="presentation" modalTransitionStyle="flipHorizontal" id="meU-nu-Fk7"/>
+                                                    <segue destination="8FJ-oi-aue" kind="presentation" id="meU-nu-Fk7"/>
                                                 </connections>
                                             </tableViewCell>
                                         </prototypes>
@@ -1169,7 +1169,7 @@
         <!--Move Controller-->
         <scene sceneID="Iin-Y9-eyE">
             <objects>
-                <viewController id="1Bl-DN-zNd" customClass="MoveController" customModule="digimon" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="moves" id="1Bl-DN-zNd" customClass="MoveController" customModule="digimon" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="trQ-HW-iYb">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1181,22 +1181,29 @@
                                         <rect key="frame" x="0.0" y="47" width="314" height="284"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="APf-2r-Izr">
-                                                <rect key="frame" x="0.0" y="28" width="314" height="43.5"/>
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="moveCell" id="APf-2r-Izr" customClass="MoveCell" customModule="digimon" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="28" width="314" height="43"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="APf-2r-Izr" id="IVy-cs-uZX">
-                                                    <rect key="frame" x="0.0" y="0.0" width="314" height="43.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="314" height="43"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6y1-U2-P5R">
-                                                            <rect key="frame" x="136" y="11" width="42" height="21"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6y1-U2-P5R">
+                                                            <rect key="frame" x="136.5" y="11" width="41.5" height="21"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                     </subviews>
+                                                    <constraints>
+                                                        <constraint firstAttribute="bottom" secondItem="6y1-U2-P5R" secondAttribute="bottom" constant="11" id="7Ni-xR-Wi8"/>
+                                                        <constraint firstItem="6y1-U2-P5R" firstAttribute="top" secondItem="IVy-cs-uZX" secondAttribute="top" constant="11" id="Nvu-3B-Dn7"/>
+                                                        <constraint firstItem="6y1-U2-P5R" firstAttribute="centerX" secondItem="IVy-cs-uZX" secondAttribute="centerX" id="wq9-m6-cCE"/>
+                                                    </constraints>
                                                 </tableViewCellContentView>
+                                                <connections>
+                                                    <outlet property="moveName" destination="6y1-U2-P5R" id="m2L-fw-Q9E"/>
+                                                </connections>
                                             </tableViewCell>
                                         </prototypes>
                                     </tableView>
@@ -1211,6 +1218,9 @@
                                             <segment title="TM/HM"/>
                                             <segment title="Tutor"/>
                                         </segments>
+                                        <connections>
+                                            <action selector="segPick:" destination="1Bl-DN-zNd" eventType="valueChanged" id="QU9-Di-uJe"/>
+                                        </connections>
                                     </segmentedControl>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemGreenColor"/>
@@ -1226,13 +1236,17 @@
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="rzi-P7-qg3"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="systemBlueColor"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="vMp-PB-d62" firstAttribute="centerY" secondItem="trQ-HW-iYb" secondAttribute="centerY" id="oGH-A2-d6m"/>
                             <constraint firstItem="vMp-PB-d62" firstAttribute="centerX" secondItem="trQ-HW-iYb" secondAttribute="centerX" id="qK4-vl-E7o"/>
                             <constraint firstItem="vMp-PB-d62" firstAttribute="leading" secondItem="rzi-P7-qg3" secondAttribute="leading" constant="50" id="sxg-yh-QIY"/>
                             <constraint firstItem="rzi-P7-qg3" firstAttribute="trailing" secondItem="vMp-PB-d62" secondAttribute="trailing" constant="50" id="tKq-fT-rCi"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="t8i-WP-f33" appends="YES" id="LyA-Rg-i2g"/>
+                        </connections>
                     </view>
                     <navigationItem key="navigationItem" id="4hB-eT-V8c"/>
                     <connections>
@@ -1242,13 +1256,18 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RWO-xd-6jR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="t8i-WP-f33">
+                    <connections>
+                        <action selector="onTap:" destination="1Bl-DN-zNd" id="kho-Ok-VXO"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="179.71014492753625" y="2028.3482142857142"/>
         </scene>
     </scenes>
     <resources>
-        <image name="bag" width="327" height="320"/>
         <image name="bag" catalog="system" width="128" height="128"/>
+        <image name="bag" width="327" height="320"/>
         <image name="bag.fill" catalog="system" width="128" height="128"/>
         <image name="gearshape" catalog="system" width="128" height="121"/>
         <image name="machines" width="100" height="100"/>
@@ -1262,6 +1281,9 @@
         </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
             <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
