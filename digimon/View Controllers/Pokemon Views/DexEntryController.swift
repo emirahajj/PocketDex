@@ -9,20 +9,16 @@ import UIKit
 import Alamofire
 import CoreData
 
-class DexEntryController: UIViewController, UITableViewDelegate, UITableViewDataSource, ViewStyle {
-    
-    func styleController(frame: CGRect) {
-        let GradientColors = dictionary.DexEntryColors
-        view.createGradientLayer(frame: frame, colors: GradientColors)
-    }
-    
+class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITableViewDataSource {
+
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private var models = [FavPokemon]()
     
     let APImanager = APIHelper()
-    let pokemonColors = dict.init().colors
     let typeColors = dict.init().typeColors
     let dictionary = dict.init()
+    let defaults = UserDefaults.standard
+    var type = String()
     
     
     @IBOutlet weak var scrollView: UIScrollView!
@@ -31,8 +27,6 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     
     var pokeURL : String! //https://pokeapi.co/api/v2/pokemon/<name>/ endpoint
     var dexInfo = [String: Any]() //stores the JSON from above response
-    
-    var picInfo = [String: Any]()
     var formattedName = String() //capitalized pokemon name
     var speciesInfo = [String: Any]() //dictionary that holds species info
     var picString : String!
@@ -42,47 +36,30 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
     var filteredMoveSet = [[String:Any]]()
     var moveCriteria = "level-up"
     let colors = dict.init().DexEntryColors
+    var textEntries = [[String:Any]]()
+    var dexText = String()
+    var statsArray = [[String:Any]]()
 
 
+
+    @IBOutlet weak var statsTable: UITableView!
     
     //top view
     @IBOutlet weak var topColor: UIView! //top view that holds pokemon, pokeball image, and pokedex #
     @IBOutlet weak var pokeBall: UIImageView!
     @IBOutlet weak var dexEntryLabel: UILabel! //pokedex entry number
     @IBOutlet weak var dexPicture: UIImageView! //main pokemon image
-    @IBOutlet weak var moveSegment: UISegmentedControl!
     
-    //stat bars
-    @IBOutlet weak var speedBar: UIProgressView!
-    @IBOutlet weak var spDefBar: UIProgressView!
-    @IBOutlet weak var spAtkBar: UIProgressView!
-    @IBOutlet weak var defenseBar: UIProgressView!
-    @IBOutlet weak var attackBar: UIProgressView!
-    @IBOutlet weak var hpBar: UIProgressView!
-    
-    @IBOutlet weak var hpAmount: UILabel!
-    @IBOutlet weak var spAttkAmt: UILabel!
-    @IBOutlet weak var defAmount: UILabel!
-    @IBOutlet weak var attackAmount: UILabel!
-    @IBOutlet weak var speedAmt: UILabel!
-    @IBOutlet weak var spDefAmt: UILabel!
+
     
     @IBOutlet weak var typeButton: UIButton!
     @IBOutlet weak var pokemonNameLabel: UILabel! //pokemon name
-    @IBOutlet weak var hpLabel: UILabel!
-    @IBOutlet weak var attackLabel: UILabel!
-    @IBOutlet weak var defenseLabel: UILabel!
+
     @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var secondaryStack: UIStackView!
     
-    
-    @IBOutlet weak var viewHeight: NSLayoutConstraint!
-    
-    @IBOutlet weak var tableView: UITableView!
-    
-    @IBOutlet weak var tableViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var dexTextLabel: UILabel!
     @IBOutlet weak var favIcon: UIButton!
-    //@IBOutlet weak var scrollView: UIScrollView!
     
 //    override func viewWillLayoutSubviews() {
 //        super.updateViewConstraints()
@@ -144,6 +121,29 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         return count
     }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return statsArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = statsTable.dequeueReusableCell(withIdentifier: "statCell") as! StatsCell
+        let statObj = statsArray[indexPath.row]
+        
+        cell.statLabel.text = (statObj["stat"] as! [String:Any])["name"] as! String
+        cell.amountVal = statObj["base_stat"] as! Double
+        cell.amtLabel.text = String(cell.amountVal)
+        
+        cell.progressBar.progressTintColor = self.typeColors[type]!
+        UIView.animate(withDuration: 0.5, delay: 6.5, options: .curveEaseInOut){
+            cell.progressBar.setProgress(Float(cell.amountVal/255), animated: true)
+        }
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 35
+    }
+    
     @IBAction func addFav(_ sender: Any) {
         if exists(name: formattedName).count > 0{
             //if it's already favorited, delete it and hollow out the button
@@ -160,51 +160,28 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
     
-
-    func filterMoves() {
-        filteredMoveSet = totalMoveSet.filter{object in
-            let version_details = object["version_group_details"] as! [[String:Any]]
-            for obj in version_details {
-                if let version_group_obj = (obj["move_learn_method"] as! [String: Any])["name"]{
-                    return version_group_obj as! String == moveCriteria
-                }
+    func filterText() {
+        for flavor in textEntries {
+            let version = (flavor["version"] as! [String:Any])["name"] as! String
+            let language = (flavor["language"] as! [String:Any])["name"] as! String
+            let version_group = defaults.object(forKey: "versionGroup") as! String
+            if dictionary.gameVersion2VersionGroup[version_group]!.contains(version) && language == "en"{
+                print(flavor)
+                dexTextLabel.text = (flavor["flavor_text"] as! String).replacingOccurrences(of: "\n", with: " ")
+                return
             }
-            return false
         }
-        tableView.reloadData()
-        
-    }
-    //function run when user taps on another segment
-    @IBAction func segTap(_ sender: Any) {
-        moveCriteria = moveTriggers[moveSegment.selectedSegmentIndex]
-        print(moveTriggers[moveSegment.selectedSegmentIndex])
-        filterMoves()
-        //allows whatever is constrained relative to the the bottom of this tableview to be constrained to how many rows are in the tableview
-        self.tableViewHeight?.constant = self.tableView.contentSize.height
-        //self.viewHeight?.constant = self.scrollView.contentSize.height
-        
-        //self.viewWillLayoutSubviews()
-        
-        
-        tableView.reloadData()
 
     }
+    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        scrollView.contentSize.height = 2000
-        //self.viewHeight?.constant = self.scrollView.contentSize.height
         
-        //        self.layer.insertSublayer(layer, at: 0)
-        
-        //self.view.layer.insertSublayer(styleController(frame: view.frame, colors: colors), at: 0)
-
-        //view.layer.insertSublayer(styleController(frame: view.frame, colors: colors))
-        exists(name: formattedName)
-        
-        tableView.delegate = self
-        tableView.dataSource = self
+        statsTable.delegate = self
+        statsTable.dataSource = self
+        //exists(name: formattedName)
         
         styleController(frame: view.frame)
         //set the image
@@ -226,20 +203,20 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         topColor.layer.shadowOffset = CGSize.init(width: 0, height: 7)
         
         
+        
         if exists(name: formattedName).count > 0 {
             favIcon.setImage(UIImage(systemName: "star.fill"), for: .normal)
         }
-
-
-
         
         //first API call to get the stats in the progress bars
         APImanager.APICall(pokeURL) {theResponse in
             
             //extract pokemon type and format button
             let types = (((theResponse["types"] as! NSArray)[0] as! [String:Any])["type"] as! [String:Any])
-            let type = types["name"] as! String
-            self.typeButton.buttonStyle(type)
+            self.type = types["name"] as! String
+            self.typeButton.buttonStyle(self.type)
+            self.topColor.backgroundColor = self.typeColors[self.type]
+
             
             //setting the number
             self.dexEntryLabel.text = "#" + self.id
@@ -250,39 +227,18 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
 
             //stats/status bar formatting formatting
             let statArr = (theResponse["stats"] as! [[String:Any]])
-            let hp = ((statArr[0] as [String:Any])["base_stat"] as! Double)
-            self.hpAmount.text = String(Int(hp))
-            let attack = ((statArr[1] as [String:Any])["base_stat"] as! Double)
-            self.attackAmount.text = String(Int(attack))
-            let defense = ((statArr[2] as [String:Any])["base_stat"] as! Double)
-            self.defAmount.text = String(Int(defense))
-            let spAtk = ((statArr[3] as [String:Any])["base_stat"] as! Double)
-            self.spAttkAmt.text = String(Int(spAtk))
-            let spDef = ((statArr[4] as [String:Any])["base_stat"] as! Double)
-            self.spDefAmt.text = String(Int(spDef))
-            let speed = ((statArr[5] as [String:Any])["base_stat"] as! Double)
-            self.speedAmt.text = String(Int(speed))
+            self.statsArray = theResponse["stats"] as! [[String:Any]]
+            self.statsTable.reloadData()
             
-            //print("before reload", self.viewHeight)
-            
+
             //setting all the moves a pokemon can learn
             self.totalMoveSet = theResponse["moves"] as! [[String:Any]]
-            self.filterMoves()
-            self.tableView.reloadData()
 
             //self.tableViewHeight.constant = self.tableView.contentSize.height
             //self.viewHeight.constant = self.scrollView.contentSize.height + self.tableViewHeight.constant
             
 
-            
-            UIView.animate(withDuration: 0.5, delay: 6.5, options: .curveEaseInOut){
-                self.hpBar.setProgress(Float(hp/255), animated: true)
-                self.defenseBar.setProgress(Float(defense/255), animated: true)
-                self.attackBar.setProgress(Float(attack/255), animated: true)
-                self.spAtkBar.setProgress(Float(spAtk/255), animated: true)
-                self.spDefBar.setProgress(Float(spDef/255), animated: true)
-                self.speedBar.setProgress(Float(speed/255), animated: true)
-            }
+        
         }
         
         let pokeID = pokeURL.dropFirst(34).dropLast()
@@ -292,30 +248,15 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
         APImanager.APICall(speciesURL) {theResponse in
             self.evoChainURL = (theResponse["evolution_chain"] as! [String:Any])["url"] as! String
             
+            self.textEntries = theResponse["flavor_text_entries"] as! [[String:Any]]
+            self.filterText()
+
+            
             self.getEvoChain(self.evoChainURL)
             
-            let color = (theResponse["color"] as! [String: Any])["name"] as! String
-            
-            self.topColor.backgroundColor = self.pokemonColors[color]
-            self.hpBar.progressTintColor = self.pokemonColors[color]!
-            self.attackBar.progressTintColor = self.pokemonColors[color]!
-            self.defenseBar.progressTintColor = self.pokemonColors[color]!
-            self.spAtkBar.progressTintColor = self.pokemonColors[color]!
-            self.spDefBar.progressTintColor = self.pokemonColors[color]!
-            self.speedBar.progressTintColor = self.pokemonColors[color]!
         }
     }
 
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filteredMoveSet.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "moveCell") as! MoveCell
-        cell.moveName.text = ((filteredMoveSet[indexPath.row])["move"] as! [String:Any])["name"] as? String
-        return cell
-    }
     //creates a view given a species object to add to the stackView for the evolution chain
     func createEvoContainerView(obj: NSObject) -> UIView {
         //object we're passing is "species." it has "name" and "url" keys
@@ -461,4 +402,10 @@ class DexEntryController: UIViewController, UITableViewDelegate, UITableViewData
             
         }
     }
+    
+    func styleController(frame: CGRect) {
+        let GradientColors = dictionary.DexEntryColors
+        view.createGradientLayer(frame: frame, colors: GradientColors)
+    }
+    
 }
