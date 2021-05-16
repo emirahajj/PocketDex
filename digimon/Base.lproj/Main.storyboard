@@ -835,6 +835,18 @@
                                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
+                                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zxk-94-LLg">
+                                                        <rect key="frame" x="304" y="310" width="95" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <state key="normal" title="Move Set">
+                                                            <imageReference key="image" image="info.circle.fill" catalog="system" symbolScale="small"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="showMoves:" destination="8FJ-oi-aue" eventType="touchUpInside" id="PCS-ki-mZe"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -867,30 +879,19 @@
                                                 <color key="highlightedColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Evolution Chain" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xYe-nT-yNU">
-                                                <rect key="frame" x="116" y="964" width="182" height="32"/>
+                                                <rect key="frame" x="116" y="787" width="182" height="32"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="AppleSDGothicNeo-Bold" family="Apple SD Gothic Neo" pointSize="26"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="highlightedColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </label>
                                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pJg-es-pSE">
-                                                <rect key="frame" x="20" y="1004" width="374" height="220"/>
+                                                <rect key="frame" x="20" y="827" width="374" height="220"/>
                                                 <color key="backgroundColor" systemColor="systemGreenColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="220" id="igh-Wj-sHC"/>
                                                 </constraints>
                                             </stackView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Move Set" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TYA-fi-xpD">
-                                                <rect key="frame" x="152" y="1229" width="109" height="32"/>
-                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="32" id="1UL-Tc-JbO"/>
-                                                    <constraint firstAttribute="width" constant="109" id="7cu-oj-VzF"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" name="AppleSDGothicNeo-Bold" family="Apple SD Gothic Neo" pointSize="26"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <color key="highlightedColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            </label>
                                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eFk-OR-iyj">
                                                 <rect key="frame" x="318" y="363" width="33" height="32"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -908,14 +909,6 @@
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zxk-94-LLg">
-                                                <rect key="frame" x="285" y="1229" width="46" height="30"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <state key="normal" title="Button"/>
-                                                <connections>
-                                                    <action selector="showMoves:" destination="8FJ-oi-aue" eventType="touchUpInside" id="PCS-ki-mZe"/>
-                                                </connections>
-                                            </button>
                                             <tableView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="fwW-t1-Ljl">
                                                 <rect key="frame" x="0.0" y="506" width="414" height="251"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -946,7 +939,10 @@
                                                                     </constraints>
                                                                 </progressView>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Amt" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nZI-XO-Y64">
-                                                                    <rect key="frame" x="80" y="21" width="31.5" height="21"/>
+                                                                    <rect key="frame" x="80" y="21" width="44" height="21"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="width" constant="44" id="Q2Y-xT-Cty"/>
+                                                                    </constraints>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                     <nil key="textColor"/>
                                                                     <nil key="highlightedColor"/>
@@ -955,7 +951,6 @@
                                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <constraints>
                                                                 <constraint firstItem="nZI-XO-Y64" firstAttribute="leading" secondItem="gjM-in-D5h" secondAttribute="trailing" constant="15" id="4Qh-Rn-qrE"/>
-                                                                <constraint firstItem="qaO-nF-TzD" firstAttribute="leading" secondItem="nZI-XO-Y64" secondAttribute="trailing" constant="20" id="GXW-fv-FfT"/>
                                                                 <constraint firstItem="nZI-XO-Y64" firstAttribute="centerY" secondItem="q2V-dI-Me1" secondAttribute="centerY" id="VR1-0r-A5i"/>
                                                                 <constraint firstItem="gjM-in-D5h" firstAttribute="centerY" secondItem="q2V-dI-Me1" secondAttribute="centerY" id="Wd1-Hc-FYi"/>
                                                                 <constraint firstAttribute="trailing" secondItem="qaO-nF-TzD" secondAttribute="trailing" constant="14" id="hjM-Fg-23F"/>
@@ -976,7 +971,6 @@
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstItem="xYe-nT-yNU" firstAttribute="centerX" secondItem="bfe-hU-zPb" secondAttribute="centerX" id="0S4-DF-dfQ"/>
-                                            <constraint firstItem="TYA-fi-xpD" firstAttribute="top" secondItem="pJg-es-pSE" secondAttribute="bottom" constant="13" id="0ox-QB-ten"/>
                                             <constraint firstAttribute="trailing" secondItem="pJg-es-pSE" secondAttribute="trailing" constant="20" id="5WQ-Yg-gw7"/>
                                             <constraint firstAttribute="height" constant="2000" id="DNM-tQ-lfj"/>
                                             <constraint firstItem="ga7-3f-saO" firstAttribute="top" secondItem="bfe-hU-zPb" secondAttribute="top" id="EU9-rp-vuY"/>
@@ -991,9 +985,8 @@
                                             <constraint firstItem="iqn-Ec-aXj" firstAttribute="centerX" secondItem="bfe-hU-zPb" secondAttribute="centerX" id="dMk-nz-FTo"/>
                                             <constraint firstAttribute="trailing" secondItem="qbS-Lm-EPn" secondAttribute="trailing" constant="40" id="euX-3h-93d"/>
                                             <constraint firstItem="pJg-es-pSE" firstAttribute="top" secondItem="xYe-nT-yNU" secondAttribute="bottom" constant="8" id="gSN-tg-rKk"/>
-                                            <constraint firstItem="TYA-fi-xpD" firstAttribute="centerX" secondItem="bfe-hU-zPb" secondAttribute="centerX" id="hKW-si-gGK"/>
                                             <constraint firstItem="pJg-es-pSE" firstAttribute="centerX" secondItem="bfe-hU-zPb" secondAttribute="centerX" id="lPS-ft-e6f"/>
-                                            <constraint firstItem="xYe-nT-yNU" firstAttribute="top" secondItem="fwW-t1-Ljl" secondAttribute="bottom" constant="207" id="rdD-ZO-sDj"/>
+                                            <constraint firstItem="xYe-nT-yNU" firstAttribute="top" secondItem="fwW-t1-Ljl" secondAttribute="bottom" constant="30" id="rdD-ZO-sDj"/>
                                             <constraint firstItem="V9X-cp-k7H" firstAttribute="centerX" secondItem="bfe-hU-zPb" secondAttribute="centerX" id="sVg-3C-uud"/>
                                             <constraint firstItem="fwW-t1-Ljl" firstAttribute="leading" secondItem="bfe-hU-zPb" secondAttribute="leading" id="uPO-X0-Smy"/>
                                             <constraint firstItem="pJg-es-pSE" firstAttribute="leading" secondItem="bfe-hU-zPb" secondAttribute="leading" constant="20" id="xOe-AV-tbB"/>
@@ -1031,6 +1024,7 @@
                         <outlet property="scrollView" destination="GvR-5u-G1Y" id="wup-Ms-EG1"/>
                         <outlet property="stackView" destination="pJg-es-pSE" id="SWy-c4-g9V"/>
                         <outlet property="statsTable" destination="fwW-t1-Ljl" id="B0t-S5-ko0"/>
+                        <outlet property="tableViewHeight" destination="cmz-YN-Lki" id="vbX-07-xXp"/>
                         <outlet property="topColor" destination="ga7-3f-saO" id="bLs-Dt-4rq"/>
                         <outlet property="typeButton" destination="iqn-Ec-aXj" id="iVx-57-Ed7"/>
                     </connections>
@@ -1159,10 +1153,11 @@
         </scene>
     </scenes>
     <resources>
-        <image name="bag" catalog="system" width="128" height="128"/>
         <image name="bag" width="327" height="320"/>
+        <image name="bag" catalog="system" width="128" height="128"/>
         <image name="bag.fill" catalog="system" width="128" height="128"/>
         <image name="gearshape" catalog="system" width="128" height="121"/>
+        <image name="info.circle.fill" catalog="system" width="128" height="121"/>
         <image name="machines" width="100" height="100"/>
         <image name="mappin.and.ellipse" catalog="system" width="118" height="128"/>
         <image name="poke.png" width="860" height="903"/>

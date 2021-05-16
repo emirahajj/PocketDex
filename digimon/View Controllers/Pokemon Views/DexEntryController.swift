@@ -61,14 +61,12 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
     @IBOutlet weak var dexTextLabel: UILabel!
     @IBOutlet weak var favIcon: UIButton!
     
-//    override func viewWillLayoutSubviews() {
-//        super.updateViewConstraints()
-//        self.tableViewHeight?.constant = self.tableView.contentSize.height
-//        self.viewHeight?.constant = self.scrollView.contentSize.height
-//
-//        print("viewHeight ", self.viewHeight?.constant)
-//        print("contentSize: ", self.scrollView.contentSize.height)
-//    }
+    @IBOutlet weak var tableViewHeight: NSLayoutConstraint!
+    
+    override func viewWillLayoutSubviews() {
+        super.updateViewConstraints()
+        self.tableViewHeight?.constant = self.statsTable.contentSize.height
+    }
     
     
     func createFav(_name: String, _id: Int) {

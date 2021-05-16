@@ -38,6 +38,8 @@ extension UIProgressView{
 }
 
 extension UIButton {
+    
+    
     func buttonStyle(_ a : String){
         let capType = a.prefix(1).uppercased() + a.lowercased().dropFirst()
         self.titleLabel?.text = capType
