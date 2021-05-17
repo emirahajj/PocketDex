@@ -126,9 +126,9 @@ struct dict {
     let menuTitles = ["Types"]
 
     let DexEntryColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
-    let mainPokemonColors = [UIColor(red: 0.95, green: 0.53, blue: 0.53, alpha: 1.00).cgColor, UIColor(red: 0.60, green: 0.00, blue: 1.00, alpha: 1.00).cgColor]
+    let mainPokemonColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
     let FavPokemonColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
-    let ItemsColors = [UIColor(red: 0.01, green: 0.02, blue: 0.16, alpha: 1.00).cgColor, UIColor(red: 0.12, green: 0.30, blue: 0.55, alpha: 1.00).cgColor]
+    let ItemsColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
     let AreasColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
     
     

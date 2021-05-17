@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -163,8 +163,8 @@
 		2D6CBC1F264B85E2006E2892 /* Pokemon Views */ = {
 			isa = PBXGroup;
 			children = (
-				2DBCF3A225D71F84009E0174 /* DexEntryController.swift */,
 				2D7C9B4E25CCEFE400A94181 /* PokemonViewController.swift */,
+				2DBCF3A225D71F84009E0174 /* DexEntryController.swift */,
 				2D7C9B9025CCF24A00A94181 /* PokeCell.swift */,
 				2DAED01226425617005AD659 /* SideMenuCell.swift */,
 				2DADC0DA264A0F1300E5C59A /* favPokemonController.swift */,
@@ -307,7 +307,6 @@
 				2D7C9B4325CCEFE400A94181 /* Sources */,
 				2D7C9B4425CCEFE400A94181 /* Frameworks */,
 				2D7C9B4525CCEFE400A94181 /* Resources */,
-				52F3C815F2B7B6F7AF49DE36 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -345,7 +344,6 @@
 				2D7C9B6425CCEFE500A94181 /* Sources */,
 				2D7C9B6525CCEFE500A94181 /* Frameworks */,
 				2D7C9B6625CCEFE500A94181 /* Resources */,
-				D34687BDA54960E6407B2016 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -450,23 +448,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		52F3C815F2B7B6F7AF49DE36 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-digimon/Pods-digimon-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-digimon/Pods-digimon-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-digimon/Pods-digimon-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7FCBF47A7CD1260B7549F516 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -509,23 +490,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D34687BDA54960E6407B2016 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-digimon-digimonUITests/Pods-digimon-digimonUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-digimon-digimonUITests/Pods-digimon-digimonUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-digimon-digimonUITests/Pods-digimon-digimonUITests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

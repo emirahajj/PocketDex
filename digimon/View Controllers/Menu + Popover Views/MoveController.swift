@@ -46,8 +46,10 @@ class MoveController: UIViewController, UITableViewDataSource, UITableViewDelega
         view.insertSubview(frost, at: 0)
         view.backgroundColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.3)
         moveTable.layer.cornerRadius = 15
+        cardView.layer.cornerRadius = 15
         cardView.layer.shadowColor = UIColor.darkGray.cgColor
         cardView.layer.shadowRadius = 15
+        cardView.backgroundColor = UIColor(red: 0.38, green: 0.27, blue: 0.57, alpha: 0.4)
         cardView.layer.shadowOpacity = 1.0
         cardView.layer.shadowOffset = CGSize(width: 0, height: 7)
 

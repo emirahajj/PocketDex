@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import AlamofireImage
 
 
 class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, ViewStyle {
@@ -71,7 +70,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     
     func styleController(frame: CGRect) {
         let GradientColors = dictionary.DexEntryColors
-        view.createGradientLayer(frame: frame, colors: GradientColors)
+        pokeContent.createGradientLayer(frame: frame, colors: GradientColors)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -98,7 +97,11 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         pokeContent.layer.shadowOffset = CGSize.init(width: 0, height: 7)
         
         tabBarController?.tabBar.backgroundImage = UIImage(named: "transparent.png")
-        tabBarController?.tabBar.backgroundColor = UIColor(white: 1, alpha: 0.3)
+        tabBarController?.tabBar.unselectedItemTintColor = UIColor(red: 0.29, green: 0.22, blue: 0.45, alpha: 1.00)
+        
+
+    
+        tabBarController?.tabBar.backgroundColor = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
         searchBar.searchBarStyle = .minimal
         searchBar.setBackgroundImage(UIImage(ciImage: .white), for: UIBarPosition(rawValue: 0)!, barMetrics:.default)
         searchBar.searchTextField.attributedPlaceholder =  NSAttributedString.init(string: "Search Pokémon", attributes: [NSAttributedString.Key.foregroundColor:UIColor.lightGray])

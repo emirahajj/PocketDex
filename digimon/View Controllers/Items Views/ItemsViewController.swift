@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Alamofire
 
 //creating a struct to be able to "collapse" rows to show the subobjects they contain
 struct cellData {

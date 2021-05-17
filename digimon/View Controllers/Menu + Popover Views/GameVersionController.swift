@@ -24,6 +24,17 @@ class GameVersionController: UIViewController, UITableViewDataSource, UITableVie
         
         tableViewData = dictionary.version_groups
         versionTable.reloadData()
+        
+        let frost = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
+        frost.frame = view.bounds
+        cardView.insertSubview(frost, at: 0)
+        cardView.backgroundColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.1)
+        cardView.layer.cornerRadius = 15
+        cardView.backgroundColor = UIColor(red: 0.47, green: 0.42, blue: 0.76, alpha: 1.0)
+        cardView.layer.shadowColor = UIColor.darkGray.cgColor
+        cardView.layer.shadowRadius = 15
+        cardView.layer.shadowOpacity = 1.0
+        cardView.layer.shadowOffset = CGSize(width: 0, height: 7)
         // Do any additional setup after loading the view.
     }
     
@@ -34,12 +45,12 @@ class GameVersionController: UIViewController, UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = versionTable.dequeueReusableCell(withIdentifier: "sideMenuCell") as! SideMenuCell
         cell.versionLabel.text = tableViewData[indexPath.row]
-        cell.versionLabel.textColor = UIColor.black
+        cell.versionLabel.formatName()
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 45
+        return 35
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
