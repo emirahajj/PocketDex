@@ -80,13 +80,19 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
     
     @IBAction func onSwipeLeft(_ sender: Any) {
-        segControl.selectedSegmentIndex += 1
+        if segControl.selectedSegmentIndex < sections.count - 1 {
+            segControl.selectedSegmentIndex += 1
+        }
         self.onSegChange(self)
 
     }
     
     @IBAction func onSwipeRight(_ sender: Any) {
-        segControl.selectedSegmentIndex -= 1
+        if segControl.selectedSegmentIndex > 0 {
+            segControl.selectedSegmentIndex -= 1
+
+        }
+        
         self.onSegChange(self)
 
     }

@@ -98,7 +98,7 @@
             </objects>
             <point key="canvasLocation" x="-1399" y="1329"/>
         </scene>
-        <!--Pokemon-->
+        <!--Pokemon View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="PokemonViewController" customModule="digimon" customModuleProvider="target" sceneMemberID="viewController">
@@ -238,7 +238,7 @@
                             <constraint firstItem="kvH-MS-TcQ" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="f1u-mS-ZR3"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Pokemon" image="pokeballs" id="7Rw-Nw-rQc"/>
+                    <tabBarItem key="tabBarItem" title="" image="pokeballs" id="7Rw-Nw-rQc"/>
                     <navigationItem key="navigationItem" id="69P-mf-PyI">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="sidebar.left" catalog="system" id="V9H-En-Zn2">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -264,7 +264,7 @@
             </objects>
             <point key="canvasLocation" x="-678.26086956521749" y="626.78571428571422"/>
         </scene>
-        <!--Items-->
+        <!--Items View Controller-->
         <scene sceneID="bcd-66-K16">
             <objects>
                 <viewController id="Z9T-eo-5ow" customClass="ItemsViewController" customModule="digimon" customModuleProvider="target" sceneMemberID="viewController">
@@ -405,7 +405,10 @@
                             <outletCollection property="gestureRecognizers" destination="7MZ-WJ-xAn" appends="YES" id="tXJ-17-AfQ"/>
                         </connections>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Items" image="bag" catalog="system" selectedImage="bag.fill" id="lrW-9Q-jvb"/>
+                    <tabBarItem key="tabBarItem" title="" id="lrW-9Q-jvb">
+                        <imageReference key="image" image="bag" catalog="system" symbolScale="large"/>
+                        <imageReference key="selectedImage" image="bag.fill" catalog="system" symbolScale="large"/>
+                    </tabBarItem>
                     <connections>
                         <outlet property="bagImage" destination="8t1-NG-pYc" id="zWD-9k-RQJ"/>
                         <outlet property="categoryLabel" destination="ygr-mS-3Ik" id="PCt-aD-Nhh"/>
@@ -676,7 +679,7 @@
             </objects>
             <point key="canvasLocation" x="1016" y="1329"/>
         </scene>
-        <!--Favorites-->
+        <!--Fav Pokemon Controller-->
         <scene sceneID="X7a-zh-pvG">
             <objects>
                 <viewController id="nR0-jH-oq6" customClass="favPokemonController" customModule="digimon" customModuleProvider="target" sceneMemberID="viewController">
@@ -753,7 +756,7 @@
                         <viewLayoutGuide key="safeArea" id="YgO-20-4cj"/>
                         <color key="backgroundColor" systemColor="systemTealColor"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Favorites" image="star" catalog="system" selectedImage="star" id="8LD-Yy-eTa">
+                    <tabBarItem key="tabBarItem" title="" image="star" catalog="system" selectedImage="star" id="8LD-Yy-eTa">
                         <color key="badgeColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBarItem>
                     <connections>
@@ -764,7 +767,7 @@
             </objects>
             <point key="canvasLocation" x="-1374" y="627"/>
         </scene>
-        <!--Areas-->
+        <!--Areas View Controller-->
         <scene sceneID="ufn-7a-BNo">
             <objects>
                 <viewController id="VyM-hL-AhB" customClass="AreasViewController" customModule="digimon" customModuleProvider="target" sceneMemberID="viewController">
@@ -875,7 +878,7 @@
                             <outletCollection property="gestureRecognizers" destination="LHA-oJ-s18" appends="YES" id="OaW-yF-pUF"/>
                         </connections>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Areas" image="mappin.and.ellipse" catalog="system" selectedImage="mappin.and.ellipse" id="K5l-qZ-Sjo"/>
+                    <tabBarItem key="tabBarItem" title="" image="mappin.and.ellipse" catalog="system" selectedImage="mappin.and.ellipse" id="K5l-qZ-Sjo"/>
                     <navigationItem key="navigationItem" id="NAT-ag-oeb"/>
                     <connections>
                         <outlet property="regionName" destination="oQA-KX-miZ" id="HLO-3o-18M"/>
