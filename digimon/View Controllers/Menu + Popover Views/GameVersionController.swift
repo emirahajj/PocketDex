@@ -7,22 +7,14 @@
 
 import UIKit
 
-protocol AddVersionGroupDelegate {
-    func setVersionGroup(versionGroup: String)
-}
-
 class GameVersionController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
-    //var delegate: AddVersionGroupDelegate?
 
     @IBOutlet weak var cardView: UIView!
-    
     @IBOutlet weak var versionTable: UITableView!
     
     var defaults = UserDefaults.standard
-    
     let dictionary = dict.init()
-    
     var tableViewData = [String]()
     
     override func viewDidLoad() {
@@ -55,16 +47,5 @@ class GameVersionController: UIViewController, UITableViewDataSource, UITableVie
         defaults.set(tableViewData[indexPath.row], forKey: "versionGroup")
         self.dismiss(animated: true, completion: nil)
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

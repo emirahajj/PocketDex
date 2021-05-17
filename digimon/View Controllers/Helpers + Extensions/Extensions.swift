@@ -21,6 +21,19 @@ extension UIView {
     }
 }
 
+extension SideMenuCell {
+    func formatCell(width: CGFloat, height: CGFloat){
+        self.labelText = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: 20))
+        self.labelText.adjustsFontSizeToFitWidth = true
+        self.labelText.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
+        self.labelText.font = UIFont(name: "Menlo-Bold", size: 12)
+        self.labelText.textColor = UIColor.black
+        self.labelText.textAlignment = NSTextAlignment.center
+        self.addSubview(self.labelText)
+        self.backgroundColor = UIColor.clear
+    }
+    
+}
 extension UIProgressView{
 
     override open func awakeFromNib() {
@@ -61,21 +74,29 @@ extension UILabel {
 
 extension UIImageView {
     
-func loadImage(url: URL) -> URLSessionDownloadTask {
-    let session = URLSession.shared
-    let downloadTask = session.downloadTask(with: url) {
-        [weak self] url, _, error in
-        if error == nil, let url = url, let data = try? Data(contentsOf: url), // 3
-           let image = UIImage(data: data) {
-                DispatchQueue.main.async {
-                    if let weakSelf = self {
-                        weakSelf.image = image
+    func loadImage(url: URL) -> URLSessionDownloadTask {
+        let session = URLSession.shared
+        let downloadTask = session.downloadTask(with: url) {
+            [weak self] url, _, error in
+            if error == nil, let url = url, let data = try? Data(contentsOf: url), // 3
+               let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        if let weakSelf = self {
+                            weakSelf.image = image
+                        }
                     }
                 }
             }
-        }
-        downloadTask.resume()
-        return downloadTask
+            downloadTask.resume()
+            return downloadTask
     }
 }
+
+extension UserDefaults {
+    static func exists(key: String) -> Bool {
+        return UserDefaults.standard.object(forKey: key) != nil
+    }
+
+}
+
 

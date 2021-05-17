@@ -13,7 +13,7 @@ class APIHelper {
         var result = [String:Any]()
         let url1 = URL(string: a)!
         //print("URL: \(url1)")
-        let request = URLRequest(url: url1, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10)
+        let request = URLRequest(url: url1, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task = session.dataTask(with: request) {(data, response, error) in
             // This will run when the network request returns

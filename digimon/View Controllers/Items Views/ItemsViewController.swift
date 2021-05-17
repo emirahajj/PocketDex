@@ -8,28 +8,34 @@
 import UIKit
 import Alamofire
 
-
+//creating a struct to be able to "collapse" rows to show the subobjects they contain
 struct cellData {
     var opened = Bool()
     var title = String()
     var sectionData = [String]()
 }
 
-class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, ViewStyle {
+    func styleController(frame: CGRect) {
+        let GradientColors = dictionary.DexEntryColors
+        view.createGradientLayer(frame: frame, colors: GradientColors)
+    }
+    
 
     @IBOutlet weak var bagImage: UIImageView!
     @IBOutlet weak var tableView: UITableView!
-    
+    @IBOutlet weak var categoryLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
-    //try making another struct and embedding that as the section data of the first
+    
+    var downloadTask: URLSessionDownloadTask?
+
+    
     var tableViewData = [cellData]()
     
-    @IBOutlet weak var categoryLabel: UILabel!
-    
     //segmented control
-    let sections = ["machines", "pokeballs", "medicine", "berries", "mail", "battle","key","misc"]
+    let sections = ["medicine", "pokeballs", "machines", "berries", "mail", "battle","key","misc"]
     var subcategories : [String] = []
-    var segControl = UISegmentedControl(items: ["machines", "pokeballs", "medicine", "berries", "mail", "battle","key","misc"])
+    var segControl = UISegmentedControl(items: ["medicine", "pokeballs", "machines", "berries", "mail", "battle","key","misc"])
 
     let dictionary = dict.init()
     let APImanager = APIHelper()
@@ -40,11 +46,7 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         tableView.delegate = self
         
         segControl.selectedSegmentIndex = 0
-        
-        let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
-        let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00)
-        let array = [blue.cgColor, green.cgColor]
-        view.layer.insertSublayer(gradient(frame: view.bounds, colors:array ), at:0)
+        styleController(frame: view.frame)
 
         
         //get the selected index item-pocket
@@ -52,7 +54,6 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         categoryLabel.text = bagPocket.capitalized
 
-        print(bagPocket)
         
         //get the item-categories that belong to the selected index
         
@@ -63,7 +64,7 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 let newCellData = cellData(opened: false, title: category["name"] as! String, sectionData: [])
                 newSubCategories.append(newCellData)
             }
-            
+
             self.tableViewData = newSubCategories
             self.tableView.reloadData()
         }
@@ -90,54 +91,38 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         self.onSegChange(self)
 
     }
+    
     @IBAction func onSegChange(_ sender: Any) {
         let bagPocket = sections[segControl.selectedSegmentIndex]
         categoryLabel.text = bagPocket.capitalized
         imageView.image = UIImage(named: "\(bagPocket).png")
         
-        let url = URL(string: "https://pokeapi.co/api/v2/item-pocket/\(bagPocket)")!
-        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
-        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        let task = session.dataTask(with: request) { (data, response, error) in
-            // This will run when the network request returns
-            if let error = error {
-                print(error.localizedDescription)
-            } else if let data = data {
-                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-                
-                let categorieObjects = dataDictionary["categories"] as! [[String:Any]]
-                var newSubCategories : [cellData] = []
-                for category in categorieObjects {
-                    let newCellData = cellData(opened: false, title: category["name"] as! String, sectionData: [])
-                    newSubCategories.append(newCellData)
-                }
-                
-                self.tableViewData = newSubCategories
-                self.tableView.reloadData()
-
-
+        APImanager.APICall("https://pokeapi.co/api/v2/item-pocket/\(bagPocket)"){response in
+            
+            let categorieObjects = response["categories"] as! [[String:Any]]
+            var newSubCategories : [cellData] = []
+            for category in categorieObjects {
+                let newCellData = cellData(opened: false, title: category["name"] as! String, sectionData: [])
+                newSubCategories.append(newCellData)
             }
+            
+            self.tableViewData = newSubCategories
+            self.tableView.reloadData()
         }
-
-        task.resume()
-        
-        
+    
         //animate the bag to shake a lil
-        
         UIView.animate(withDuration: 0.05, animations: {
             self.bagImage.transform = CGAffineTransform(rotationAngle: (4 * .pi) / 180.0)
         }, completion: { _ in
             UIView.animate(withDuration: 0.05) {
-                self.bagImage.transform = CGAffineTransform(rotationAngle: -1 * (4 * .pi) / 180.0)
+                self.bagImage.transform = CGAffineTransform.identity
             }
         })
         
-
         self.tableView.reloadData()
 
-
-        
     }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableViewData[section].opened {
             return tableViewData[section].sectionData.count + 1
@@ -150,20 +135,14 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
         return tableViewData.count
     }
     
-
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        //need to check if the sgemented control got switched or not
-        
+                
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "InnerItemCell") as! InnerItemCell
 
             cell.label?.text = tableViewData[indexPath.section].title
             cell.label.formatName()
             cell.backgroundColor = UIColor(red: 0.38, green: 0.27, blue: 0.57, alpha: 1.00)
-            
-
             return cell
 
         } else {
@@ -171,18 +150,22 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.label?.text = tableViewData[indexPath.section].sectionData[indexPath.row - 1]
             cell.label.formatName()
             //need to take care of TM/HM sprites
-            let imageURL = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/\(tableViewData[indexPath.section].sectionData[indexPath.row - 1]).png")
-            cell.itemImage2?.af.setImage(withURL: imageURL!)
+            var itemVarPic = tableViewData[indexPath.section].sectionData[indexPath.row - 1]
+            if segControl.selectedSegmentIndex == 2 {
+                itemVarPic = "tm-normal"
+            }
+            
+            cell.itemImage2.image = UIImage(systemName: "square")
+            if let smallURL = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/\(itemVarPic).png") {
+                downloadTask = cell.itemImage2.loadImage(url: smallURL)
+            }
             return cell
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
         
-        //refactor--use title for header in section, and keep the
-        //only want to collapse first when first one is clicked]
-        
-        print("This is in section: \(indexPath.section) and row: \(indexPath.row)")
         if indexPath.row == 0 {
             if tableViewData[indexPath.section].opened == true {
                 tableViewData[indexPath.section].opened = false
@@ -190,84 +173,40 @@ class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 tableView.reloadSections(sections, with: .none)
             } else {
                 tableViewData[indexPath.section].opened = true
-
                 let sections = IndexSet.init(integer: indexPath.section)
-                
-                let url = URL(string: "https://pokeapi.co/api/v2/item-category/\(tableViewData[indexPath.section].title)")!
-                let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
-                let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-                let task = session.dataTask(with: request) { (data, response, error) in
-                    // This will run when the network request returns
-                    if let error = error {
-                        print(error.localizedDescription)
-                    } else if let data = data {
-                        let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-                        //tableviewdata[indexpath.section].sectionData = [our new aray]
-                        let categorieObjects = dataDictionary["items"] as! [[String:Any]]
-                        var categoryNames: [String] = []
-                        for category in categorieObjects {
-//                             let innerSection = innerData(opened: false, title: category["name"] as! String, sectionData: [])
-                            categoryNames.append(category["name"] as! String)
-                        }
-                        self.tableViewData[indexPath.section].sectionData = categoryNames
-                        self.tableView.reloadSections(sections, with: .none)
+                APImanager.APICall("https://pokeapi.co/api/v2/item-category/\(tableViewData[indexPath.section].title)"){response in
+                    let categorieObjects = response["items"] as! [[String:Any]]
+                    var categoryNames: [String] = []
+                    for category in categorieObjects {
+                        categoryNames.append(category["name"] as! String)
                     }
+                    self.tableViewData[indexPath.section].sectionData = categoryNames
+                    self.tableView.reloadSections(sections, with: .none)
+
                 }
                 
-
-                task.resume()
             }
         } else { //popup goes here
             
-            //make api call 
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             if let myAlert = storyboard.instantiateViewController(withIdentifier: "alert") as? AlertController {
                 
-                let url = URL(string: "https://pokeapi.co/api/v2/item/\(tableViewData[indexPath.section].sectionData[indexPath.row - 1])")!
-                let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
-                let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-                let task = session.dataTask(with: request) { (data, response, error) in
-                    // This will run when the network request returns
-                    if let error = error {
-                        print(error.localizedDescription)
-                    } else if let data = data {
-                        let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-                        //tableviewdata[indexpath.section].sectionData = [our new aray]
-                        let effect = ((dataDictionary["effect_entries"] as! [[String:Any]])[0])["short_effect"] as! String
-                        
-                        myAlert.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
-                        myAlert.labelText = self.tableViewData[indexPath.section].sectionData[indexPath.row - 1]
-                        myAlert.descText = effect
-                        myAlert.costText = String(dataDictionary["cost"] as! Int)
-                        myAlert.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
-                        self.present(myAlert, animated: true, completion: nil)
+                APImanager.APICall("https://pokeapi.co/api/v2/item/\(tableViewData[indexPath.section].sectionData[indexPath.row - 1])"){response in
+                    let effect = ((response["effect_entries"] as! [[String:Any]])[0])["short_effect"] as! String
+                    
+                    myAlert.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
+                    myAlert.labelText = self.tableViewData[indexPath.section].sectionData[indexPath.row - 1]
+                    myAlert.descText = effect
+                    myAlert.costText = String(response["cost"] as! Int)
+                    myAlert.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
+                    self.present(myAlert, animated: true, completion: nil)
+                    self.tableView.deselectRow(at: indexPath, animated: true)
 
-                        
-                        
-                    }
                 }
                 
-
-                task.resume()
-
-            
             }
-//            myAlert.itemName!.text = "hey"
 
-            
-            
-        } //we can put a segue here to go to that items individual page
+        }
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

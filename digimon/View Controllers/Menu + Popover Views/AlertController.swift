@@ -38,7 +38,7 @@ class AlertController: UIViewController {
         view.insertSubview(frost, at: 0)
         view.backgroundColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.3)
         card.layer.cornerRadius = 15
-        card.backgroundColor = UIColor(red: 0.38, green: 0.27, blue: 0.57, alpha: 1.0)
+        card.backgroundColor = UIColor(red: 0.38, green: 0.27, blue: 0.57, alpha: 0.4)
         card.layer.shadowColor = UIColor.darkGray.cgColor
         card.layer.shadowRadius = 15
         card.layer.shadowOpacity = 1.0

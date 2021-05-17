@@ -10,11 +10,6 @@ import AlamofireImage
 
 
 class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, ViewStyle {
-    
-    func styleController(frame: CGRect) {
-        let GradientColors = dictionary.mainPokemonColors
-        view.createGradientLayer(frame: frame, colors: GradientColors)
-    }
 
     var isMenuActive = false //boolean to control side menu
     let menuTable = UITableView() //tableview for side menu
@@ -22,6 +17,8 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     var secondary = [[String:Any]]() //duplicate of pokemon to use search feature
     var picString = String() //string representing pokemon image
     let defaults = UserDefaults.standard
+    var downloadTask: URLSessionDownloadTask?
+
     
     @IBOutlet weak var pokeContent: UIView!
     @IBOutlet weak var tableView: UITableView! //for pokemon
@@ -29,70 +26,31 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     
     let menuContent = dict.init().menuContent
     let menuTitles = dict.init().menuTitles
-    let gens = dict.init().gens
     let typesArray = dict.init().typesArray
     let versionGroups = dict.init().version_groups
     let dictionary = dict.init()
-    
-    
-
-    //array of integer ranges to represent which generation to filter by
-    let dexEntryRanges = [1..<151, 152..<251, 252..<386, 387..<493, 494..<649, 650..<722, 722..<809]
+    let APImanager = APIHelper()
     
     //the set that will contain the ranges to filter by
-    var filterRanges:Set<Range<Int>> = []
-    
-    
     
     let gameVersion = String()
     let generation = String()
     var searchType = String()
     var filterTypes:Set<String> = []
 
-    
-    func APICall(_ a : String, complete: @escaping ([String:Any])->()) {
-        var result = [String:Any]()
-        let url1 = URL(string: a)!
-        //print("URL: \(url1)")
-        let request = URLRequest(url: url1, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10)
-        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        let task = session.dataTask(with: request) {(data, response, error) in
-            // This will run when the network request returns
-            if let error = error {
-                print(error.localizedDescription)
-            } else if let data = data {
-                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed]) as! [String: Any]
-                result = dataDictionary as [String: Any]
-                complete(result)
-            }
-        }
-        task.resume()
-    }
-    
-    func gradient(frame:CGRect, colors:[CGColor]) -> CAGradientLayer {
-            let layer = CAGradientLayer()
-            layer.frame = frame
-            layer.startPoint = CGPoint(x: 0, y: 1)
-            layer.endPoint = CGPoint(x: 0, y: 0)
-            layer.colors = colors
-            return layer
-        }
-    
-    
 
-    
     func createSideMenu(view: UIView) {
         
-        let rect = CGRect(x: 0, y: 0, width: view.layer.bounds.width * 0.4, height: view.layer.bounds.width)
+        let rect = CGRect(x: 0, y: 0, width: view.layer.bounds.width * 0.4, height: pokeContent.layer.bounds.height)
         let newView = UIView(frame:rect)
         
         self.menuTable.frame = newView.frame
         self.menuTable.allowsMultipleSelection = true
+        menuTable.backgroundColor = UIColor.clear
         newView.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         newView.translatesAutoresizingMaskIntoConstraints = false
         menuTable.translatesAutoresizingMaskIntoConstraints = false
 
-        
         view.addSubview(newView)
         view.sendSubviewToBack(newView)
         newView.addSubview(self.menuTable)
@@ -107,66 +65,57 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         menuTable.leadingAnchor.constraint(equalTo: newView.leadingAnchor).isActive = true
         menuTable.widthAnchor.constraint(equalTo: newView.widthAnchor).isActive = true
         
-        menuTable.backgroundColor = UIColor.clear
-        
         menuTable.reloadData()
-        
-        print(MemoryLayout.size(ofValue: self.menuTable))
-        
         
     }
     
+    func styleController(frame: CGRect) {
+        let GradientColors = dictionary.DexEntryColors
+        view.createGradientLayer(frame: frame, colors: GradientColors)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
-        //do the filtering here
         filter()
-        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //super.view.layoutIfNeeded()
+        
+        if !UserDefaults.exists(key: "versionGroup"){
+            defaults.set("x-y", forKey: "versionGroup")
+        }
+        
+        styleController(frame: pokeContent.frame)
         menuTable.delegate = self
         menuTable.dataSource = self
         searchBar.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
         
+        pokeContent.layer.shadowColor = UIColor.darkGray.cgColor
+        pokeContent.layer.shadowRadius = 7
+        pokeContent.layer.shadowOpacity = 1
+        pokeContent.layer.shadowOffset = CGSize.init(width: 0, height: 7)
+        
         tabBarController?.tabBar.backgroundImage = UIImage(named: "transparent.png")
         tabBarController?.tabBar.backgroundColor = UIColor(white: 1, alpha: 0.3)
+        searchBar.searchBarStyle = .minimal
+        searchBar.setBackgroundImage(UIImage(ciImage: .white), for: UIBarPosition(rawValue: 0)!, barMetrics:.default)
+        searchBar.searchTextField.attributedPlaceholder =  NSAttributedString.init(string: "Search Pokémon", attributes: [NSAttributedString.Key.foregroundColor:UIColor.lightGray])
 
         createSideMenu(view: view)
 
         let blue = UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00)
         let green = UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00)
         let array = [blue.cgColor, green.cgColor]
-        pokeContent.layer.insertSublayer(gradient(frame: view.bounds, colors:array), at:0)
-        view.layer.insertSublayer(gradient(frame: view.bounds, colors:array ), at:0)
-
+        view.createGradientLayer(frame: view.bounds, colors: array)
         
-        searchBar.searchBarStyle = .minimal
-        searchBar.setBackgroundImage(UIImage(ciImage: .white), for: UIBarPosition(rawValue: 0)!, barMetrics:.default)
-        searchBar.searchTextField.attributedPlaceholder =  NSAttributedString.init(string: "Search Pokémon", attributes: [NSAttributedString.Key.foregroundColor:UIColor.lightGray])
-        
-                
-        let url = URL(string: "https://pokeapi.co/api/v2/pokedex/1/")!
-        let request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: 10)
-        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        let task = session.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                print(error.localizedDescription)
-            } else if let data = data {
-                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-                
-                self.pokemon = dataDictionary["pokemon_entries"] as! [[String:Any]]
-                self.secondary = dataDictionary["pokemon_entries"] as! [[String:Any]]
-                self.tableView.reloadData()
-
-            }
+        APImanager.APICall("https://pokeapi.co/api/v2/pokedex/1/"){response in
+            self.pokemon = response["pokemon_entries"] as! [[String:Any]]
+            self.secondary = response["pokemon_entries"] as! [[String:Any]]
+            self.tableView.reloadData()
+            
         }
-
-        task.resume()
-
-        
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -179,17 +128,12 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-
-
         switch tableView {
         case menuTable:
             let vw = UIView()
             vw.translatesAutoresizingMaskIntoConstraints = false
 
             let label = UILabel(frame:  CGRect(x: 0, y: 0, width: tableView.frame.width, height: 20))
-            //label.translatesAutoresizingMaskIntoConstraints = false
-
-
             label.text = menuTitles[section]
             label.textColor = UIColor.white
             label.textAlignment = NSTextAlignment.center
@@ -198,9 +142,6 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             vw.backgroundColor = UIColor(red: 0.47, green: 0.33, blue: 0.69, alpha: 1.00)
             vw.layer.cornerRadius = 6
             vw.addSubview(label)
-
-//            label.centerXAnchor.constraint(equalTo: vw.centerXAnchor).isActive = true
-//            label.centerYAnchor.constraint(equalTo: vw.centerYAnchor).isActive = true
 
             return vw
         default:
@@ -217,7 +158,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         case menuTable:
             return 20
         default:
-            return UITableView.automaticDimension
+            return 60
         }
     }
     
@@ -245,8 +186,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         switch tableView {
         case menuTable:
             searchType = typesArray[indexPath.row]
-//                let num = String(indexPath.row + 1)
-            APICall("https://pokeapi.co/api/v2/type/\(searchType)"){response in
+            APImanager.APICall("https://pokeapi.co/api/v2/type/\(searchType)"){response in
                 let pokemonArray = response["pokemon"] as! [[String:Any]]
                 self.filterTypes = Set(pokemonArray.map { ($0["pokemon"] as! [String:Any])["name"] as! String })
                 print(self.filterTypes)
@@ -260,54 +200,25 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
 
         switch tableView {
         case menuTable:
-            var cell = SideMenuCell()
-            cell.labelText = UILabel(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 20))
-            cell.labelText.adjustsFontSizeToFitWidth = true
+            let cell = SideMenuCell()
+            cell.formatCell(width: tableView.frame.width, height: 20)
             cell.labelText.text = menuContent[indexPath.section][indexPath.row]
-            cell.labelText.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
-            cell.labelText.font = UIFont(name: "Menlo-Bold", size: 12)
-            cell.labelText.textColor = UIColor.black
-            cell.labelText.textAlignment = NSTextAlignment.center
-            //cell.heightAnchor.constraint(equalToConstant: 12).isActive = true
-            cell.addSubview(cell.labelText)
-            
             cell.labelText.centerYAnchor.constraint(equalTo: cell.centerYAnchor).isActive = true
             cell.labelText.centerXAnchor.constraint(equalTo: cell.centerXAnchor).isActive = true
-            cell.backgroundColor = UIColor.clear
-//            cell.selectionStyle = .
-            
-            
-
-//            cell = tableView.dequeueReusableCell(withIdentifier: "PokeCell") as! PokeCell
             return cell
+            
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: "PokeCell") as! PokeCell
             let mypoke = secondary[indexPath.row]
             let name = (mypoke["pokemon_species"] as! [String:Any])["name"] as! String //name of pokemon
             let localDexNumber = mypoke["entry_number"] as! Int
-            let cellPicString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(localDexNumber).png"
 
             let picstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(localDexNumber).png"
-            let photoURL = URL(string: cellPicString)
-            cell.digiPic.af.setImage(withURL: photoURL!)
+
+            if let smallURL = URL(string: picstring) {
+                downloadTask = cell.digiPic.loadImage(url: smallURL)
+            }
             cell.digiPic.layer.magnificationFilter = CALayerContentsFilter.nearest
-            //cell.digiPic.backgroundColor = UIColor.red
-            
-//            APICall("https://pokeapi.co/api/v2/pokemon/\(localDexNumber)") {response in
-//                let types = response["types"] as! [[String:Any]]
-//                var type1 = String()
-//                var type2 = String()
-//                
-//                if types.count == 2 {
-//                    type1 = ((types[0])["type"] as! [String:Any])["name"] as! String
-//                    type2 = ((types[1])["type"] as! [String:Any])["name"] as! String
-//                } else {
-//                    type2 = ((types[0])["type"] as! [String:Any])["name"] as! String
-//                }
-//                cell.type1.text = type1
-//                cell.type2.text = type2
-//
-//            }
         
             cell.digiLevel.text = String(format: "%03d", localDexNumber)
 
@@ -319,7 +230,6 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             return cell
         }
     }
-    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -335,17 +245,12 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             let query = searchBar.text!.lowercased()
             print(query)
             secondary = secondary.filter({ (value:[String : Any]) -> Bool in
-                
                 let name = (value["pokemon_species"] as! [String:Any])["name"] as! String
-                
                 return (name.starts(with: query))
-                 
             })
-
         }
         tableView.reloadData()
     }
-    
     
     @IBAction func buttonTap(_ sender: Any) {
 
@@ -362,16 +267,11 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             
             self.tableView.reloadData()
         }
-        print(filterRanges)
-
     }
-    
+    //filters the array that holds the pokemon by gameversion + type
     func filter() {
-        //there is a generation to fill
         let versionGroup = defaults.object(forKey: "versionGroup") as! String
         self.secondary = self.pokemon.filter({ (value:[String : Any]) -> (Bool) in
-            let name = (value["pokemon_species"] as! [String:Any])["name"] as! String
-
             var isFound = false
             let number = value["entry_number"] as! Int
                 if dictionary.versionGroupRanges[versionGroup]!.contains(number) {
@@ -392,7 +292,6 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        print("i got called")
         
         if segue.identifier == "toDexView" {
             let cell = sender as! PokeCell
@@ -414,15 +313,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             dexViewController.picString = cell.myPic!
             dexViewController.formattedName = cell.properName!
             dexViewController.id = cell.digiLevel.text!
-        } else if segue.identifier == "toVersionSelect" {
-            
         }
-        
-
-        //ensuring the sender is the type of cell we want
-
-        
-    
     }
 
 

@@ -7,11 +7,13 @@
 
 import UIKit
 import CoreData
+import AVFoundation
 
 class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITableViewDataSource {
 
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private var models = [FavPokemon]()
+    var audioPlayer: AVAudioPlayer?
     
     let APImanager = APIHelper()
     let typeColors = dict.init().typeColors
@@ -19,10 +21,6 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
     let defaults = UserDefaults.standard
     var type = String()
     
-    
-    @IBOutlet weak var scrollView: UIScrollView!
-    
-    let moveTriggers = ["level-up", "machine", "tutor"]
     
     var pokeURL : String! //https://pokeapi.co/api/v2/pokemon/<name>/ endpoint
     var dexInfo = [String: Any]() //stores the JSON from above response
@@ -38,10 +36,13 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
     var textEntries = [[String:Any]]()
     var dexText = String()
     var statsArray = [[String:Any]]()
+    var abbreviations = ["HP", "ATK", "DEF", "SPDEF", "SPATK", "SP"]
+    let moveTriggers = ["level-up", "machine", "tutor"]
+
 
     var downloadTask: URLSessionDownloadTask?
 
-
+    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var statsTable: UITableView!
     
     //top view
@@ -49,8 +50,6 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
     @IBOutlet weak var pokeBall: UIImageView!
     @IBOutlet weak var dexEntryLabel: UILabel! //pokedex entry number
     @IBOutlet weak var dexPicture: UIImageView! //main pokemon image
-    
-
     
     @IBOutlet weak var typeButton: UIButton!
     @IBOutlet weak var pokemonNameLabel: UILabel! //pokemon name
@@ -62,6 +61,8 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
     @IBOutlet weak var favIcon: UIButton!
     
     @IBOutlet weak var tableViewHeight: NSLayoutConstraint!
+    
+    
     
     override func viewWillLayoutSubviews() {
         super.updateViewConstraints()
@@ -105,6 +106,7 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
         }
         
     }
+    
     func exists(name: String) -> [FavPokemon] {
         let fetchOne = NSFetchRequest<FavPokemon>(entityName: "FavPokemon")
         fetchOne.fetchLimit = 1
@@ -127,9 +129,9 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
         let cell = statsTable.dequeueReusableCell(withIdentifier: "statCell") as! StatsCell
         let statObj = statsArray[indexPath.row]
         
-        cell.statLabel.text = (statObj["stat"] as! [String:Any])["name"] as! String
+        cell.statLabel.text = abbreviations[indexPath.row]
         cell.amountVal = statObj["base_stat"] as! Double
-        cell.amtLabel.text = String(cell.amountVal)
+        cell.amtLabel.text = String(Int(cell.amountVal))
         
         cell.progressBar.progressTintColor = self.typeColors[type]!
         UIView.animate(withDuration: 0.5, delay: 6.5, options: .curveEaseInOut){
@@ -156,6 +158,16 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
             createFav(_name: formattedName, _id: Int(id)!)
         }
         
+        //play sound here
+        let soundPath = Bundle.main.path(forResource: "pop", ofType: "wav")
+        let url = URL(fileURLWithPath: soundPath!)
+        
+        do{
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            audioPlayer?.play()
+        }catch{
+            print("can't play that sound!")
+        }
     }
     
     func filterText() {
@@ -172,10 +184,9 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
 
     }
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         statsTable.delegate = self
         statsTable.dataSource = self
@@ -228,7 +239,6 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
 
 
             //stats/status bar formatting formatting
-            let statArr = (theResponse["stats"] as! [[String:Any]])
             self.statsArray = theResponse["stats"] as! [[String:Any]]
             self.statsTable.reloadData()
             
@@ -300,8 +310,6 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
         //image creation + styling
         let firstImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 75, height: 75))
         let urls = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/\(num).png"
-        let url = URL(string: urls)!
-        //firstImage.af.setImage(withURL: url)
         
         firstImage.image = UIImage(systemName: "square")
         if let smallURL = URL(string: urls) {
@@ -338,19 +346,14 @@ class DexEntryController: UIViewController, ViewStyle, UITableViewDelegate, UITa
             let species = (evoResponse["chain"] as! [String:Any])["species"] as! [String:Any]
             
             let newView = self.createEvoContainerView(obj: species as NSObject)
-            let bottom = self.createEvoContainerView(obj: species as NSObject)
-
-//            let newView1 = self.createEvoContainerView(obj: species as NSObject)
-//            let newView2 = self.createEvoContainerView(obj: species as NSObject)
 
             let first_array = (evoResponse["chain"] as! [String:Any])["evolves_to"] as! [[String:Any]]
-            print(first_array)
             
             self.stackView.addArrangedSubview(newView)
             //self.secondaryStack.addArrangedSubview(bottom)
 
             
-            for index in 0..<first_array.count{
+            for _ in 0..<first_array.count{
                 //catches the following cases:
                 //line of two, line of three, evolves once, then branches to two
                 if first_array.count == 1 {

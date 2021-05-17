@@ -36,10 +36,7 @@ class MoveController: UIViewController, UITableViewDataSource, UITableViewDelega
         moveTable.dataSource = self
         moveTable.delegate = self
         self.filterMoves()
-        
-        print(versionGroup, filteredMoveSet?.count)
-
-        
+                
         if let text1 = totalMoveSet {
             self.totalMoveSet = text1
         }
@@ -54,7 +51,6 @@ class MoveController: UIViewController, UITableViewDataSource, UITableViewDelega
         cardView.layer.shadowOpacity = 1.0
         cardView.layer.shadowOffset = CGSize(width: 0, height: 7)
 
-        // Do any additional setup after loading the view.
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -69,10 +65,8 @@ class MoveController: UIViewController, UITableViewDataSource, UITableViewDelega
         cell.levelLabel.text = ""
         if segControl.selectedSegmentIndex == 0 {
             let levelAmount = (((filteredMoveSet![indexPath.row])["version_group_details"] as! [[String:Any]])[0])["level_learned_at"] as! Int
-            cell.levelLabel.text = levelAmount == 0 ? "-" : ("Lvl: " + String(levelAmount))
+            cell.levelLabel.text = levelAmount == 0 ? "-" : String(levelAmount)
         }
-//        check if the lvl up is selected, if it is, display the level
-        
         return cell
     }
     
@@ -81,7 +75,6 @@ class MoveController: UIViewController, UITableViewDataSource, UITableViewDelega
         moveCriteria = moveTriggers[segControl.selectedSegmentIndex]
         print(moveTriggers[segControl.selectedSegmentIndex])
         filterMoves()
-        //moveTable.reloadData()
         
     }
     func filterMoves() {
@@ -107,17 +100,11 @@ class MoveController: UIViewController, UITableViewDataSource, UITableViewDelega
             return ((v1["level_learned_at"] as! Int) < (v2["level_learned_at"] as! Int))
             //first/second are the actual move objects
         })
-
-        
-        print(filteredMoveSet)
         moveTable.reloadData()
-        
     }
     
-
     @IBAction func onTap(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
-
     }
     /*
     // MARK: - Navigation

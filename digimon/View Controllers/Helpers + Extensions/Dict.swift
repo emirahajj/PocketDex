@@ -67,8 +67,8 @@ struct dict {
         "black-white": ["unova"],
         "black-2-white-2": ["unova"],
         "x-y": ["kalos"],
-//        "sun-moon": ["alola"],
-//        "ultra-sun-ultra-moon": ["alola"]
+        "sun-moon": ["alola"],
+        "ultra-sun-ultra-moon": ["alola"]
     ]
     
     //a pokemons moveset is the same across a version group, but there are version specific pokemon between versions within a version group
@@ -88,6 +88,8 @@ struct dict {
         "black-white": ["black", "white"],
         "black-2-white-2": ["black-2", "white-2"],
         "x-y": ["x", "y"],
+        "sun-moon": ["sun", "moon"],
+        "ultra-sun-ultra-moon": ["ultra-sun", "ultra-moon"]
     ]
     
     let dexEntryRanges = [1..<151, 152..<251, 252..<386, 387..<493, 494..<649, 650..<722, 722..<809]
@@ -108,6 +110,8 @@ struct dict {
         "black-2-white-2": 1..<649,
         "omega-ruby-alpha-sapphire":1..<722,
         "x-y": 1..<722,
+        "sun-moon": 1..<809,
+        "ultra-sun-ultra-moon": 1..<809
     ]
 
     
@@ -120,11 +124,11 @@ struct dict {
     
     //section titles for side menu
     let menuTitles = ["Types"]
-    
-    let DexEntryColors = [UIColor(red: 0.06, green: 0.13, blue: 0.15, alpha: 1.00).cgColor, UIColor(red: 0.17, green: 0.33, blue: 0.39, alpha: 1.00).cgColor]
+
+    let DexEntryColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
     let mainPokemonColors = [UIColor(red: 0.95, green: 0.53, blue: 0.53, alpha: 1.00).cgColor, UIColor(red: 0.60, green: 0.00, blue: 1.00, alpha: 1.00).cgColor]
     let FavPokemonColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
-    let ItemsColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
+    let ItemsColors = [UIColor(red: 0.01, green: 0.02, blue: 0.16, alpha: 1.00).cgColor, UIColor(red: 0.12, green: 0.30, blue: 0.55, alpha: 1.00).cgColor]
     let AreasColors = [UIColor(red: 0.62, green: 0.28, blue: 0.76, alpha: 1.00).cgColor, UIColor(red: 0.27, green: 0.64, blue: 0.84, alpha: 1.00).cgColor]
     
     

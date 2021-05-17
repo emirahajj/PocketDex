@@ -6,16 +6,8 @@
 //
 
 import UIKit
-import Alamofire
 
 class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ViewStyle {
-    
-    func styleController(frame: CGRect) {
-        let GradientColors = dictionary.AreasColors
-        view.createGradientLayer(frame: frame, colors: GradientColors)
-    }
-
-
     
     @IBOutlet weak var locationName: UILabel!
     @IBOutlet weak var tableView: UITableView!
@@ -23,6 +15,8 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     let defaults = UserDefaults.standard
     var areaName = String()
     var versionGroup = String()
+    var downloadTask: URLSessionDownloadTask?
+
     
     var version_details = [[String:Any]]()
     var pokemon_encounters = [[String:Any]]()
@@ -32,23 +26,16 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.delegate = self
+        tableView.dataSource = self
         locationName.text = areaName
         locationName.formatName()
         versionGroup = defaults.object(forKey: "versionGroup") as! String
         styleController(frame: view.frame)
 
-        
-        
-        tableView.delegate = self
-        tableView.dataSource = self
-        print(areaName)
         APImanager.APICall("https://pokeapi.co/api/v2/location-area/\(areaName)/"){theResponse in
-            print("hey")
-            //print(theResponse)
-            //self.pokemon_encounters = theResponse["pokemon_encounters"] as! [[String:Any]]
-            
+
             let allEncounters = theResponse["pokemon_encounters"] as! [[String:Any]]
-            
             
             let filteredByVersion = allEncounters.filter({ (value:[String : Any]) -> Bool in
                 
@@ -67,15 +54,11 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
             
             self.pokemon_encounters = filteredByVersion
             
-            //self.version_details = theResponse["version_details"] as! [[String:Any]]
-            print(self.pokemon_encounters)
+            if self.pokemon_encounters.count == 0 {
+                self.alert()
+            }
             self.tableView.reloadData()
-
         }
-        
-        
-        
-        //print(defaults.object(forKey: "versionGroup") as! String) //able to print default version group
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -88,10 +71,12 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
         cell.nameLabel.formatName()
         
         let URLstring = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(number).png"
-        print(URLstring)
-        let url = URL(string: URLstring)!
+        
+        cell.pkmnImageView.image = UIImage(systemName: "square")
+        if let smallURL = URL(string: URLstring) {
+            downloadTask = cell.pkmnImageView.loadImage(url: smallURL)
+        }
 
-        cell.pkmnImageView.af.setImage(withURL: url)
         return cell.contentView
     }
     
@@ -101,15 +86,10 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        //should filter out here tha matches game version
-        
+                
         let filteredArray = ((pokemon_encounters[section])["version_details"] as! [[String:Any]]).filter({ (value:[String : Any]) -> Bool in
-            
             let name = (value["version"] as! [String:Any])["name"] as! String
-            
             let truth = dict.init().gameVersion2VersionGroup[versionGroup]?.contains(name)
-
             return (truth!)
              
         })
@@ -118,31 +98,23 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        //maybe another filter here to filter out sections that have 1 or more pkmn
         return pokemon_encounters.count
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return ((pokemon_encounters[section])["pokemon"] as! [String:Any])["name"] as! String
+        return ((pokemon_encounters[section])["pokemon"] as! [String:Any])["name"] as? String
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "EncounterCell") as! EncounterCell
+        
         let versionDetails = (pokemon_encounters[indexPath.section])["version_details"] as! [[String:Any]]
-        //another filter step here afterVersionDetails
-
         let filteredArray = (versionDetails).filter({ (value:[String : Any]) -> Bool in
 
             let name = (value["version"] as! [String:Any])["name"] as! String
-            //print(name)
-
             let truth = dictionary.gameVersion2VersionGroup[versionGroup]?.contains(name)
-
             return (truth!)
-
         })
-
-        
         let cellInfo = filteredArray[indexPath.row]
         let version = (cellInfo["version"] as! [String:Any])["name"] as! String
         //let maxChance = cellInfo["max_chance"] as! String
@@ -162,15 +134,17 @@ class AreaDetailViewController: UIViewController, UITableViewDelegate, UITableVi
         return cell
     }
     
+    func alert() {
+        let alert = UIAlertController(title: "Oops!", message: "Area not reachable in this version group. Change version groups to view attainable Pokemon in this area!", preferredStyle: .alert)
 
-    /*
-    // MARK: - Navigation
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {_ in self.dismiss(animated: true)}))
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        self.present(alert, animated: true)
     }
-    */
+    
+    func styleController(frame: CGRect) {
+        let GradientColors = dictionary.AreasColors
+        view.createGradientLayer(frame: frame, colors: GradientColors)
+    }
 
 }

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2D08509E2627539A0028E533 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D08509D2627539A0028E533 /* ItemCell.swift */; };
 		2D3B57B02633A67A0031CDD6 /* InnerItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3B57AF2633A67A0031CDD6 /* InnerItemCell.swift */; };
+		2D598B482651FF2300B63220 /* pop.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2D598B472651FF2300B63220 /* pop.wav */; };
 		2D6BEBA2263E2534006FE4E1 /* AlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6BEBA1263E2534006FE4E1 /* AlertController.swift */; };
 		2D6BEBAA263E598D006FE4E1 /* MoveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6BEBA9263E598D006FE4E1 /* MoveCell.swift */; };
 		2D6CBC18264B7A4F006E2892 /* AreaDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6CBC17264B7A4F006E2892 /* AreaDetailViewController.swift */; };
@@ -63,6 +64,7 @@
 /* Begin PBXFileReference section */
 		2D08509D2627539A0028E533 /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
 		2D3B57AF2633A67A0031CDD6 /* InnerItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnerItemCell.swift; sourceTree = "<group>"; };
+		2D598B472651FF2300B63220 /* pop.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pop.wav; sourceTree = "<group>"; };
 		2D6BEBA1263E2534006FE4E1 /* AlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertController.swift; sourceTree = "<group>"; };
 		2D6BEBA9263E598D006FE4E1 /* MoveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveCell.swift; sourceTree = "<group>"; };
 		2D6CBC17264B7A4F006E2892 /* AreaDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreaDetailViewController.swift; sourceTree = "<group>"; };
@@ -150,6 +152,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		2D598B462651FF1600B63220 /* sounds */ = {
+			isa = PBXGroup;
+			children = (
+				2D598B472651FF2300B63220 /* pop.wav */,
+			);
+			path = sounds;
+			sourceTree = "<group>";
+		};
 		2D6CBC1F264B85E2006E2892 /* Pokemon Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -212,6 +222,7 @@
 		2D7C9B4925CCEFE400A94181 /* digimon */ = {
 			isa = PBXGroup;
 			children = (
+				2D598B462651FF1600B63220 /* sounds */,
 				2D7C9B4A25CCEFE400A94181 /* AppDelegate.swift */,
 				2D7C9B4C25CCEFE400A94181 /* SceneDelegate.swift */,
 				2DBDA62C26081ADE0071AB29 /* View Controllers */,
@@ -395,6 +406,7 @@
 			files = (
 				2D7C9B5725CCEFE500A94181 /* LaunchScreen.storyboard in Resources */,
 				2D7C9B5425CCEFE500A94181 /* Assets.xcassets in Resources */,
+				2D598B482651FF2300B63220 /* pop.wav in Resources */,
 				2D7C9B5225CCEFE400A94181 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
